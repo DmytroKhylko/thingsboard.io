@@ -8,9 +8,10 @@ export const opensourceSidebar: SidebarConfig = [
 		translations: { uk: 'Початок роботи' },
 		items: [
 			'docs/getting-started',
+			'docs/why-thingsboard',
 			{
-				label: 'Welcome',
-				translations: { uk: 'Ласкаво просимо' },
+				label: 'Hello, IoT!',
+				translations: { uk: 'Привіт, IoT!' },
 				items: [
 					'docs/concepts/why-astro',
 					'docs/concepts/islands',
@@ -19,26 +20,27 @@ export const opensourceSidebar: SidebarConfig = [
 				],
 			},
 			{
-				label: 'New Project',
+				label: 'Key concepts',
 				translations: { uk: 'Новий проект' },
 				items: [
 					'docs/install-and-setup',
 					'docs/basics/project-structure',
 					'docs/develop-and-build',
 				],
-			},
-			{
-				label: 'Configuration',
-				translations: { uk: 'Конфігурація' },
-				items: [
-					'docs/guides/configuring-astro',
-					'docs/editor-setup',
-					'docs/guides/typescript',
-					'docs/guides/environment-variables',
-					'docs/guides/build-with-ai',
-					'docs/guides/dev-toolbar',
-				],
-			},
+			}
+			// ,
+			// {
+			// 	label: 'Configuration',
+			// 	translations: { uk: 'Конфігурація' },
+			// 	items: [
+			// 		'docs/guides/configuring-astro',
+			// 		'docs/editor-setup',
+			// 		'docs/guides/typescript',
+			// 		'docs/guides/environment-variables',
+			// 		'docs/guides/build-with-ai',
+			// 		'docs/guides/dev-toolbar',
+			// 	],
+			// }
 		],
 	},
 	{
