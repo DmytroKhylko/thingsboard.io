@@ -1,0 +1,16 @@
+---
+title: Multi-Tenancy & Hierarchy
+description: Learn about tenants and customers
+---
+
+Defines who owns what and how users access the system.
+
+- **[Tenant](/docs/user-guide/ui/tenants/):** Top-level entity representing a company or business unit. Owns all resources and defines the primary security boundary.
+- **[Customer](/docs/user-guide/ui/customers/):** Logical sub-organization used to isolate resources (devices, dashboards) for specific end-users.
+- **[User](/docs/user-guide/ui/users/):** Authenticated account with [RBAC](/docs/pe/user-guide/rbac/) permissions. Can belong to either a Tenant or a Customer.
+
+:::tip
+Use **Customers** to securely delegate access. A Customer User can only interact with entities specifically assigned to their Customer account.
+:::
+
+TODO: diagram

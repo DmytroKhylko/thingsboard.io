@@ -7,25 +7,24 @@ export const opensourceSidebar: SidebarConfig = [
 		label: 'Getting Started',
 		translations: { uk: 'Початок роботи' },
 		items: [
-			'docs/getting-started',
-			'docs/why-thingsboard',
+			'docs/introduction',
 			{
-				label: 'Hello, IoT!',
-				translations: { uk: 'Привіт, IoT!' },
+				label: 'Welcome to IoT!',
+				translations: { uk: 'Новий проект' },
 				items: [
-					'docs/concepts/why-astro',
-					'docs/concepts/islands',
-					'docs/tutorial/0-introduction',
-					'docs/astro-courses',
+					'docs/why-thingsboard',
+					'docs/tutorial/0-introduction'
 				],
 			},
 			{
 				label: 'Key concepts',
 				translations: { uk: 'Новий проект' },
 				items: [
-					'docs/install-and-setup',
-					'docs/basics/project-structure',
-					'docs/develop-and-build',
+					'docs/concepts/multi-tenancy',
+					'docs/concepts/digital-twin-model',
+					'docs/concepts/data-processing',
+					'docs/concepts/alerts-and-notifications',
+					'docs/concepts/data-visualization'
 				],
 			}
 			// ,
