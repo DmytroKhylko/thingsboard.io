@@ -107,7 +107,7 @@ export const peSidebar: SidebarConfig = [
 				translations: { uk: 'Новий проект' },
 				items: [
 					'docs/pe/why-thingsboard',
-					// 'docs/pe/tutorial/0-introduction'
+					'docs/pe/tutorial/getting-started',
 				],
 			},			
 			{

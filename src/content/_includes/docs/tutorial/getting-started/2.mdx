@@ -1,0 +1,127 @@
+import DocLink from '@components/DocLink.astro';
+import { Aside } from '@astrojs/starlight/components';
+import Checklist from '~/components/Checklist.astro';
+import Box from '~/components/tutorial/Box.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+<DocLink product={props.product} path='user-guide/TBD/'>Dashboard</DocLink> is a centralized, configurable user interface used for monitoring, analyzing, and real-time managing IoT systems.
+
+A dashboard consists of <DocLink product={props.product} path='user-guide/TBD/'>widgets</DocLink> — configurable components such as charts, cards, tables, or maps — used to visualize data, display alarms and events, and interact with devices or processes.
+
+In this step, you will create a new dashboard and add three widgets:
+- a widget that displays the latest temperature value;
+- a chart widget that shows temperature changes over time;
+- an alarms widget that displays alarms triggered by high temperature conditions.
+
+---
+
+## Step 2.1 Create the Dashboard
+
+Create a dashboard to visualize device telemetry and alarm data.
+
+<Steps>
+  1. From the main menu, navigate to **Dashboards**.
+
+  2. Click **&#43; Add dashboard** in the upper-right corner and select **Create new dashboard**.
+
+  3. Name it **My Dashboard**
+
+  4. Click **Add**.
+</Steps>
+
+The dashboard has been created. It opens automatically, so you can start adding widgets right away.
+
+---
+
+## Step 2.2 Add a Value card widget
+
+Add a **Value card** widget to display the latest temperature value.
+
+<Steps>
+1. In the dashboard edit mode, click **&#43; Add new widget** in the center of the screen.
+
+2. Select **Cards** &#8702; **Value card**.
+
+3. Configure the widget:
+  &#8226;&#8194;Set **Thermometer** device as the datasource.
+  &#8226;&#8194;Use **temperature** as the data key.
+4. Click **Add**.
+5. Resize the widget if necessary.
+</Steps>
+
+The widget displays the latest temperature reported by the device.
+
+<Aside type="tip">
+  This guide uses a single device as the widget datasource.
+  For dynamic or multi-entity dashboards, use <DocLink product={props.product} path='user-guide/TBD/'>entity aliases</DocLink>.
+</Aside>
+
+---
+
+## Step 2.3 Add a Time series chart widget
+
+A **Time series chart** visualizes how telemetry values change over time.
+
+Add a chart to display temperature history:
+
+<Steps>
+  1. In the dashboard edit mode, click **&#43; Add widget**.
+
+2. Select **Charts** &#8702; **Time series chart**.
+
+3. Set **Thermometer** device as the datasource.
+
+4. In **Series**, specify **temperature** as the series key.
+
+5. Click **Add**.
+
+6. Adjust the widget size if needed.
+</Steps>
+
+The chart displays all recorded temperature values with timestamps for the last hour.
+
+Send several new telemetry updates (see <DocLink product={props.product} path='/docs/tutorial/getting-started/1/#step-12-verify-device-connectivity'>Step 1.2</DocLink>). The chart updates automatically as new data arrives, providing real-time visualization of temperature changes.
+
+<Aside type="tip">
+  Explore the dashboard <DocLink product={props.product} path='user-guide/TBD/'>time window</DocLink> settings, as well as data aggregation and grouping options, to customize how telemetry is displayed.
+</Aside>
+
+---
+
+## Step 2.4 Add an Alarms table widget
+
+An **Alarms table** widget displays alarms associated with selected entities, including their severity and status.
+
+Add an alarms table to the dashboard:
+
+<Steps>
+1. In edit mode, click **&#43; Add widget**.
+
+2. Select **Alarm widgets** &#8702; **Alarms table**.
+
+3. Set **Thermometer** device as the datasource.
+
+4. Configure alarm severity and status filters.
+  The widget displays alarms matching the selected properties. If none are selected, all alarms will be displayed, regardless of their status or severity.
+
+5. Click **Add**.
+
+6. Resize and position the widget if needed.
+</Steps>
+
+##### Save the rule
+
+Click **Save** in the top-right corner of the dashboard to save it.
+
+The dashboard now provides real-time visibility into telemetry data and active alarms.
+
+---
+
+<Box icon="check-list">
+
+### Checklist for moving on
+
+  <Checklist>
+    - [ ] I have created a dashboard and am ready to proceed.
+  </Checklist>
+</Box>
