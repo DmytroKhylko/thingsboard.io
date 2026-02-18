@@ -21,7 +21,7 @@ const isCurrentUnit = (unit: (typeof units)[number]) =>
 
 <div class="tutorial-nav">
 	<TabbedContent styled>
-		<Fragment slot="tab-list">
+		{units.length > 1 && <Fragment slot="tab-list">
 			{
 				units.map((unit, idx) => (
 					<TabListItem id={makeUnitId(idx)} initial={isCurrentUnit(unit)} class="tutorial-tab">
@@ -30,6 +30,7 @@ const isCurrentUnit = (unit: (typeof units)[number]) =>
 				))
 			}
 		</Fragment>
+		}
 		{
 			units.map((unit, idx) => (
 				<TabPanel id={makeUnitId(idx)} initial={isCurrentUnit(unit)}>
