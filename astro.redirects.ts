@@ -1,4 +1,4 @@
-import type { AstroUserConfig } from 'astro/config';
+import type { AstroUserConfig } from 'astro';
 
 export const redirects: AstroUserConfig['redirects'] = {
 	// Add redirects here. They work in both dev and production.
