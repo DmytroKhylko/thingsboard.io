@@ -1,22 +1,39 @@
 import DocLink from '@components/DocLink.astro';
 import { Steps, Aside } from '@astrojs/starlight/components';
 
-**Device claiming** is how a device provisioned by a tenant gets transferred to a specific customer. The tenant or device provides a secret key; the customer enters that key to take ownership. Once claimed, only that customer's users can access the device.
+**Device claiming** transfers a device from the tenant's account to a specific customer. A manufacturer ships thousands of devices pre-provisioned under the tenant — then each end customer claims their own unit using a secret key. Once claimed, only that customer's users can see the device and its data.
 
-## Choose a Scenario
-
-| | Device-Side | Server-Side |
-|-|-------------|-------------|
-| **Who generates the secret** | The device itself, at runtime | The tenant admin, in advance |
-| **How the customer gets the key** | Device displays it (screen, QR code, LED blink) | Admin distributes it out-of-band (email, box label) |
-| **Best for** | Wi-Fi / IP devices with a display or button | NB-IoT / LoRaWAN / Sigfox devices without a UI |
-| **Key stored in** | ThingsBoard (sent by device via transport API) | `claimingData` server-side attribute |
-
-Both scenarios end the same way: the customer opens the **Claim Device** widget, enters the device name and secret key, and ownership transfers.
+There are two scenarios depending on what the device can do. Both end the same way: the customer opens the **Claim Device** widget, enters the device name and secret key, and ownership transfers.
 
 ## Device-Side Claiming
 
-The device generates a secret key on a trigger (first boot, button press) and publishes it to ThingsBoard. ThingsBoard stores it temporarily. The customer reads the key from the device and claims it.
+Use this when the device has a display, button, or indicator and can show the customer a code at setup time — for example, a Wi-Fi thermostat that shows a PIN on its screen during first boot, or a smart meter with a QR code generated on demand. The device generates a secret key on a trigger and publishes it to ThingsBoard; the customer reads it directly off the device and claims it.
+
+```
+  Device                   ThingsBoard              Customer
+    │                           │                       │
+    ├─ [boot / button press]    │                       │
+    │  generates secret key     │                       │
+    │                           │                       │
+    │──── Claiming Info ───────▶│                       │
+    │     {secretKey,           │                       │
+    │      durationMs}          │ stores key            │
+    │                           │ + expirationTime      │
+    │                           │                       │
+    ├─ displays QR code         │                       │
+    │  or plain-text key        │                       │
+    │                           │                       │
+    │◀─────────── reads key ────┼───────────────────────┤
+    │                           │                       │
+    │                           │◀──── Claim ───────────┤
+    │                           │      {deviceName,     │
+    │                           │       secretKey}      │
+    │                           │ validates &           │
+    │                           │ assigns device        │
+    │                           │                       │
+    │                           │───── Response ───────▶│
+    │                           │      (status)         │
+```
 
 ### 1. Enable Claiming
 
@@ -51,7 +68,30 @@ The customer uses the **Claim Device** widget (or the REST API below), entering 
 
 ## Server-Side Claiming
 
-The tenant admin pre-generates secret keys and uploads them as device attributes. Keys reach customers via email, product packaging, or a portal — no device involvement required. This is the right choice for LoRaWAN/NB-IoT devices that are auto-provisioned via <DocLink product={props.product} path='TODO'>Platform Integrations</DocLink> and have no display.
+Use this when the device has no UI at all — NB-IoT sensors, LoRaWAN trackers, or any device auto-provisioned via <DocLink product={props.product} path='TODO'>Platform Integrations</DocLink> that the customer never physically interacts with. The tenant generates secrets in advance and includes them in the product packaging, a welcome email, or a customer portal; the customer never touches the device to get the code.
+
+```
+  Tenant                  ThingsBoard              Customer
+    │                          │                       │
+    ├─ generate secret keys    │                       │
+    │  per device              │                       │
+    │                          │                       │
+    │──── Provision devices ──▶│                       │
+    │     + claimingData       │ stores secretKey      │
+    │                          │ + expirationTime      │
+    │                          │                       │
+    ├─ distribute key ─────────┼──────────────────────▶│
+    │  (in box / via email)    │                       │
+    │                          │                       │
+    │                          │◀──── Claim ───────────┤
+    │                          │      {deviceName,     │
+    │                          │       secretKey}      │
+    │                          │ validates &           │
+    │                          │ assigns device        │
+    │                          │                       │
+    │                          │───── Response ───────▶│
+    │                          │      (status)         │
+```
 
 ### 1. Upload the Claiming Data
 
