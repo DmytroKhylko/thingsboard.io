@@ -218,14 +218,153 @@ export const peSidebar: SidebarConfig = [
 /** Cloud (PaaS) documentation sidebar (pages at /docs/paas/) */
 export const paasSidebar: SidebarConfig = [
 	{
-		label: 'Getting Started',
+		label: 'Getting Started NA',
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/paas/getting-started'],
 	},
 	{
-		label: 'Cloud Features',
+		label: 'Cloud Features NA',
 		translations: { uk: 'Функції Cloud' },
 		autogenerate: { directory: 'docs/paas/guides' },
+	},
+];
+
+export const paasEuSidebar: SidebarConfig = [
+	{
+		label: 'Getting Started EU',
+		translations: { uk: 'Початок роботи' },
+		items: ['docs/paas/eu/getting-started'],
+	},
+	{
+		label: 'Cloud Europe Features',
+		translations: { uk: 'Функції Cloud' },
+		autogenerate: { directory: 'docs/paas/eu/guides' },
+	},
+];
+
+/** Edge Community Edition sidebar (pages at /docs/edge/) */
+export const edgeSidebar: SidebarConfig = [
+	{
+		label: 'Getting Started',
+		translations: { uk: 'Початок роботи' },
+		items: ['docs/edge'],
+	},
+	{
+		label: 'Edge Features',
+		translations: { uk: 'Функції Edge' },
+		autogenerate: { directory: 'docs/edge/guides' },
+	},
+];
+
+/** Edge Professional Edition sidebar (pages at /docs/edge/pe/) */
+export const edgePeSidebar: SidebarConfig = [
+	{
+		label: 'Getting Started',
+		translations: { uk: 'Початок роботи' },
+		items: ['docs/edge/pe'],
+	},
+	{
+		label: 'Edge PE Features',
+		translations: { uk: 'Функції Edge PE' },
+		autogenerate: { directory: 'docs/edge/pe/guides' },
+	},
+];
+
+/** IoT Gateway sidebar (pages at /docs/iot-gateway/) */
+export const gwSidebar: SidebarConfig = [
+	{
+		label: 'Getting Started',
+		translations: { uk: 'Початок роботи' },
+		items: ['docs/iot-gateway'],
+	},
+	{
+		label: 'IoT Gateway Features',
+		translations: { uk: 'Функції IoT Gateway' },
+		autogenerate: { directory: 'docs/iot-gateway/guides' },
+	},
+];
+
+/** TBMQ Community Broker sidebar (pages at /docs/mqtt-broker/) */
+export const tbmqSidebar: SidebarConfig = [
+	{
+		label: 'Getting Started',
+		translations: { uk: 'Початок роботи' },
+		items: ['docs/mqtt-broker'],
+	},
+	{
+		label: 'TBMQ Features',
+		translations: { uk: 'Функції TBMQ' },
+		autogenerate: { directory: 'docs/mqtt-broker/guides' },
+	},
+];
+
+/** TBMQ PE Broker sidebar (pages at /docs/mqtt-broker/pe/) */
+export const tbmqPeSidebar: SidebarConfig = [
+	{
+		label: 'Getting Started',
+		translations: { uk: 'Початок роботи' },
+		items: ['docs/mqtt-broker/pe'],
+	},
+	{
+		label: 'TBMQ PE Features',
+		translations: { uk: 'Функції TBMQ PE' },
+		autogenerate: { directory: 'docs/mqtt-broker/pe/guides' },
+	},
+];
+
+/** Mobile Application sidebar (pages at /docs/mobile/) */
+export const mobileSidebar: SidebarConfig = [
+	{
+		label: 'Getting Started',
+		translations: { uk: 'Початок роботи' },
+		items: ['docs/mobile'],
+	},
+	{
+		label: 'Mobile Features',
+		translations: { uk: 'Функції Mobile' },
+		autogenerate: { directory: 'docs/mobile/guides' },
+	},
+];
+
+/** Mobile PE sidebar (pages at /docs/mobile/pe/) */
+export const mobilePeSidebar: SidebarConfig = [
+	{
+		label: 'Getting Started',
+		translations: { uk: 'Початок роботи' },
+		items: ['docs/mobile/pe'],
+	},
+	{
+		label: 'Mobile PE Features',
+		translations: { uk: 'Функції Mobile PE' },
+		autogenerate: { directory: 'docs/mobile/pe/guides' },
+	},
+];
+
+/** Trendz Analytics sidebar (pages at /docs/trendz/) */
+export const trendzSidebar: SidebarConfig = [
+	{
+		label: 'Getting Started',
+		translations: { uk: 'Початок роботи' },
+		items: ['docs/trendz'],
+	},
+	{
+		label: 'Trendz Features',
+		translations: { uk: 'Функції Trendz' },
+		autogenerate: { directory: 'docs/trendz/guides' },
+	},
+];
+
+/** License Server sidebar (pages at /docs/license-server/) */
+export const licenseSidebar: SidebarConfig = [
+	{
+		label: 'Getting Started',
+		translations: { uk: 'Початок роботи' },
+		items: ['docs/license-server'],
+	},
+	{
+		label: 'License Server Features',
+		translations: { uk: 'Функції License Server' },
+		autogenerate: { directory: 'docs/license-server/guides' },
 	},
 ];
 
@@ -234,4 +373,18 @@ export const paasSidebar: SidebarConfig = [
  * Route middleware in routeData.ts filters this to show only
  * the relevant version's sidebar items.
  */
-export const sidebar: SidebarConfig = [...opensourceSidebar, ...peSidebar, ...paasSidebar];
+export const sidebar: SidebarConfig = [
+	...opensourceSidebar,
+	...peSidebar,
+	...paasSidebar,
+	...paasEuSidebar,
+	...edgeSidebar,
+	...edgePeSidebar,
+	...gwSidebar,
+	...tbmqSidebar,
+	...tbmqPeSidebar,
+	...mobileSidebar,
+	...mobilePeSidebar,
+	...trendzSidebar,
+	...licenseSidebar,
+];
