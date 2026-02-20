@@ -241,11 +241,6 @@ export const peSidebar: SidebarConfig = [
 		translations: { uk: 'Довідник' },
 		items: referenceItems('docs/pe/reference'),
 	},
-	{
-		label: 'PE Features',
-		translations: { uk: 'Функції PE' },
-		autogenerate: { directory: 'docs/pe/guides' },
-	},
 ];
 
 /** Cloud (PaaS) documentation sidebar (pages at /docs/paas/) */
@@ -255,11 +250,6 @@ export const paasSidebar: SidebarConfig = [
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/paas/getting-started'],
 	},
-	{
-		label: 'Cloud Features NA',
-		translations: { uk: 'Функції Cloud' },
-		autogenerate: { directory: 'docs/paas/guides' },
-	},
 ];
 
 export const paasEuSidebar: SidebarConfig = [
@@ -267,11 +257,6 @@ export const paasEuSidebar: SidebarConfig = [
 		label: 'Getting Started EU',
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/paas/eu/getting-started'],
-	},
-	{
-		label: 'Cloud Europe Features',
-		translations: { uk: 'Функції Cloud' },
-		autogenerate: { directory: 'docs/paas/eu/guides' },
 	},
 ];
 
@@ -282,11 +267,6 @@ export const edgeSidebar: SidebarConfig = [
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/edge'],
 	},
-	{
-		label: 'Edge Features',
-		translations: { uk: 'Функції Edge' },
-		autogenerate: { directory: 'docs/edge/guides' },
-	},
 ];
 
 /** Edge Professional Edition sidebar (pages at /docs/edge/pe/) */
@@ -295,11 +275,6 @@ export const edgePeSidebar: SidebarConfig = [
 		label: 'Getting Started',
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/edge/pe'],
-	},
-	{
-		label: 'Edge PE Features',
-		translations: { uk: 'Функції Edge PE' },
-		autogenerate: { directory: 'docs/edge/pe/guides' },
 	},
 ];
 
@@ -310,11 +285,6 @@ export const gwSidebar: SidebarConfig = [
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/iot-gateway'],
 	},
-	{
-		label: 'IoT Gateway Features',
-		translations: { uk: 'Функції IoT Gateway' },
-		autogenerate: { directory: 'docs/iot-gateway/guides' },
-	},
 ];
 
 /** TBMQ Community Broker sidebar (pages at /docs/mqtt-broker/) */
@@ -323,11 +293,6 @@ export const tbmqSidebar: SidebarConfig = [
 		label: 'Getting Started',
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/mqtt-broker'],
-	},
-	{
-		label: 'TBMQ Features',
-		translations: { uk: 'Функції TBMQ' },
-		autogenerate: { directory: 'docs/mqtt-broker/guides' },
 	},
 ];
 
@@ -338,11 +303,6 @@ export const tbmqPeSidebar: SidebarConfig = [
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/mqtt-broker/pe'],
 	},
-	{
-		label: 'TBMQ PE Features',
-		translations: { uk: 'Функції TBMQ PE' },
-		autogenerate: { directory: 'docs/mqtt-broker/pe/guides' },
-	},
 ];
 
 /** Mobile Application sidebar (pages at /docs/mobile/) */
@@ -351,11 +311,6 @@ export const mobileSidebar: SidebarConfig = [
 		label: 'Getting Started',
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/mobile'],
-	},
-	{
-		label: 'Mobile Features',
-		translations: { uk: 'Функції Mobile' },
-		autogenerate: { directory: 'docs/mobile/guides' },
 	},
 ];
 
@@ -366,11 +321,6 @@ export const mobilePeSidebar: SidebarConfig = [
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/mobile/pe'],
 	},
-	{
-		label: 'Mobile PE Features',
-		translations: { uk: 'Функції Mobile PE' },
-		autogenerate: { directory: 'docs/mobile/pe/guides' },
-	},
 ];
 
 /** Trendz Analytics sidebar (pages at /docs/trendz/) */
@@ -380,11 +330,6 @@ export const trendzSidebar: SidebarConfig = [
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/trendz'],
 	},
-	{
-		label: 'Trendz Features',
-		translations: { uk: 'Функції Trendz' },
-		autogenerate: { directory: 'docs/trendz/guides' },
-	},
 ];
 
 /** License Server sidebar (pages at /docs/license-server/) */
@@ -393,11 +338,6 @@ export const licenseSidebar: SidebarConfig = [
 		label: 'Getting Started',
 		translations: { uk: 'Початок роботи' },
 		items: ['docs/license-server'],
-	},
-	{
-		label: 'License Server Features',
-		translations: { uk: 'Функції License Server' },
-		autogenerate: { directory: 'docs/license-server/guides' },
 	},
 ];
 
