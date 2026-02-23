@@ -1,5 +1,8 @@
 import DocLink from '@components/DocLink.astro';
 import { Aside } from '@astrojs/starlight/components';
+import ThemedImage from '@components/ThemedImage.astro';
+import multiTenancyLight from '~/assets/schemas/multi-tenancy-light.svg';
+import multiTenancyDark from '~/assets/schemas/multi-tenancy-dark.svg';
 
 Defines who owns what and how users access the system.
 
@@ -13,24 +16,4 @@ Defines who owns what and how users access the system.
 Use **Customers** to securely delegate access. A Customer User can only interact with entities specifically assigned to their Customer account.
 </Aside>
 
-```
-┌─ ThingsBoard ─────────────────────────────────────────────────┐
-│  System Administrator                                          │
-│  (platform config · billing · tenant management)               │
-│                                                                │
-│  ┌─ Tenant A ──────────────────────────────────────────────┐  │
-│  │  Tenant Users                                            │  │
-│  │  Devices · Assets · Dashboards · Rule Chains  (full)    │  │
-│  │                                                          │  │
-│  │  ┌─ Customer X ──────────────┐  ┌─ Customer Y ────────┐ │  │
-│  │  │  Customer Users           │  │  Customer Users      │ │  │
-│  │  │  Assigned Devices         │  │  Assigned Devices    │ │  │
-│  │  │  Assigned Dashboards      │  │  Assigned Dashboards │ │  │
-│  │  └───────────────────────────┘  └──────────────────────┘ │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                                                                │
-│  ┌─ Tenant B ──────────────────┐  ┌─ Tenant C ─────────────┐  │
-│  │  (fully isolated)           │  │  (fully isolated)       │  │
-│  └─────────────────────────────┘  └────────────────────────┘  │
-└────────────────────────────────────────────────────────────────┘
-```
+<ThemedImage light={multiTenancyLight} dark={multiTenancyDark} alt="Multi-tenancy hierarchy diagram" caption="ThingsBoard Multi-Tenancy Hierarchy Diagram." />

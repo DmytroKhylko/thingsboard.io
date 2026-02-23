@@ -1,27 +1,17 @@
 import DocLink from '@components/DocLink.astro';
 import { Aside } from '@astrojs/starlight/components';
+import ThemedImage from '@components/ThemedImage.astro';
+import connectDeviceLight from '~/assets/schemas/how-to-connect-device-light.svg';
+import connectDeviceDark from '~/assets/schemas/how-to-connect-device-dark.svg';
+import gatewayArchLight from '~/assets/schemas/iot-gateway-architecture-light.svg';
+import gatewayArchDark from '~/assets/schemas/iot-gateway-architecture-dark.svg';
 
 export const CE = () => <span style="background:#22c55e;color:white;padding:2px 10px;border-radius:999px;font-size:0.75em;font-weight:600;white-space:nowrap">Community</span>;
 export const PE = () => <span style="background:#3b82f6;color:white;padding:2px 10px;border-radius:999px;font-size:0.75em;font-weight:600;white-space:nowrap">Professional</span>;
 
 ThingsBoard supports multiple connectivity scenarios. Choose the one that fits your device and infrastructure — then follow the linked reference for setup instructions.
 
-```
-                  ┌──────────────────────────────────┐
-                  │   How do you connect your device? │
-                  └──────────────┬───────────────────┘
-                                 │
-       ┌─────────────────────────┼───────────────────┬──────────────────────┐
-       │                         │                   │                      │
-       ▼                         ▼                   ▼                      ▼
-Custom firmware,          IIoT equipment         LoRaWAN,             Already sending
-IP-connected device      in factories or          SigFox,             data to a cloud
-(MQTT, HTTP, CoAP,       buildings (Modbus,       NB-IoT               (AWS, Azure,
- LwM2M, SNMP)           OPC-UA, BACnet…)                              MQTT broker…)
-       │                         │                   │                      │
-       ▼                         ▼                   ▼                      ▼
- Direct Connection          IoT Gateway        LoRaWAN & LPWAN    Platform Integrations
-```
+<ThemedImage light={connectDeviceLight} dark={connectDeviceDark} alt="How to connect your device" caption="How to Connect Your Device — Decision Flowchart." />
 
 ## Direct Connection
 
@@ -88,7 +78,7 @@ Use the built-in **Check connectivity** tool from the <DocLink product={props.pr
 
 Used in enterprises, factories, and building management systems where devices speak IIoT protocols (Modbus, OPC-UA, BACnet, CAN, BLE…). The **ThingsBoard IoT Gateway** runs on a local machine and bridges them to ThingsBoard over MQTT.
 
-**Architecture:** Local devices → Connector → IoT Gateway → MQTT(S) → ThingsBoard
+<ThemedImage light={gatewayArchLight} dark={gatewayArchDark} alt="IoT Gateway architecture" caption="IoT Gateway Architecture — Local Devices → Connector → IoT Gateway → MQTT(S) → ThingsBoard." />
 
 <table style={{width:'100%'}}>
   <colgroup>
