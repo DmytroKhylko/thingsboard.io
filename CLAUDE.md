@@ -144,6 +144,140 @@ import YouTubeVideo from '~/components/YouTubeVideo.astro';
 <YouTubeVideo videoId="3xRWm1W1IM4" title="ThingsBoard overview" />
 ```
 
+### Code Block Meta Options (pluginMaxLines)
+
+`config/plugins/expressive-code-max-lines.ts` — custom Expressive Code plugin that adds two independent meta options to fenced code blocks.
+
+**Meta options:**
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `maxLines=N` | number | Limits the visible height to N lines; enables vertical scroll when content overflows |
+| `collapsible` | boolean flag | Adds an ▼ Expand / ▲ Collapse button below the block (requires `maxLines`) |
+
+The two options are independent — `maxLines` alone gives a scrollable block without a button; adding `collapsible` enables the toggle.
+
+**Usage in MDX fenced code blocks:**
+
+````
+```js maxLines=15
+// height-limited + scrollable, no expand/collapse button
+```
+
+```js maxLines=15 collapsible
+// height-limited + scrollable + Expand/Collapse button
+```
+
+```js maxLines=15 collapsible title="script.js"
+// can be combined with other EC meta options
+```
+````
+
+**Implementation notes:**
+- Plugin registered in `astro.config.ts` → `expressiveCode.plugins`
+- HAST uses `properties.className` (array), not `properties.class` — the plugin uses a local `appendClassName` helper
+- Data attribute stored as `dataMaxLines` in HAST properties → rendered as `data-max-lines` in HTML → read as `el.dataset.maxLines` in JS
+- Hook order: `pluginFrames` wraps `blockAst` in `<figure.frame>` before our hook runs, so `renderData.blockAst` is already the final `<figure>`
+- `@expressive-code/core` is not hoisted in pnpm flat `node_modules`, so the plugin defines minimal local types instead of importing from that package
+
+### Tabbed Code Blocks
+
+For multiple files shown as tabs, use Starlight's `<Tabs>` and `<TabItem>` from `@astrojs/starlight/components`. Fenced code blocks (including EC meta options) work correctly inside `<TabItem>` in MDX.
+
+**Usage in MDX:**
+
+````mdx
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+<Tabs>
+<TabItem label="decoder.js">
+```js maxLines=15 collapsible
+// decoder code
+```
+</TabItem>
+<TabItem label="encoder.js">
+```js maxLines=15 collapsible
+// encoder code
+```
+</TabItem>
+</Tabs>
+````
+
+**Note:** IDE diagnostics may show false `} expected` errors for curly braces inside fenced code blocks within `<TabItem>`. These are TypeScript language server noise — the MDX compiler handles them correctly.
+
+### Code Block — `<Code>` component vs fenced blocks
+
+Both approaches use Expressive Code under the hood and support the same meta options.
+
+**When to use each:**
+- **Fenced block** ` ``` ` — static code, preferred in most cases, cleaner syntax
+- **`<Code>` component** — when the code string comes from a variable or needs to be passed as a prop
+
+**`<Code>` component usage:**
+
+```mdx
+import { Code } from '@astrojs/starlight/components';
+
+{/* Inline string — use template literal to avoid JSX curly-brace conflicts */}
+<Code code={`var result = {};
+return result;`} lang="js" title="script.js" />
+
+{/* From a variable — preferred for long code */}
+export const snippet = `
+var data = decodeToJson(payload);
+var result = { telemetry: {} };
+return result;
+`;
+
+<Code code={snippet} lang="js" title="decoder.js" meta="maxLines=15 collapsible" />
+```
+
+**`<Code>` props:**
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `code` | `string` | The code to display (required) |
+| `lang` | `string` | Language for syntax highlighting |
+| `title` | `string` | Filename shown in the frame tab |
+| `mark` | `string` | Lines to highlight, e.g. `"{3,5-7}"` |
+| `ins` | `string` | Lines to mark green (inserted) |
+| `del` | `string` | Lines to mark red (deleted) |
+| `meta` | `string` | Raw meta string — pass any EC options including custom ones: `"maxLines=15 collapsible"` |
+| `frame` | `string` | Frame style: `auto` (default), `code`, `terminal`, `none` |
+
+**Tabbed `<Code>` blocks — same `<Tabs>` + `<TabItem>` wrapper:**
+
+````mdx
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<Tabs>
+<TabItem label="decoder.js">
+  <Code code={decoderSnippet} lang="js" meta="maxLines=15 collapsible" />
+</TabItem>
+<TabItem label="encoder.js">
+  <Code code={encoderSnippet} lang="js" meta="maxLines=15 collapsible" />
+</TabItem>
+</Tabs>
+````
+
+**Supported `lang` values (Shiki):**
+
+| Category | Values |
+|----------|--------|
+| JavaScript / TypeScript | `js`, `javascript`, `ts`, `typescript`, `jsx`, `tsx` |
+| JVM | `java`, `kotlin`, `groovy`, `scala` |
+| Systems | `c`, `cpp`, `csharp`, `cs`, `rust`, `go` |
+| Scripting | `python`, `ruby`, `php`, `bash`, `sh`, `shell`, `powershell` |
+| Data / Config | `json`, `json5`, `yaml`, `yml`, `toml`, `ini`, `properties`, `xml` |
+| Web | `html`, `css`, `scss`, `graphql`, `sql` |
+| DevOps | `dockerfile`, `docker`, `nginx`, `terraform` |
+| Docs / Other | `markdown`, `md`, `mdx`, `plaintext`, `txt` |
+| Mobile | `swift`, `dart`, `objc` |
+| Other | `proto`, `r`, `matlab`, `lua` |
+
+Full list: [shiki.style/languages](https://shiki.style/languages). Use `plaintext` or omit `lang` entirely for no syntax highlighting.
+
 ### Product System & Version Switcher
 
 #### Products enum
