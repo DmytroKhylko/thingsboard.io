@@ -67,6 +67,9 @@ export default defineConfig({
 			expressiveCode: {
 				plugins: [pluginCollapsibleSections(), pluginMaxLines()],
 			},
+			markdown: {
+				processedDirs: ['./src/content/_includes'],
+			},
 			components: {
 				EditLink: './src/components/starlight/EditLink.astro',
 				Hero: './src/components/starlight/Hero.astro',
