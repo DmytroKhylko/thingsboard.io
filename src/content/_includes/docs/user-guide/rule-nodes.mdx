@@ -1,1 +1,196 @@
-{/* TODO: Add content */}
+import DocLink from '@components/DocLink.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+export const PEOnly = () => (
+  <span style="display:inline-block;background:#3b82f6;color:white;padding:2px 10px;border-radius:999px;font-size:0.75em;font-weight:600;white-space:nowrap">PE / Cloud only</span>
+);
+
+Rule Nodes are the building blocks of
+<DocLink product={props.product} path="user-guide/rule-engine">Rule Chains</DocLink>.
+Each node processes one incoming message at a time and routes the result to connected nodes via
+named relations (`Success`, `Failure`, `True`, `False`, or custom names).
+
+```plaintext
+  incoming message
+        │
+        ▼
+  ┌─────────────┐  Success  ┌─────────────┐
+  │  Rule Node  │──────────▶│  Next Node  │
+  └─────────────┘           └─────────────┘
+        │ Failure
+        ▼
+  ┌─────────────┐
+  │  Next Node  │  (or unhandled → message marked as Failed)
+  └─────────────┘
+```
+
+Nodes fall into seven categories:
+
+| Category | Purpose |
+|----------|---------|
+| [Filter](#filter-nodes) | Route messages based on conditions — no data modification |
+| [Enrichment](#enrichment-nodes) | Add attributes, telemetry, or entity details to message metadata |
+| [Transformation](#transformation-nodes) | Modify payload, metadata, type, or originator |
+| [Action](#action-nodes) | Perform system operations — persist data, manage alarms, send RPC |
+| [External](#external-nodes) | Publish data to external systems (Kafka, MQTT, REST, cloud, email) |
+| [Flow](#flow-nodes) | Control routing between rule chains and queues |
+| [Analytics](#analytics-nodes) | Aggregate data streams and compute statistics |
+
+---
+
+## Filter Nodes
+
+Route and direct messages based on various criteria without modifying them. Filter nodes typically
+produce `True`/`False` outputs for boolean evaluations, or named connections for switch-style routing.
+
+| Node | Description |
+|------|-------------|
+| **Alarm status filter** | Routes based on whether the alarm status matches configured statuses |
+| **Asset profile switch** | Routes to a connection named after the originator asset's profile |
+| **Check fields presence** | Routes based on whether specified fields exist in message data or metadata |
+| **Check relation presence** | Routes based on whether a relation exists between the originator and a target entity |
+| **Device profile switch** | Routes to a connection named after the originator device's profile |
+| **Entity type filter** | Passes or blocks messages based on the originator entity type |
+| **Entity type switch** | Routes to a connection named after the originator entity type |
+| **GPS geofencing filter** | Routes based on whether GPS coordinates fall inside a configured geofence |
+| **Message type filter** | Passes or blocks messages based on the message type |
+| **Message type switch** | Routes to a connection named after the message type |
+| **Script** | Routes using a boolean TBEL/JS function — `True` or `False` output |
+| **Switch** | Routes to one or more connections returned by a TBEL/JS function |
+
+---
+
+## Enrichment Nodes
+
+Add context to messages by fetching attributes, telemetry values, or entity details and placing
+them into message metadata for use by downstream nodes.
+
+| Node | Description |
+|------|-------------|
+| **Calculate delta** | Computes the difference between the current and previous value; optionally includes elapsed time |
+| **Customer attributes** | Adds server-side attributes or latest telemetry from the originator's customer |
+| **Customer details** | Adds customer details (name, email, address, etc.) from the originator's customer |
+| **Fetch device credentials** | Adds device credential type and value of the originator device |
+| **Originator attributes** | Adds client, shared, and server attributes and/or latest telemetry from the originator |
+| **Originator fields** | Adds entity details (name, label, profile, etc.) from the originator |
+| **Originator telemetry** | Adds historical time series from the originator within a time interval, with optional aggregation |
+| **Related device attributes** | Adds attributes and/or latest telemetry from a related device found via configurable relation query |
+| **Related entity data** | Adds attributes, latest telemetry, or fields from a related entity found via configurable relation query |
+| **Tenant attributes** | Adds server-side attributes or latest telemetry from the originator's tenant |
+| **Tenant details** | Adds tenant details (name, email, address, etc.) from the originator's tenant |
+
+---
+
+## Transformation Nodes
+
+Modify the content, structure, or originator of messages.
+
+| Node | Description |
+|------|-------------|
+| **Change originator** | Changes the message originator to another entity (customer, tenant, related entity, alarm originator, or by name pattern) |
+| **Copy key-value pairs** | Copies specified key-value pairs between message data and metadata in either direction |
+| **Deduplication** | Deduplicates messages from the same originator within a time interval; returns first, last, or all |
+| **Delete key-value pairs** | Removes specified keys from message data or metadata |
+| **JSON path** | Extracts a portion of message data using a JSONPath expression and replaces the full payload |
+| **Rename keys** | Renames keys in message data or metadata according to a configured mapping |
+| **Script** | Executes a TBEL/JS function to transform data, metadata, and type; supports multiple output messages |
+| **Split array msg** | Splits a JSON array payload into individual messages, one per array element |
+| **To email** | Prepares a message for email dispatch using configurable sender, recipients, subject, and body templates |
+| **Duplicate to group** <PEOnly /> | Duplicates the message to every entity in a specified entity group |
+| **Duplicate to group by name** <PEOnly /> | Duplicates the message to every entity in a group found dynamically by name |
+| **Duplicate to related** <PEOnly /> | Duplicates the message to all entities related to the originator |
+
+---
+
+## Action Nodes
+
+Execute operations with side effects — persist data, manage alarms, control devices, or modify
+system state.
+
+| Node | Description |
+|------|-------------|
+| **Calculated fields** | Triggers calculated field processing for incoming data without persisting the original to the database |
+| **Clear alarm** | Clears active alarms for the originator |
+| **Copy to view** | Replicates attribute changes from devices/assets to their associated entity views |
+| **Create alarm** | Creates a new alarm or updates an existing active alarm for the originator |
+| **Create relation** | Creates a relation between the originator and a configured target entity |
+| **Delete attributes** | Deletes specified attributes from the originator |
+| **Delete relation** | Removes a relation from the originator to a configured entity |
+| **Device profile** | Evaluates device profile alarm rules and creates, updates, or clears alarms accordingly |
+| **Device state** | Sends device connectivity events for the originator |
+| **Generator** | Generates messages at configurable intervals using a custom script |
+| **GPS geofencing events** | Monitors GPS coordinates against geofence polygons or circles; routes on entry, exit, or duration events |
+| **Log** | Executes a script to format and write a custom log entry to the ThingsBoard log file |
+| **Math function** | Performs mathematical operations on data from multiple sources; stores results to message or database |
+| **Message count** | Counts incoming messages over a time interval and outputs the count per interval |
+| **Push to edge** | Forwards the message from a cloud ThingsBoard instance to a ThingsBoard Edge instance |
+| **Rest call reply** | Sends message data as an HTTP response to a REST API call made to the rule engine |
+| **RPC call reply** | Sends message data as a reply to a device RPC request |
+| **RPC call request** | Sends an RPC to a device and returns the device response as outgoing message data |
+| **Save attributes** | Persists message data as attributes of the originator |
+| **Save time series** | Persists message data as time series of the originator |
+| **Save to custom table** | Persists message data to a custom Cassandra table |
+| **Assign to customer** | Assigns the originator entity to a specified customer |
+| **Unassign from customer** | Removes the originator entity from its customer assignment |
+| **Push to cloud** *(Edge only)* | Forwards the message from an Edge instance to the cloud ThingsBoard instance |
+| **Add to group** <PEOnly /> | Adds the originator to an entity group found by name pattern |
+| **Change owner** <PEOnly /> | Changes the ownership of the originator to a specified tenant or customer |
+| **Generate dashboard report** <PEOnly /> | Generates a screenshot of a configured dashboard |
+| **Generate report** <PEOnly /> | Generates a report from a template and sends it to configured targets |
+| **Integration downlink** <PEOnly /> | Pushes the message as a downlink to a selected integration |
+| **Remove from group** <PEOnly /> | Removes the originator from an entity group found by name pattern |
+
+---
+
+## External Nodes
+
+Publish data to third-party services and external systems.
+
+| Node | Description |
+|------|-------------|
+| **AI request** | Sends a request to a large language model with custom prompts; returns the AI response as outgoing message data |
+| **AWS Lambda** | Invokes an AWS Lambda function with message data as the payload; returns the function response |
+| **AWS SNS** | Publishes message data to an AWS SNS topic |
+| **AWS SQS** | Publishes message data to an AWS SQS queue |
+| **Azure IoT Hub** | Publishes message data to Azure IoT Hub via MQTT (SAS token or X.509 auth) |
+| **GCP Pub/Sub** | Publishes message data to a Google Cloud Pub/Sub topic |
+| **Kafka** | Publishes message data to an Apache Kafka topic |
+| **MQTT** | Publishes message data to an external MQTT broker |
+| **RabbitMQ** | Publishes message data to a RabbitMQ exchange |
+| **REST API call** | Sends an HTTP request to an external endpoint; returns the response as outgoing message data |
+| **Send email** | Sends an email via SMTP (supports TLS and proxy configuration) |
+| **Send notification** | Sends a notification via the notification center using a configured template |
+| **Send SMS** | Sends SMS via AWS SNS, Twilio, or SMPP provider |
+| **Send to Slack** | Sends a message to a Slack channel or direct message |
+| **Twilio SMS** <PEOnly /> | Sends message data as an SMS via Twilio |
+| **Twilio Voice** <PEOnly /> | Sends message data as a voice message via Twilio text-to-speech |
+
+---
+
+## Flow Nodes
+
+Control how messages move between rule chains and queues.
+
+| Node | Description |
+|------|-------------|
+| **Acknowledge** | Acknowledges the message in the queue and forwards it to the next nodes |
+| **Checkpoint** | Transfers the message to a specified queue for separate or sequential processing |
+| **Rule chain** | Forwards the message to a configured rule chain |
+| **Output** | Returns the processing result from a sub-chain back to the calling Rule Chain node |
+
+---
+
+## Analytics Nodes
+
+<Aside type="note">
+  <PEOnly /> All analytics nodes require **ThingsBoard PE** or **ThingsBoard Cloud**.
+</Aside>
+
+Compute statistical metrics and aggregations on data streams or groups of entities.
+
+| Node | Description |
+|------|-------------|
+| **Aggregate latest** | Periodically aggregates attributes or latest telemetry from child entities for a set of parent entities |
+| **Aggregate stream** | Computes MIN, MAX, SUM, AVG, COUNT, or UNIQUE from an incoming data stream |
+| **Alarms count** | Counts alarms as each new alarm message arrives |
+| **Alarms count (deprecated)** | Periodically counts alarms for a selected set of entities |

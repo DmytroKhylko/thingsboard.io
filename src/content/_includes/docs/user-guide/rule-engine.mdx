@@ -1,1 +1,273 @@
-{/* TODO: Add content */}
+import DocLink from '@components/DocLink.astro';
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+export const PEOnly = () => (
+  <span style="display:inline-block;background:#3b82f6;color:white;padding:2px 10px;border-radius:999px;font-size:0.75em;font-weight:600;white-space:nowrap">PE / Cloud only</span>
+);
+
+The Rule Engine is the data processing backbone of ThingsBoard. Every incoming telemetry reading,
+attribute update, device lifecycle event, or RPC call becomes a **Message** that flows through a
+**Rule Chain** — a visual pipeline of **Rule Nodes** that filter, enrich, transform, or act on it.
+
+```plaintext
+  Device / API / Lifecycle event
+          │
+          ▼
+  ┌───────────────┐       ┌────────────────────────────────────────────────────┐
+  │    Message    │──────▶│                  Root Rule Chain                   │
+  │               │       │                                                    │
+  │  • type       │       │  ┌──────────────┐  True   ┌──────────────────┐    │
+  │  • payload    │       │  │  Filter node │────────▶│  Save Telemetry  │    │
+  │  • metadata   │       │  └──────────────┘         └──────────────────┘    │
+  └───────────────┘       │        │ False                                     │
+                          │        ▼                                           │
+                          │  ┌──────────────┐                                 │
+                          │  │   Log node   │                                 │
+                          │  └──────────────┘                                 │
+                          └────────────────────────────────────────────────────┘
+```
+
+## Message
+
+A Rule Engine Message is an immutable, serializable data structure representing a single event:
+
+| Field | Description |
+|-------|-------------|
+| **Message ID** | Time-based universally unique identifier |
+| **Originator** | The entity that generated the message (Device, Asset, etc.) |
+| **Type** | What triggered the message — e.g. `POST_TELEMETRY_REQUEST`, `INACTIVITY_EVENT` |
+| **Payload** | JSON body with the event data |
+| **Metadata** | Key-value pairs with contextual data (device name, type, custom fields added by nodes) |
+
+See [Message Type Reference](#message-type-reference) for the full list of built-in types.
+
+## Rule Node
+
+A Rule Node processes one incoming message at a time and produces one or more outgoing messages.
+Nodes are the building blocks of Rule Chains and fall into seven categories — see
+<DocLink product={props.product} path="user-guide/rule-nodes">Rule Nodes</DocLink> for the full reference.
+
+## Rule Chain
+
+A Rule Chain is a directed graph of Rule Nodes connected by **relations**. When a node produces
+an outgoing message, the relation type (e.g. `Success`, `Failure`, `True`, `False`, or a custom
+name) determines which connected nodes receive it next.
+
+```plaintext
+  ┌─────────────────────┐  Post Telemetry  ┌─────────────────────┐
+  │  Message Type       │─────────────────▶│  Script Filter      │──▶ True ──▶ Save Telemetry
+  │  Switch             │                  └─────────────────────┘
+  └─────────────────────┘                         │ False
+                                                  ▼
+                                           ┌─────────────┐
+                                           │  Log Other  │
+                                           └─────────────┘
+```
+
+The **Root Rule Chain** is the entry point for all incoming messages. A tenant administrator can
+define one Root Rule Chain and any number of additional chains. Both can forward messages to each
+other using the **Rule Chain** flow node.
+
+<Aside type="note">
+  Root Rule Chain and additional Rule Chains can be created and managed only by **Tenant Administrators**.
+</Aside>
+
+## Message Processing Results
+
+Every message processing attempt ends as **Success**, **Failure**, or **Timeout**:
+
+| Result | When it occurs |
+|--------|----------------|
+| **Success** | The last node in the processing path completes successfully |
+| **Failure** | A node produces a Failure output and no downstream node handles it |
+| **Timeout** | Overall processing time exceeds the configured threshold |
+
+A message is only marked as **Failure** if the failure output is **unhandled**. Connecting a node
+to the Failure relation (e.g. a log or fallback write) means the failure is handled and the
+message can still end as Success:
+
+```plaintext
+  ┌──────────────┐  Success  ┌───────────────────┐
+  │  Transform   │──────────▶│  External System  │──▶ Success (replied within timeout)
+  │  (script)    │           │  (REST API call)  │    Timeout  (no reply before threshold)
+  └──────────────┘           └───────────────────┘
+        │ Failure
+        ▼
+  ┌──────────────┐
+  │  Save to DB  │──▶ Success   ← Transform failure is handled; overall result = Success
+  └──────────────┘
+```
+
+## Managing Rule Chains
+
+### Create a Rule Chain
+
+<Steps>
+1. Go to **Rule Chains** in the left sidebar.
+2. Click the **+** button in the top-right corner.
+3. Enter a name and click **Add**.
+4. Click the rule chain row to open the editor and configure nodes.
+</Steps>
+
+### Export a Rule Chain
+
+<Steps>
+1. Go to **Rule Chains**.
+2. Click the **Export rule chain** icon in the desired row.
+</Steps>
+
+A JSON file is saved to your computer.
+
+### Import a Rule Chain
+
+<Steps>
+1. Go to **Rule Chains**.
+2. Click **+** → **Import rule chain**.
+3. Upload the JSON file and click **Import**.
+</Steps>
+
+<Aside type="note">
+  Imported rule chains are **not** set as Root. If the chain contains **Rule Chain** nodes that
+  reference other chains, update those references before saving.
+</Aside>
+
+### Set a Rule Chain as Root
+
+<Steps>
+1. Go to **Rule Chains**.
+2. Click the flag icon in the desired row and confirm.
+</Steps>
+
+### Delete a Rule Chain
+
+<Steps>
+1. Go to **Rule Chains**.
+2. Click the **Delete** icon in the desired row — or select multiple rows and use **Delete selected**.
+</Steps>
+
+## Configuration
+
+To configure a rule node, double-click it in the Rule Chain editor. The configuration window is
+specific to each node type.
+
+Nodes with TBEL/JS scripts provide a **Test** button. Use it to verify the script with custom
+inputs before deploying:
+
+| Panel | Content |
+|-------|---------|
+| **Top-left** | Message type |
+| **Left** | Message payload |
+| **Right** | Metadata |
+| **Script area** | The TBEL/JS function |
+| **Output** | Execution result |
+
+## Debug
+
+Enable **Debug mode** on a node via its configuration window or the **Debug** toggle in the chain
+editor. When enabled, ThingsBoard records every incoming and outgoing message with the relation
+type used. Click the **Events** icon on the node to review them.
+
+<Aside type="caution">
+  Debug mode records every execution. Disable it in production once the node is validated.
+</Aside>
+
+## Statistics
+
+A built-in Rule Engine statistics dashboard is automatically available for each tenant.
+Access it via **API Usage → View statistics** to monitor message processing rates, error counts,
+and queue lag.
+
+## Queues
+
+Rule Engine uses message queues to guarantee delivery under load, handle traffic spikes, and
+control the order in which messages are processed. See
+<DocLink product={props.product} path="user-guide/rule-engine/queues">Queues</DocLink> for
+configuration details, submit and retry strategies, and the three built-in queues.
+
+## Custom REST API Calls
+
+<Aside type="note">
+  <PEOnly /> This feature is available in **ThingsBoard PE** and **ThingsBoard Cloud** only.
+</Aside>
+
+ThingsBoard provides an HTTP API to send custom requests directly to the Rule Engine and return
+the processing result in the response body. Useful for extending the platform API, enriching
+calls with device/asset attributes, or powering custom widgets.
+
+Use the `rule-engine-controller` endpoints from the
+<DocLink product={props.product} path="TODO">REST API reference</DocLink>.
+The entity ID in the request becomes the message originator. If omitted, the calling user entity is used.
+
+## Quick Start: Temperature Validation
+
+A DHT22 sensor reports temperatures between −40 °C and +80 °C. Any reading outside that range
+should be discarded and logged instead of saved.
+
+<Steps>
+1. Go to **Rule Chains** and open the **Root Rule Chain**.
+2. Drag a **Script Filter** node onto the canvas. Enter title **Temperature Validation** and
+   write the script:
+   ```js
+   return typeof temperature === 'undefined' || (temperature >= -40 && temperature <= 80);
+   ```
+   Click **Add**.
+3. Delete the **Post Telemetry** relation between **Message Type Switch** and **Save Timeseries**
+   (hover the connection arrow and click ✕).
+4. Draw a **Post Telemetry** relation from **Message Type Switch** to **Temperature Validation**.
+5. Draw a **True** relation from **Temperature Validation** to **Save Timeseries**.
+6. Draw a **False** relation from **Temperature Validation** to **Log Other**.
+7. Click **Apply changes**.
+</Steps>
+
+**Test — out-of-range value (99 °C):**
+
+```bash
+curl -X POST -d '{"temperature":99}' \
+  http://localhost:8080/api/v1/$ACCESS_TOKEN/telemetry \
+  -H "Content-Type:application/json"
+```
+
+The value does **not** appear in Latest Telemetry — filtered and logged.
+
+**Test — valid value (24 °C):**
+
+```bash
+curl -X POST -d '{"temperature":24}' \
+  http://localhost:8080/api/v1/$ACCESS_TOKEN/telemetry \
+  -H "Content-Type:application/json"
+```
+
+The value appears in Latest Telemetry — saved successfully.
+
+## Message Type Reference
+
+| Type | Display name | Originator | Key metadata | Payload |
+|------|-------------|-----------|-------------|---------|
+| `POST_ATTRIBUTES_REQUEST` | Post attributes | Device | `deviceName`, `deviceType` | `{ "key": "value" }` |
+| `POST_TELEMETRY_REQUEST` | Post telemetry | Device | `deviceName`, `deviceType`, `ts` | `{ "temperature": 22.7 }` |
+| `TO_SERVER_RPC_REQUEST` | RPC Request from Device | Device | `deviceName`, `deviceType`, `requestId` | `{ "method": "getTime", "params": {} }` |
+| `RPC_CALL_FROM_SERVER_TO_DEVICE` | RPC Request to Device | Device | `requestUUID`, `expirationTime`, `oneway` | `{ "method": "getGpioStatus", "params": {} }` |
+| `ACTIVITY_EVENT` | Activity Event | Device | `deviceName`, `deviceType` | Device activity JSON |
+| `INACTIVITY_EVENT` | Inactivity Event | Device | `deviceName`, `deviceType` | Device activity JSON |
+| `CONNECT_EVENT` | Connect Event | Device | `deviceName`, `deviceType` | Device activity JSON |
+| `DISCONNECT_EVENT` | Disconnect Event | Device | `deviceName`, `deviceType` | Device activity JSON |
+| `ENTITY_CREATED` | Entity Created | Any entity | `userName`, `userId` | Created entity details JSON |
+| `ENTITY_UPDATED` | Entity Updated | Any entity | `userName`, `userId` | Updated entity details JSON |
+| `ENTITY_DELETED` | Entity Deleted | Any entity | `userName`, `userId` | Deleted entity details JSON |
+| `ENTITY_ASSIGNED` | Entity Assigned | Any entity | `userName`, `userId`, `assignedCustomerName`, `assignedCustomerId` | Entity details JSON |
+| `ENTITY_UNASSIGNED` | Entity Unassigned | Any entity | `userName`, `userId`, `unassignedCustomerName`, `unassignedCustomerId` | Entity details JSON |
+| `ADDED_TO_ENTITY_GROUP` | Added to Group | Any entity | `userName`, `userId`, `addedToEntityGroupName`, `addedToEntityGroupId` | Empty `{}` |
+| `REMOVED_FROM_ENTITY_GROUP` | Removed from Group | Any entity | `userName`, `userId`, `removedFromEntityGroupName`, `removedFromEntityGroupId` | Empty `{}` |
+| `ATTRIBUTES_UPDATED` | Attributes Updated | Any entity | `userName`, `userId`, `scope` | `{ "softwareVersion": "1.2.3" }` |
+| `ATTRIBUTES_DELETED` | Attributes Deleted | Any entity | `userName`, `userId`, `scope` | `{ "attributes": ["key1"] }` |
+| `ALARM` | Alarm event | Any entity | `isNewAlarm`, `isExistingAlarm`, `isClearedAlarm` | Alarm details JSON |
+| `ALARM_ASSIGNED` | Alarm Assigned | Any entity | `entityName`, `entityType`, `userId`, `userEmail`, `userName` | Alarm details JSON |
+| `ALARM_UNASSIGNED` | Alarm Unassigned | Any entity | `entityName`, `entityType`, `userId`, `userEmail`, `userName` | Alarm details JSON |
+| `COMMENT_CREATED` | Comment Created | Any entity | `userId`, `userName`, `userEmail`, `comment` | Alarm details JSON |
+| `COMMENT_UPDATED` | Comment Updated | Any entity | `userId`, `userName`, `userEmail`, `comment` | Alarm details JSON |
+| `REST_API_REQUEST` | REST API Request to Rule Engine | Any entity | `requestUUID`, `expirationTime` | Request payload JSON |
+
+<Aside type="note">
+  `ADDED_TO_ENTITY_GROUP` and `REMOVED_FROM_ENTITY_GROUP` are available in **ThingsBoard PE** and
+  **ThingsBoard Cloud** only.
+</Aside>

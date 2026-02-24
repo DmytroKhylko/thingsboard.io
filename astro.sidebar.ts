@@ -77,7 +77,14 @@ const guideItems = (prefix: string) => [
 					{ label: 'Time Series Aggregation', slug: `${prefix}/calculated-fields/time-series-data-aggregation` },
 				],
 			},
-			`${prefix}/rule-engine`,
+			{
+				label: 'Rule Engine',
+				collapsed: true,
+				items: [
+					{ label: 'Overview', slug: `${prefix}/rule-engine` },
+					{ label: 'Queues', slug: `${prefix}/rule-engine/queues` },
+				],
+			},
 			`${prefix}/rule-nodes`,
 		],
 	},
