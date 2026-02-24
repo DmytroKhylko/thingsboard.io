@@ -39,7 +39,8 @@ A Rule Engine Message is an immutable, serializable data structure representing 
 | **Payload** | JSON body with the event data |
 | **Metadata** | Key-value pairs with contextual data (device name, type, custom fields added by nodes) |
 
-See [Message Type Reference](#message-type-reference) for the full list of built-in types.
+For the full list of built-in type strings, originators, metadata fields, and payload shapes, see
+<DocLink product={props.product} path="reference/rule-engine/message-types">Rule Engine Message Types</DocLink>.
 
 ## Rule Node
 
@@ -237,7 +238,3 @@ curl -X POST -d '{"temperature":24}' \
 
 The value appears in Latest Telemetry — saved successfully.
 
-## Message Type Reference
-
-See the full list of built-in message types, metadata fields, and payload shapes in
-<DocLink product={props.product} path="reference/rule-engine/message-types">Rule Engine Message Types</DocLink>.
