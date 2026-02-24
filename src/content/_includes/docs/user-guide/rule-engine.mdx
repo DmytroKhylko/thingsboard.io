@@ -65,9 +65,22 @@ name) determines which connected nodes receive it next.
                                            └─────────────┘
 ```
 
-The **Root Rule Chain** is the entry point for all incoming messages. A tenant administrator can
-define one Root Rule Chain and any number of additional chains. Both can forward messages to each
-other using the **Rule Chain** flow node.
+The **Root Rule Chain** is the default entry point for all incoming messages. There is exactly
+one Root Rule Chain per tenant at any given time. A tenant administrator can define any number
+of additional chains; both the root and additional chains can forward messages to each other
+using the **Rule Chain** flow node.
+
+**Device profile routing** — a
+<DocLink product={props.product} path="user-guide/device-profiles">Device Profile</DocLink>
+can override routing for all its devices with two settings:
+
+| Setting | Effect |
+|---------|--------|
+| **Default rule chain** | Messages from devices of this profile are routed to the specified chain instead of the Root Rule Chain |
+| **Queue** | Messages from devices of this profile are placed in the specified queue instead of the default **Main** queue |
+
+This lets you isolate processing logic and queue priorities per device type without touching
+the root chain.
 
 <Aside type="note">
   Root Rule Chain and additional Rule Chains can be created and managed only by **Tenant Administrators**.
