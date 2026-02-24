@@ -24,6 +24,28 @@ logical evaluation. An entity is `INSIDE` if it is inside **at least one** zone 
 This prevents false `ENTERED/LEFT` events when an entity moves between adjacent zones within the
 same group.
 
+```plaintext
+  Without zone groups — crossing between adjacent polygons fires false events:
+
+     ┌──────────┐     ┌──────────┐     ┌──────────┐
+     │  Zone A  │     │  Zone B  │     │  Zone C  │
+     └──────────┘     └──────────┘     └──────────┘
+     truck A→B: LEFT Zone A + ENTERED Zone B  ← unwanted
+
+  ─────────────────────────────────────────────────────────────────────
+
+  With zone group "warehouseArea" — all three treated as one logical area:
+
+     ┌──────────────────────────────────────────────────────────────┐
+     │                      warehouseArea                           │
+     │   ┌──────────┐     ┌──────────┐     ┌──────────┐            │
+     │   │  Zone A  │     │  Zone B  │     │  Zone C  │            │
+     │   └──────────┘     └──────────┘     └──────────┘            │
+     └──────────────────────────────────────────────────────────────┘
+     truck A→B: warehouseAreaStatus = INSIDE         ← no event
+     truck exits all: warehouseAreaStatus = OUTSIDE + warehouseAreaEvent = LEFT
+```
+
 ## Configuration
 
 <Steps>
@@ -109,6 +131,18 @@ Controls which telemetry keys are generated for the zone group:
 | **Transition events only** | `<name>Event` (ENTERED / LEFT) | You only need boundary-crossing events |
 | **Presence status only** | `<name>Status` (INSIDE / OUTSIDE) | You only need current state |
 | **Presence status and transition events** | Both | Full monitoring — dashboards and alarms |
+
+```plaintext
+                        enters ANY zone in group
+     ┌──────────┐  ──────────────────────────────▶  ┌──────────┐
+     │ OUTSIDE  │                                    │  INSIDE  │
+     └──────────┘  ◀──────────────────────────────  └──────────┘
+                        leaves ALL zones in group
+
+     OUTSIDE → INSIDE : Event = ENTERED
+     INSIDE  → OUTSIDE: Event = LEFT
+     Status is updated on every incoming GPS coordinate pair
+```
 
 #### Create Relations with Matched Zones
 

@@ -17,6 +17,18 @@ Executions can be **chained**: the output of one field triggers the next, enabli
 processing pipelines. ThingsBoard automatically prevents infinite loops — if the same calculated
 field appears twice in a single execution chain, the chain is stopped.
 
+```plaintext
+  telemetry arrives
+        │
+        ▼
+  ┌───────────┐   dewPoint    ┌────────────────┐   alert flag
+  │   CF: A   │ ────────────▶ │     CF: B      │ ─────────────▶ ...
+  │ dew point │               │  threshold     │
+  └───────────┘               └────────────────┘
+
+  Loop guard: if CF A appears again in the chain → stop
+```
+
 Calculated fields apply at two levels:
 
 - **Entity level** — applied to a single <DocLink product={props.product} path="user-guide/ui/devices">Device</DocLink> or <DocLink product={props.product} path="user-guide/ui/assets">Asset</DocLink>.

@@ -6,6 +6,23 @@ multiple entities related to the target entity, applies aggregation functions, a
 result on the target entity. For example, a **Building A** asset can compute `avgTemperature`
 and `maxTemperature` from all child sensor devices automatically.
 
+```plaintext
+  ┌────────────────────────────────────────────────────────┐
+  │  Building A  (CF applied here)                         │
+  │  ┌──────────────────────────────────┐                  │
+  │  │ avgTemperature: 22.7             │ ◀── computed     │
+  │  │ maxTemperature: 25.1             │                  │
+  │  └──────────────────────────────────┘                  │
+  └─────────────────────┬──────────────────────────────────┘
+                        │ Manages — Down to child
+            ┌───────────┼───────────┐
+            ▼           ▼           ▼
+  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+  │  Sensor 1   │ │  Sensor 2   │ │  Sensor 3   │
+  │  temp: 21.3 │ │  temp: 22.8 │ │  temp: 24.0 │
+  └─────────────┘ └─────────────┘ └─────────────┘
+```
+
 Use Related entities aggregation when you need:
 
 - Fleet or building dashboards — average temperature, total power, max vibration across devices

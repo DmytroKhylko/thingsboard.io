@@ -30,6 +30,20 @@ Defines the path from the current entity to the target entity.
 | **Relation direction** | **Up to parent** — propagate to the parent entity; **Down to child** — propagate to child entities |
 | **Relation type** | The relation type between entities (e.g., `Contains`, `Manages`) |
 
+```plaintext
+  Up to parent — CF runs on the child, writes to its parent
+
+     Smart Device ──Contains──▶ Building A
+     (CF applied here)          (result written here)
+
+
+  Down to child — CF runs on the parent, writes to all matching children
+
+     Building A ──Manages──▶ HVAC Device 1
+     (CF applied  ──Manages──▶ HVAC Device 2  (result written to each)
+      here)        ──Manages──▶ HVAC Device 3
+```
+
 <Aside type="note">
   Propagation works only with direct (single-level) relationships — without recursion or multi-level traversal.
   If multiple entities match, data is propagated to each.

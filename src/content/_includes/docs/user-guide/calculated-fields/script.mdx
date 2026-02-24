@@ -115,6 +115,21 @@ and provides:
 - `.values` — array of `{ ts, value }` records within the window
 - Aggregation methods and merge utilities described below
 
+```plaintext
+  time ──────────────────────────────────────────────────────────────▶
+
+  data     72.3    72.9    73.6     NaN    74.1    73.8
+            ●───────●───────●───────●───────●───────●
+
+  window 1 ╔══════════════════════╗
+  (15 min) ║  72.3   72.9   73.6  ║  .mean() → 72.93
+           ╚══════════════════════╝
+
+  window 2          ╔══════════════════════╗
+  (slides)          ║  72.9   73.6   NaN   ║  .mean() → 73.25  (NaN ignored)
+                    ╚══════════════════════╝
+```
+
 ### Aggregation Methods
 
 All methods accept an optional `ignoreNaN` boolean (default `true`):
@@ -171,7 +186,24 @@ if no previous value exists, `NaN` is used.
 `settings` (optional): `{ ignoreNaN: boolean, timeWindow: { startTs, endTs } }`
 
 Each merged record has the shape `{ ts, v1, v2, ... }` where `v1` is the value from the calling
-argument and `v2`, `v3`, ... are values from the merged arguments.
+argument and `v2`, `v3`, ... are values from the merged arguments. Missing values at a timestamp
+are forward-filled from the most recent known reading.
+
+```plaintext
+  temperature   ●──────────────●──────────────●
+                72.3           73.6           74.1
+                ts1            ts3            ts5
+
+  humidity      ──────●──────────────────●────
+                      65                 68
+                      ts2                ts4
+
+  merged        ●──────●────────●─────────●────●
+                ts1    ts2     ts3        ts4   ts5
+
+  merged[ts3] = { ts: ts3, v1: 73.6, v2: 65 }
+                                        ↑ forward-filled from ts2
+```
 
 **Merge two arguments:**
 
