@@ -212,13 +212,13 @@ const links = integrations.map((item) => {
 	}
 
 	/* Capture clicks on the whole card for this link */
-	a::before {
+	.card a::before {
 		content: '';
 		position: absolute;
 		inset: 0;
 	}
 
-	a:focus {
+	.card a:focus {
 		outline: none;
 	}
 
