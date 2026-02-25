@@ -420,8 +420,8 @@ All product identifiers live in `src/models/site.models.ts` as the `Products` en
 |---------------|------------------------|----------------------|-------------------------------|
 | `CE`          | Community Edition      | *(empty)*            | Default/root product          |
 | `PE`          | Professional Edition   | `pe/`                | Main product list             |
-| `PASS`        | Cloud                  | `paas/`              | Has sub-variant PASS_EU       |
-| `PASS_EU`     | Cloud (EU)             | `paas/eu/`           | Sub-variant of PASS           |
+| `PAAS`        | Cloud                  | `paas/`              | Has sub-variant PAAS_EU       |
+| `PAAS_EU`     | Cloud (EU)             | `paas/eu/`           | Sub-variant of PAAS           |
 | `EDGE`        | Edge                   | `edge/`              | Has sub-variant EDGE_PE       |
 | `EDGE_PE`     | Edge Professional      | `edge/pe/`           | Sub-variant of EDGE           |
 | `TRENDZ`      | Trendz Analytics       | `trendz/`            | Main product list             |
@@ -432,9 +432,9 @@ All product identifiers live in `src/models/site.models.ts` as the `Products` en
 | `MOBILE_PE`   | Mobile PE              | `mobile/pe/`         | Sub-variant of MOBILE         |
 | `LICENSE`     | License Server         | `license-server/`    | Main product list             |
 
-**Main product list** (shown in the primary switcher dropdown): CE, PE, PASS, EDGE, TRENDZ, GW, TBMQ, MOBILE, LICENSE.
+**Main product list** (shown in the primary switcher dropdown): CE, PE, PAAS, EDGE, TRENDZ, GW, TBMQ, MOBILE, LICENSE.
 
-**Sub-variants** (shown in a secondary dropdown when a parent is selected): PASS_EU, EDGE_PE, MOBILE_PE, TBMQ_PE.
+**Sub-variants** (shown in a secondary dropdown when a parent is selected): PAAS_EU, EDGE_PE, MOBILE_PE, TBMQ_PE.
 
 #### URL Structure
 
