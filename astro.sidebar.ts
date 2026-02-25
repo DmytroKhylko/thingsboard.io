@@ -136,7 +136,9 @@ const guideItems = (prefix: string) => [
 		label: 'Mobile App Center',
 		collapsed: true,
 		items: [
-			`${prefix}/mobile-app-center`,
+			{ label: 'Overview', slug: `${prefix}/mobile-app-center` },
+			{ label: 'Applications', slug: `${prefix}/mobile-app-center/applications` },
+			{ label: 'QR Code Widget', slug: `${prefix}/mobile-app-center/qr-code-widget` },
 		],
 	},
 	{
