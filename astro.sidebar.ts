@@ -107,8 +107,9 @@ const guideItems = (prefix: string) => [
 		collapsed: true,
 		items: [
 			`${prefix}/ai-models`,
-			`${prefix}/mcp-server`,
+			`${prefix}/ai-predictive-maintenance`,
 			`${prefix}/local-ai-ollama`,
+			`${prefix}/mcp-server`,
 			`${prefix}/n8n-node`,
 		],
 	},
@@ -152,6 +153,7 @@ const guideItems = (prefix: string) => [
 		collapsed: true,
 		items: [
 			`${prefix}/security`,
+			`${prefix}/security/api-keys`
 		],
 	},
 	{
