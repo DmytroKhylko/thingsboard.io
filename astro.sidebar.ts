@@ -58,7 +58,6 @@ const guideItems = (prefix: string) => [
 			`${prefix}/alarms`,
 			`${prefix}/alarm-rules`,
 			`${prefix}/notifications`,
-			`${prefix}/notification-template-parameters`,
 		],
 	},
 	{
@@ -211,6 +210,13 @@ const referenceItems = (prefix: string) => [
 			`${prefix}/widgets/map-widgets`,
 			`${prefix}/widgets/entity-table-widget`,
 			`${prefix}/widgets/markdown-html-card`,
+		],
+	},
+	{
+		label: 'Notification System',
+		collapsed: true,
+		items: [
+			`${prefix}/notification-system/template-parameters`,
 		],
 	},
 	{
