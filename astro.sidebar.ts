@@ -58,6 +58,7 @@ const guideItems = (prefix: string) => [
 			`${prefix}/alarms`,
 			`${prefix}/alarm-rules`,
 			`${prefix}/notifications`,
+			`${prefix}/notification-template-parameters`,
 		],
 	},
 	{
@@ -188,6 +189,13 @@ const recipeItems = (prefix: string) => [
 		collapsed: true,
 		items: [
 			`${prefix}/configure-telemetry-ttl`,
+		],
+	},
+	{
+		label: 'Alarms',
+		collapsed: true,
+		items: [
+			`${prefix}/alarm-rule-tutorials`,
 		],
 	},
 ];
