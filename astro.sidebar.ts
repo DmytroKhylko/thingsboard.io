@@ -217,6 +217,7 @@ const referenceItems = (prefix: string) => [
 		collapsed: true,
 		items: [
 			`${prefix}/notification-system/template-parameters`,
+			`${prefix}/notification-system/rule-triggers`,
 		],
 	},
 	{
