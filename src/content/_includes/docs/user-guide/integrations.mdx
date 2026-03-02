@@ -34,24 +34,24 @@ ThingsBoard supports many integration protocols — HTTP, MQTT, OPC-UA, CoAP, TC
 <DocImage src="/src/assets/images/user-guide/integrations/overview/create-integration-1.png" alt="Create integration" />
 
 ```plaintext
-  External Platform / Device
-          │
-          ▼
-  ┌──────────────────────────────────┐
-  │       ThingsBoard Integration    │
-  │  (validates payload & security)  │
-  └──────────────┬───────────────────┘
-                 │
-     ┌───────────┴───────────┐
-     ▼                       ▼
-  Uplink Converter      Downlink Converter
-  (device → TB format)  (TB → device format)
-     │                       ▲
-     ▼                       │
   ┌──────────────────────────────────┐
   │     ThingsBoard Rule Engine      │
   │  (telemetry, attributes, RPC)   │
   └──────────────────────────────────┘
+     ▲                       │
+     │                       ▼
+  Uplink Converter      Downlink Converter
+  (device → TB format)  (TB → device format)
+     ▲                       │
+     └───────────┬───────────┘
+                 │
+  ┌──────────────┴───────────────────┐
+  │       ThingsBoard Integration    │
+  │  (validates payload & security)  │
+  └──────────────┬───────────────────┘
+                 ▲
+                 │
+  External Platform / Device
 ```
 
 **Uplink flow:** An incoming message is validated, then the assigned **Uplink Data Converter** extracts meaningful fields (telemetry, attributes, device name) and passes them to the Rule Engine.
@@ -65,6 +65,32 @@ Common downlink use cases:
 - Sending an RPC command to change device state
 
 <DocImage src="/src/assets/images/user-guide/integrations/integrations-overview.svg" alt="Integrations data flow" />
+
+```plaintext
+                                            ┌─── ThingsBoard ──────────────────┐
+                                            │                                  │
+  IoT Platforms          MQTT / AMQP        │  ┌────────────────────────────┐  │
+  ┌──────────────────┐ ──────────────────▶  │  │      Integrations         │  │
+  │ AWS IoT          │                      │  └─────────────┬──────────────┘  │
+  │ IBM Watson       │                      │                │                 │
+  │ Microsoft Azure  │  Sigfox              │  ┌─────────────┴──────────────┐  │
+  └──────┬───────────┘ ──────────────────▶  │  │       Converters          │  │
+  Devices┘ MQTT                             │  │  (JSON / Binary / Text)   │  │
+                                            │  └─────────────┬──────────────┘  │
+  LoRaWAN Network        MQTT / HTTP        │       Uplink ──┤── Downlink      │
+  ┌──────────────────┐ ──────────────────▶  │                ▼                 │
+  │ ThingPark        │                      │  ┌────────────────────────────┐  │
+  │ The Things Net.  │                      │  │       Rule Engine          │  │
+  │ TEKTELIC         │  OPC-UA              │  └─────────────┬──────────────┘  │
+  └──────┬───────────┘ ──────────────────▶  │                ▼                 │
+  Devices┘ LoRaWAN                          │  ┌────────────────────────────┐  │
+                                            │  │   Real-Time Dashboards    │  │
+  NB-IoT Network         TCP / UDP          │  └────────────────────────────┘  │
+  ┌──────────────────┐ ──────────────────▶  │                                  │
+  │ TCP / UDP        │                      └──────────────────────────────────┘
+  └──────┬───────────┘
+  Devices┘ TCP/UDP
+```
 
 ## Uplink data converter
 
@@ -277,6 +303,25 @@ Embedded integrations run inside the main ThingsBoard server process (monolith d
 
 <DocImage src="/src/assets/images/user-guide/integrations/embeded-integrations-overview.svg" alt="Embedded integrations architecture" />
 
+```plaintext
+                                                  ThingsBoard Cluster
+  IoT Platforms          MQTT / AMQP       ┌───────────────────────────┐
+  ┌──────────────────┐ ─────────────────▶  │                           │
+  │ AWS IoT          │                     │                           │
+  │ IBM Watson       │                     │                           │
+  │ Microsoft Azure  │  Sigfox             │                           │
+  └──────┬───────────┘ ─────────────────▶  │    Integrations           │
+  Devices┘ MQTT                            │    (embedded in server)   │
+                                           │                           │
+  LoRaWAN Network        MQTT / HTTP       │                           │
+  ┌──────────────────┐ ─────────────────▶  │                           │
+  │ ThingPark        │                     │                           │
+  │ The Things Net.  │  OPC-UA             │                           │
+  │ TEKTELIC         │ ─────────────────▶  │                           │
+  └──────┬───────────┘                     └───────────────────────────┘
+  Devices┘ LoRaWAN
+```
+
 ### Remote integrations
 
 Remote integrations run as a separate process, typically deployed close to the data source (e.g. a local MQTT broker or OPC-UA server that has no external IP). The remote integration pulls data and streams it to the cloud-hosted ThingsBoard instance when internet is available.
@@ -288,6 +333,28 @@ Remote integrations run as a separate process, typically deployed close to the d
 | Buffers data locally when internet is unavailable | |
 
 <DocImage src="/src/assets/images/user-guide/integrations/remote-integrations-overview.svg" alt="Remote integrations architecture" />
+
+```plaintext
+  Local network                                            Cloud
+  ┌─────────────────────────────────────────┐
+  │                                         │    gRPC over
+  │  Devices ──▶ OPC-UA ──▶ TB Integration ─┼──────────────────▶ ┌─────────────┐
+  │                            ↕             │    TLS / SSL       │             │
+  │                      Local file system   │                    │             │
+  └─────────────────────────────────────────┘                    │             │
+  ┌─────────────────────────────────────────┐                    │ ThingsBoard │
+  │                                         │                    │             │
+  │  Devices ──▶ MQTT    ──▶ TB Integration ─┼──────────────────▶│             │
+  │              Broker        ↕             │                    │             │
+  │                      Local file system   │                    │             │
+  └─────────────────────────────────────────┘                    │             │
+  ┌─────────────────────────────────────────┐                    │             │
+  │                                         │                    │             │
+  │  Devices ──▶ Custom  ──▶ TB Integration ─┼──────────────────▶│             │
+  │                            ↕             │                    │             │
+  │                      Local file system   │                    └─────────────┘
+  └─────────────────────────────────────────┘
+```
 
 Learn more in the <DocLink product={props.product} path="TODO">Remote Integrations guide</DocLink>.
 
@@ -303,29 +370,33 @@ Both systems serve different use cases and complement each other.
 
 ## Available integrations
 
-| Integration | Guide |
-|---|---|
-| HTTP | <DocLink product={props.product} path="user-guide/integrations/http">HTTP Integration</DocLink> |
-| MQTT | <DocLink product={props.product} path="TODO">MQTT Integration</DocLink> |
-| CoAP | <DocLink product={props.product} path="TODO">CoAP Integration</DocLink> |
-| OPC-UA | <DocLink product={props.product} path="TODO">OPC-UA Integration</DocLink> |
-| TCP | <DocLink product={props.product} path="TODO">TCP Integration</DocLink> |
-| UDP | <DocLink product={props.product} path="TODO">UDP Integration</DocLink> |
-| Kafka | <DocLink product={props.product} path="TODO">Kafka Integration</DocLink> |
-| AWS IoT | <DocLink product={props.product} path="user-guide/integrations/aws-iot">AWS IoT Integration</DocLink> |
-| AWS Kinesis | <DocLink product={props.product} path="TODO">AWS Kinesis Integration</DocLink> |
-| Azure Event Hub | <DocLink product={props.product} path="TODO">Azure Event Hub Integration</DocLink> |
-| Azure IoT Hub | <DocLink product={props.product} path="TODO">Azure IoT Hub Integration</DocLink> |
-| ChirpStack | <DocLink product={props.product} path="user-guide/integrations/chirpstack">ChirpStack Integration</DocLink> |
-| Loriot | <DocLink product={props.product} path="TODO">Loriot Integration</DocLink> |
-| The Things Stack | <DocLink product={props.product} path="TODO">The Things Stack Integration</DocLink> |
-| The Things Stack Industries | <DocLink product={props.product} path="TODO">TTI Integration</DocLink> |
-| Actility ThingPark | <DocLink product={props.product} path="TODO">ThingPark Integration</DocLink> |
-| SigFox | <DocLink product={props.product} path="TODO">SigFox Integration</DocLink> |
-| Custom | <DocLink product={props.product} path="TODO">Custom Integration</DocLink> |
+| Integration | Embedded | Remote | Guide |
+|---|---|---|---|
+| MQTT | ✓ | ✓ | <DocLink product={props.product} path="TODO">MQTT Integration</DocLink> |
+| HTTP | ✓ | ✓ | <DocLink product={props.product} path="user-guide/integrations/http">HTTP Integration</DocLink> |
+| The Things Stack | ✓ | ✓ | <DocLink product={props.product} path="TODO">The Things Stack Integration</DocLink> |
+| ChirpStack | ✓ | ✓ | <DocLink product={props.product} path="user-guide/integrations/chirpstack">ChirpStack Integration</DocLink> |
+| AWS IoT | ✓ | ✓ | <DocLink product={props.product} path="user-guide/integrations/aws-iot">AWS IoT Integration</DocLink> |
+| The Things Stack Industries | ✓ | ✓ | <DocLink product={props.product} path="TODO">TTI Integration</DocLink> |
+| Tuya | ✓ | ✓ | <DocLink product={props.product} path="TODO">Tuya Integration</DocLink> |
+| SigFox | ✓ | ✓ | <DocLink product={props.product} path="TODO">SigFox Integration</DocLink> |
+| CoAP | ✓ | ✓ | <DocLink product={props.product} path="TODO">CoAP Integration</DocLink> |
+| OPC-UA | ✓ | ✓ | <DocLink product={props.product} path="TODO">OPC-UA Integration</DocLink> |
+| Loriot | ✓ | ✓ | <DocLink product={props.product} path="TODO">Loriot Integration</DocLink> |
+| Kafka | ✓ | ✓ | <DocLink product={props.product} path="TODO">Kafka Integration</DocLink> |
+| Azure Event Hub | ✓ | ✓ | <DocLink product={props.product} path="TODO">Azure Event Hub Integration</DocLink> |
+| Actility ThingPark | ✓ | ✓ | <DocLink product={props.product} path="TODO">ThingPark Integration</DocLink> |
+| Azure IoT Hub | ✓ | ✓ | <DocLink product={props.product} path="TODO">Azure IoT Hub Integration</DocLink> |
+| Google Pub/Sub | ✓ | ✓ | <DocLink product={props.product} path="TODO">Pub/Sub Integration</DocLink> |
+| ThingPark Enterprise | ✓ | ✓ | <DocLink product={props.product} path="TODO">ThingPark Enterprise Integration</DocLink> |
+| Particle | ✓ | ✓ | <DocLink product={props.product} path="TODO">Particle Integration</DocLink> |
+| RabbitMQ | ✓ | ✓ | <DocLink product={props.product} path="TODO">RabbitMQ Integration</DocLink> |
+| KPN Things | ✓ | ✓ | <DocLink product={props.product} path="TODO">KPN Things Integration</DocLink> |
+| Azure Service Bus | ✓ | ✓ | <DocLink product={props.product} path="TODO">Azure Service Bus Integration</DocLink> |
+| AWS SQS | ✓ | ✓ | <DocLink product={props.product} path="TODO">AWS SQS Integration</DocLink> |
+| AWS Kinesis | ✓ | ✓ | <DocLink product={props.product} path="TODO">AWS Kinesis Integration</DocLink> |
+| Apache Pulsar | ✓ | ✓ | <DocLink product={props.product} path="TODO">Apache Pulsar Integration</DocLink> |
+| TCP | | ✓ | <DocLink product={props.product} path="TODO">TCP Integration</DocLink> |
+| UDP | | ✓ | <DocLink product={props.product} path="TODO">UDP Integration</DocLink> |
+| Custom | | ✓ | <DocLink product={props.product} path="TODO">Custom Integration</DocLink> |
 
-## Video tutorial
-
-Step-by-step instructions for setting up an uplink data converter:
-
-<YouTubeVideo videoId="CojStpYCTGI" title="ThingsBoard Uplink Data Converter setup" />

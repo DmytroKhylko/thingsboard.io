@@ -290,32 +290,9 @@ Add the downlink converter to the integration:
 
 ### Modify Root Rule Chain
 
-Import and configure a rule chain to process shared attribute updates as downlinks:
+import ConfigureDownlinkRuleChain from '@includes/docs/user-guide/integrations/_configure-downlink-rule-chain.mdx';
 
-<Steps>
-1. Download the <a href="/resources/downlink_to_chirpstack.json" download="downlink_to_chirpstack.json">downlink_to_chirpstack.json</a> file.
-2. Go to **Rule Chains**, click **+** → **Import rule chain**, and import the downloaded file.
-3. In the imported "Downlink to ChirpStack" rule chain, double-click the **integration downlink** node and select your ChirpStack integration. Save changes.
-4. Save the rule chain.
-</Steps>
-
-<ImageGallery images={[
-  { src: '/src/assets/images/user-guide/integrations/chirpstack/import-downlink-rule-chain-1.png', alt: 'Import rule chain', caption: 'Import the downlink rule chain JSON' },
-  { src: '/src/assets/images/user-guide/integrations/chirpstack/import-downlink-rule-chain-2.png', alt: 'Rule chain imported', caption: 'Drag the file and click Import' },
-  { src: '/src/assets/images/user-guide/integrations/chirpstack/import-downlink-rule-chain-4.png', alt: 'Configure integration node', caption: 'Select ChirpStack integration in the downlink node' },
-  { src: '/src/assets/images/user-guide/integrations/chirpstack/import-downlink-rule-chain-5.png', alt: 'Save rule chain', caption: 'Save the rule chain' },
-]} />
-
-Now configure the **Root Rule Chain** to route attribute updates to the downlink chain:
-
-<ImageGallery images={[
-  { src: '/src/assets/images/user-guide/integrations/chirpstack/edit-root-rule-chain-1.png', alt: 'Root rule chain — find check relation node', caption: 'Open the "Root Rule Chain", and find a "check relation presence" node' },
-  { src: '/src/assets/images/user-guide/integrations/chirpstack/edit-root-rule-chain-2.png', alt: 'Root rule chain — add check relation node', caption: 'Drag it to the rule chain. Name it "Check relation to ChirpStack integration", select direction "To originator", specify "ManagedByOriginator" relation type, select ChirpStack integration, and click "Add"' },
-  { src: '/src/assets/images/user-guide/integrations/chirpstack/edit-root-rule-chain-3.png', alt: 'Root rule chain — connect Attributes Updated', caption: 'Connect the "message type switch" node to the "check relation presence" node with the "Attributes Updated" link' },
-  { src: '/src/assets/images/user-guide/integrations/chirpstack/edit-root-rule-chain-4.png', alt: 'Root rule chain — find rule chain node', caption: 'Find a "rule chain" node' },
-  { src: '/src/assets/images/user-guide/integrations/chirpstack/edit-root-rule-chain-5.png', alt: 'Root rule chain — add downlink rule chain node', caption: 'Drag it to the rule chain. Name it "Downlink to Chirpstack", specify "Downlink to Chirpstack" rule chain, and click "Add"' },
-  { src: '/src/assets/images/user-guide/integrations/chirpstack/edit-root-rule-chain-6.png', alt: 'Root rule chain — connect True link', caption: 'Connect the "check relation presence" node to the "rule chain" node with the "True" link, then save the Root Rule Chain' },
-]} />
+<ConfigureDownlinkRuleChain integrationName="ChirpStack" />
 
 ### Test downlink
 

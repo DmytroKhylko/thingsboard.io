@@ -275,20 +275,9 @@ Add the created downlink converter to the integration:
 
 ### Configure rule chain
 
-To send downlinks through the integration, modify the **Root Rule Chain**:
+import ConfigureDownlinkRuleChain from '@includes/docs/user-guide/integrations/_configure-downlink-rule-chain.mdx';
 
-<Steps>
-1. Go to **Rule chains** and open the **Root Rule Chain**.
-2. Create an **integration downlink** node and specify your HTTP integration in its settings.
-</Steps>
-
-<DocImage src="/src/assets/images/user-guide/integrations/http/http-downlink-rule-chain-1-pe.png" alt="Add integration downlink node" />
-
-<Steps>
-3. Connect the **message type switch** node to the **integration downlink** node with **Attributes Updated** and **Post attributes** links. Apply changes.
-</Steps>
-
-<DocImage src="/src/assets/images/user-guide/integrations/http/http-downlink-rule-chain-2-pe.png" alt="Connect rule chain nodes" />
+<ConfigureDownlinkRuleChain integrationName="HTTP" />
 
 ### Test downlink
 

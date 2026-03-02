@@ -286,12 +286,9 @@ return result;
 
 ### Configure rule chain
 
-Add an **Integration Downlink** node to the Root Rule Chain and connect it with the **Attributes Updated** link type:
+import ConfigureDownlinkRuleChain from '@includes/docs/user-guide/integrations/_configure-downlink-rule-chain.mdx';
 
-<ImageGallery images={[
-  { src: '/src/assets/images/user-guide/integrations/aws-iot/downlink_2.png', alt: 'Add integration downlink node', caption: 'Add an Integration Downlink node to the Root Rule Chain' },
-  { src: '/src/assets/images/user-guide/integrations/aws-iot/downlink_3.png', alt: 'Connect with Attributes Updated', caption: 'Connect with "Attributes Updated" link type' },
-]} />
+<ConfigureDownlinkRuleChain integrationName="AWS IoT" />
 
 ### Test downlink
 
