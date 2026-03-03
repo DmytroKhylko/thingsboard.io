@@ -333,7 +333,7 @@ nano docker-compose.yml
 
 Add the following content. Replace `PUT_YOUR_LICENSE_SECRET_HERE` with your license secret obtained in Step 1:
 
-<Code code={inMemoryYaml} lang="yml" meta="maxLines=20 collapsible" />
+<Code code={inMemoryYaml} lang="yml" meta="maxLines=15 collapsible" />
 
 </TabItem>
 <TabItem label="Kafka (production)">
@@ -348,7 +348,7 @@ nano docker-compose.yml
 
 Add the following content. Replace `PUT_YOUR_LICENSE_SECRET_HERE` with your license secret obtained in Step 1:
 
-<Code code={kafkaYaml} lang="yml" meta="maxLines=20 collapsible" />
+<Code code={kafkaYaml} lang="yml" meta="maxLines=15 collapsible" />
 
 </TabItem>
 <TabItem label="Confluent Cloud">
@@ -363,7 +363,7 @@ nano docker-compose.yml
 
 Add the following content. Replace `PUT_YOUR_LICENSE_SECRET_HERE` with your license secret, and `CLUSTER_API_KEY`, `CLUSTER_API_SECRET`, `localhost:9092` with your Confluent Cloud values:
 
-<Code code={confluentYaml} lang="yml" meta="maxLines=20 collapsible" />
+<Code code={confluentYaml} lang="yml" meta="maxLines=15 collapsible" />
 
 You can update the default Rule Engine queue configuration using the UI. See <DocLink product={props.product} path="TODO">Rule Engine Queues</DocLink> for details.
 
@@ -519,12 +519,6 @@ docker compose -f docker-compose.yml -f docker-compose-trendz.yml up -d
 Trendz Analytics has a different version system and should be updated separately from the ThingsBoard platform. See <DocLink product={props.product} path="TODO">Trendz Docker Upgrade</DocLink>.
 
 ## Upgrading
-
-When a new ThingsBoard release becomes available, update your installation to benefit from the latest features and security patches.
-
-<Aside type="note">
-To maintain database integrity and system stability, perform upgrades sequentially (e.g. v4.0.2 → v4.1.0 → v4.2.0).
-</Aside>
 
 See the <DocLink product={props.product} path="TODO">Upgrade Instructions</DocLink> for detailed steps.
 

@@ -488,7 +488,7 @@ import YouTubeVideo from '~/components/YouTubeVideo.astro';
 ````
 
 **Implementation notes:**
-- Plugin registered in `astro.config.ts` → `expressiveCode.plugins`
+- Plugins registered in `ec.config.mjs` (project root) — **not** in `astro.config.ts`. This separate file is required for the `<Code>` component to work alongside custom plugins.
 - HAST uses `properties.className` (array), not `properties.class` — the plugin uses a local `appendClassName` helper
 - Data attribute stored as `dataMaxLines` in HAST properties → rendered as `data-max-lines` in HTML → read as `el.dataset.maxLines` in JS
 - Hook order: `pluginFrames` wraps `blockAst` in `<figure.frame>` before our hook runs, so `renderData.blockAst` is already the final `<figure>`
@@ -591,6 +591,30 @@ import { Code } from '@astrojs/starlight/components';
 | Other | `proto`, `r`, `matlab`, `lua` |
 
 Full list: [shiki.style/languages](https://shiki.style/languages). Use `plaintext` or omit `lang` entirely for no syntax highlighting.
+
+### Version Constants
+
+`src/data/versions.ts` — centralized product version strings. **Never hardcode version strings** in Docker image tags, download URLs, or code blocks.
+
+```ts
+import { CE_FULL_VER } from '~/data/versions';        // '4.3.0.1'
+import { PE_FULL_VER, TRENDZ_VER } from '~/data/versions';  // '4.3.0.1PE', '1.15.0.4'
+```
+
+Available: `CE_FULL_VER`, `PE_FULL_VER`, `TRENDZ_VER`, `EDGE_VER`, `EDGE_PE_VER`, `TBMQ_VER`, `TBMQ_PE_VER`.
+
+To interpolate versions into code blocks, use the `<Code>` component with exported string constants:
+
+```mdx
+import { Code } from '@astrojs/starlight/components';
+import { CE_FULL_VER } from '~/data/versions';
+
+export const yamlContent = `services:
+  thingsboard:
+    image: "thingsboard/tb-node:${CE_FULL_VER}"`;
+
+<Code code={yamlContent} lang="yml" meta="maxLines=20 collapsible" />
+```
 
 ### Product System & Version Switcher
 

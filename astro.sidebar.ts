@@ -167,6 +167,9 @@ const installationItems = (prefix: string) => [
 	{ label: 'Installation options', slug: `${prefix}/installation` },
 	`${prefix}/installation/docker`,
 	`${prefix}/installation/docker-windows`,
+	`${prefix}/installation/ubuntu`,
+	`${prefix}/installation/rhel`,
+	`${prefix}/installation/rpi`,
 ];
 
 const recipeItems = (prefix: string) => [
