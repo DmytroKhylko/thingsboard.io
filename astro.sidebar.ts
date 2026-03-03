@@ -217,6 +217,15 @@ const installationItems = (prefix: string) => {
 						`${prefix}/installation/gcp-microservices`,
 					],
 				},
+				{
+					label: 'Azure',
+					items: [
+						{ label: 'Azure Installation Options', slug: `${prefix}/installation/azure-index` },
+						...(isPE ? [`${prefix}/installation/azure`] : []),
+						`${prefix}/installation/azure-monolith`,
+						`${prefix}/installation/azure-microservices`,
+					],
+				},
 				`${prefix}/installation/digital-ocean`,
 			],
 		},
