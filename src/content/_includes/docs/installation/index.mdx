@@ -14,18 +14,23 @@ import TabItem from '@components/TabItem.astro';
   <TabItem label="On-premises" id="on-premises" icon="tabler:server-2">
     <h2>Standalone</h2>
     <InstallationCardGrid product={props.product} items={[
-      { path: 'installation/docker', title: 'Docker (Linux or Mac OS)', icon: '/src/assets/images/installation/docker-linux-mac.svg', accent: 'var(--sl-color-blue)' },
-      { path: 'installation/docker-windows', title: 'Docker (Windows)', icon: '/src/assets/images/installation/docker-windows.svg', accent: 'var(--sl-color-green)' },
+      { path: 'installation/docker', title: 'Docker (Linux, macOS)', icon: '/src/assets/images/installation/docker-linux-mac.svg', accent: 'var(--sl-color-blue)', badge: 'Recommended', badgeVariant: 'tip' },
+      { path: 'installation/docker-windows', title: 'Docker (Windows)', icon: '/src/assets/images/installation/docker-windows.svg', accent: 'var(--sl-color-blue)' },
+    ]} />
+    <InstallationCardGrid product={props.product} items={[
       { path: 'installation/ubuntu', title: 'Ubuntu', icon: '/src/assets/images/installation/ubuntu.svg', accent: 'var(--sl-color-orange)' },
       { path: 'installation/rhel', title: 'CentOS/RHEL Server', icon: '/src/assets/images/installation/cenos-rhel.svg', accent: 'var(--sl-color-red)' },
       { path: 'installation/rpi', title: 'Raspberry Pi', icon: '/src/assets/images/installation/raspberry-pi.svg', accent: 'var(--sl-color-purple)' },
-      { path: 'installation/building-from-source', title: 'Building from sources', icon: '/src/assets/images/installation/sources.svg', accent: 'var(--sl-color-blue)' },
     ]} />
     <h2>Cluster</h2>
     <InstallationCardGrid product={props.product} items={[
       { path: 'installation/docker-compose-setup', title: 'Docker Compose', icon: '/src/assets/images/installation/docker-compose.svg', accent: 'var(--sl-color-blue)' },
       { path: 'installation/minikube-cluster-setup', title: 'Minikube', icon: '/src/assets/images/installation/minikube.svg', accent: 'var(--sl-color-green)' },
       { path: 'installation/openshift-cluster-setup', title: 'OpenShift', icon: '/src/assets/images/installation/open-shift.svg', accent: 'var(--sl-color-orange)' },
+    ]} />
+    <h2>Building from sources</h2>
+    <InstallationCardGrid product={props.product} items={[
+      { path: 'installation/building-from-source', title: 'Building from sources', icon: '/src/assets/images/installation/sources.svg', accent: 'var(--sl-color-blue)' },
     ]} />
   </TabItem>
   <TabItem label="Cloud" id="cloud" icon="tabler:cloud">
