@@ -37,9 +37,7 @@ import DocLink from '@components/DocLink.astro';
 <CardGrid>
   <ListCard title="APIs" icon="laptop">
     - <DocLink product={props.product} path='reference/rest-api' bold={false}>REST API</DocLink>
-    - Attributes query API
-    - Timeseries query API
-    - RPC API
+    - <DocLink product={props.product} path='reference/websocket-api' bold={false}>WebSocket API</DocLink>
   </ListCard>
 
   <ListCard title="REST Clients" icon="puzzle">

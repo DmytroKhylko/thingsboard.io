@@ -267,6 +267,11 @@ const recipeItems = (prefix: string) => [
 		collapsed: true,
 		items: [`${prefix}/alarm-rule-tutorials`],
 	},
+	{
+		label: 'Real-time Data',
+		collapsed: true,
+		items: [`${prefix}/websocket-live-telemetry`],
+	},
 ];
 
 const apisAndSdksItems = (prefix: string) => [
@@ -363,7 +368,10 @@ const apisAndSdksItems = (prefix: string) => [
 	{
 		label: 'Server-side APIs',
 		collapsed: true,
-		items: [`${prefix}/reference/rest-api`],
+		items: [
+			`${prefix}/reference/rest-api`,
+			`${prefix}/reference/websocket-api`,
+		],
 	},
 	{
 		label: 'Server-side REST Clients',
