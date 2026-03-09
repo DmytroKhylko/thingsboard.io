@@ -76,7 +76,7 @@ Use the `edit-doc` skill for full props, usage examples, and authoring rules for
 - **InstallationCardGrid** — installation option card grid
 - **RuleNodeCardGrid** — rule node category card grid
 - **DocLink** — product-aware internal links (always use instead of bare markdown links)
-- **Code blocks** — `maxLines`, `collapsible`, `wrap` meta options; `<Code>` component for dynamic code
+- **Code blocks** — `maxLines`, `collapsible`, `wrap`, `download='file.ext'` meta options; `<Code>` component for dynamic code
 
 ### Product System
 
