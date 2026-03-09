@@ -125,11 +125,8 @@ const { icon, title, description, href, class: className = '', variant = 'defaul
 		}
 
 		&__title {
-			font-size: $font-size-2xl;
-			font-weight: $font-weight-medium;
-			margin-bottom: 0 !important;
-			line-height: 1.4;
-			text-align: left !important;
+			@include card-title;
+			margin-bottom: $spacing-2;
 
 			a {
 				color: $color-primary;
@@ -142,10 +139,7 @@ const { icon, title, description, href, class: className = '', variant = 'defaul
 		}
 
 		&__description {
-			color: $color-text-secondary;
-			font-size: $font-size-lg;
-			font-weight: $font-weight-normal;
-			line-height: 27px;
+			@include text-m;
 			margin: $spacing-2 0 0;
 		}
 	}
