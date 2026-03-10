@@ -14,12 +14,14 @@ const guideItems = (prefix: string) => [
 		],
 	},
 	{
-		label: 'Devices',
+		label: 'Devices & Assets',
 		collapsed: true,
 		items: [
 			`${prefix}/devices`,
 			`${prefix}/device-profiles`,
 			`${prefix}/connectivity-guide`,
+			`${prefix}/assets`,
+			`${prefix}/asset-profiles`,
 			`${prefix}/connectivity-status`,
 			`${prefix}/claiming`,
 			`${prefix}/provisioning`,
