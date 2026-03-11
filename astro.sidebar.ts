@@ -146,7 +146,7 @@ const guideItems = (prefix: string) => [
 	{
 		label: 'Other Features',
 		collapsed: true,
-		items: [`${prefix}/image-gallery`, `${prefix}/version-control`, `${prefix}/entity-views`],
+		items: [`${prefix}/image-gallery`, `${prefix}/version-control`, `${prefix}/entity-views`, `${prefix}/scheduler`],
 	},
 	{
 		label: 'Add-ons',
