@@ -127,11 +127,11 @@ const guideItems = (prefix: string) => [
 		label: 'White-labeling',
 		collapsed: true,
 		items: [
-			`${prefix}/white-labeling-general`,
-			`${prefix}/white-labeling-login`,
-			`${prefix}/white-labeling-mail`,
-			`${prefix}/white-labeling-translation`,
-			`${prefix}/white-labeling-menu`,
+			{ label: 'General', slug: `${prefix}/white-labeling-general` },
+			{ label: 'Login', slug: `${prefix}/white-labeling-login` },
+			{ label: 'Mail Templates', slug: `${prefix}/white-labeling-mail` },
+			{ label: 'Custom Translation', slug: `${prefix}/white-labeling-translation` },
+			{ label: 'Custom Menu', slug: `${prefix}/white-labeling-menu` },
 		],
 	},
 	{
@@ -151,7 +151,7 @@ const guideItems = (prefix: string) => [
 	{
 		label: 'Security',
 		collapsed: true,
-		items: [`${prefix}/security`, `${prefix}/security/two-factor-authentication`, `${prefix}/security/oauth-2-support`, `${prefix}/security/domains`, `${prefix}/security/http-over-ssl`, `${prefix}/security/audit-log`, `${prefix}/security/secrets-storage`, `${prefix}/security/api-keys`],
+		items: [`${prefix}/security`, `${prefix}/security/two-factor-authentication`, `${prefix}/security/oauth-2-support`, `${prefix}/security/domains`, `${prefix}/security/self-registration`, `${prefix}/security/http-over-ssl`, `${prefix}/security/audit-log`, `${prefix}/security/secrets-storage`, `${prefix}/security/api-keys`],
 	},
 	{
 		label: 'Contribution',
@@ -418,7 +418,9 @@ const apisAndSdksItems = (prefix: string) => [
 	},
 ];
 
-const referenceItems = (prefix: string, extraConfigItems: SidebarConfig = []) => [
+const referenceItems = (prefix: string, extraConfigItems: SidebarConfig = []) => {
+	const basePrefix = prefix.replace('/reference', '');
+	return [
 	{
 		label: 'Architecture',
 		collapsed: true,
@@ -467,6 +469,15 @@ const referenceItems = (prefix: string, extraConfigItems: SidebarConfig = []) =>
 		items: [
 			`${prefix}/notification-system/template-parameters`,
 			`${prefix}/notification-system/rule-triggers`,
+		],
+	},
+	{
+		label: 'TBEL',
+		collapsed: true,
+		items: [
+			{ label: 'Overview', slug: `${basePrefix}/user-guide/tbel` },
+			`${basePrefix}/user-guide/tbel/language-guide`,
+			`${basePrefix}/user-guide/tbel/helper-functions`,
 		],
 	},
 	{
@@ -622,6 +633,7 @@ const referenceItems = (prefix: string, extraConfigItems: SidebarConfig = []) =>
 		],
 	},
 ];
+};
 
 const mainSidebarItems = (prefix: string, extraRecipeItems: SidebarConfig = [], referenceConfigItems: SidebarConfig = []): SidebarConfig => [
 	{
@@ -700,6 +712,15 @@ export const peSidebar: SidebarConfig = mainSidebarItems('docs/pe', [
 			'docs/pe/recipes/rbac-generic-role-scope',
 			'docs/pe/recipes/rbac-isolated-device-groups',
 			'docs/pe/recipes/rbac-smart-buildings',
+		],
+	},
+	{
+		label: 'White-labeling',
+		collapsed: true,
+		items: [
+			'docs/pe/recipes/white-labeling-translate-dashboard',
+			'docs/pe/recipes/white-labeling-html-value-card',
+			'docs/pe/recipes/white-labeling-post-processing',
 		],
 	},
 ], [
