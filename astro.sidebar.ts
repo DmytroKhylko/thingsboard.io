@@ -146,7 +146,12 @@ const guideItems = (prefix: string) => [
 	{
 		label: 'Other Features',
 		collapsed: true,
-		items: [`${prefix}/image-gallery`, `${prefix}/add-ons`, `${prefix}/edge-computing`, `${prefix}/trendz-analytics`],
+		items: [`${prefix}/image-gallery`],
+	},
+	{
+		label: 'Add-ons',
+		collapsed: true,
+		items: [`${prefix}/add-ons`, `${prefix}/edge-computing`, `${prefix}/trendz-analytics`],
 	},
 	{
 		label: 'Security',
