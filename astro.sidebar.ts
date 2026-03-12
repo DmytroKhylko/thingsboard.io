@@ -156,7 +156,36 @@ const guideItems = (prefix: string, { isPE = false } = {}) => [
 	{
 		label: 'Security',
 		collapsed: true,
-		items: [`${prefix}/security`, `${prefix}/security/two-factor-authentication`, `${prefix}/security/oauth-2-support`, `${prefix}/security/domains`, `${prefix}/security/self-registration`, `${prefix}/security/http-over-ssl`, `${prefix}/security/audit-log`, `${prefix}/security/secrets-storage`, `${prefix}/security/api-keys`],
+		items: [
+			{ label: 'Overview', slug: `${prefix}/security/overview` },
+			{
+				label: 'Authentication',
+				collapsed: true,
+				items: [
+					`${prefix}/security/two-factor-authentication`,
+					`${prefix}/security/oauth-2-support`,
+					`${prefix}/security/self-registration`,
+					`${prefix}/security/api-keys`,
+				],
+			},
+			{
+				label: 'Infrastructure',
+				collapsed: true,
+				items: [
+					`${prefix}/security/http-over-ssl`,
+					`${prefix}/security/domains`,
+				],
+			},
+			{
+				label: 'Administration',
+				collapsed: true,
+				items: [
+					{ label: 'Security settings', slug: `${prefix}/security` },
+					`${prefix}/security/audit-log`,
+					`${prefix}/security/secrets-storage`,
+				],
+			},
+		],
 	},
 	{
 		label: 'Contribution',
@@ -752,7 +781,28 @@ export const paasSidebar: SidebarConfig = [
 			{
 				label: 'Security',
 				collapsed: true,
-				items: ['docs/paas/user-guide/security/two-factor-authentication', 'docs/paas/user-guide/security/oauth-2-support', 'docs/paas/user-guide/security/domains', 'docs/paas/user-guide/security/audit-log', 'docs/paas/user-guide/security/secrets-storage', 'docs/paas/user-guide/security/api-keys'],
+				items: [
+					{ label: 'Overview', slug: 'docs/paas/user-guide/security/overview' },
+					{
+						label: 'Authentication',
+						collapsed: true,
+						items: [
+							'docs/paas/user-guide/security/two-factor-authentication',
+							'docs/paas/user-guide/security/oauth-2-support',
+							'docs/paas/user-guide/security/self-registration',
+							'docs/paas/user-guide/security/api-keys',
+						],
+					},
+					{
+						label: 'Administration',
+						collapsed: true,
+						items: [
+							'docs/paas/user-guide/security/domains',
+							'docs/paas/user-guide/security/audit-log',
+							'docs/paas/user-guide/security/secrets-storage',
+						],
+					},
+				],
 			},
 		],
 	},
@@ -771,7 +821,28 @@ export const paasEuSidebar: SidebarConfig = [
 			{
 				label: 'Security',
 				collapsed: true,
-				items: ['docs/paas/eu/user-guide/security/two-factor-authentication', 'docs/paas/eu/user-guide/security/oauth-2-support', 'docs/paas/eu/user-guide/security/domains', 'docs/paas/eu/user-guide/security/audit-log', 'docs/paas/eu/user-guide/security/secrets-storage', 'docs/paas/eu/user-guide/security/api-keys'],
+				items: [
+					{ label: 'Overview', slug: 'docs/paas/eu/user-guide/security/overview' },
+					{
+						label: 'Authentication',
+						collapsed: true,
+						items: [
+							'docs/paas/eu/user-guide/security/two-factor-authentication',
+							'docs/paas/eu/user-guide/security/oauth-2-support',
+							'docs/paas/eu/user-guide/security/self-registration',
+							'docs/paas/eu/user-guide/security/api-keys',
+						],
+					},
+					{
+						label: 'Administration',
+						collapsed: true,
+						items: [
+							'docs/paas/eu/user-guide/security/domains',
+							'docs/paas/eu/user-guide/security/audit-log',
+							'docs/paas/eu/user-guide/security/secrets-storage',
+						],
+					},
+				],
 			},
 		],
 	},
