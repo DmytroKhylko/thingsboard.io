@@ -2,7 +2,7 @@ import type { StarlightUserConfig } from '@astrojs/starlight/types';
 
 type SidebarConfig = NonNullable<StarlightUserConfig['sidebar']>;
 
-const guideItems = (prefix: string) => [
+const guideItems = (prefix: string, { isPE = false } = {}) => [
 	{
 		label: 'Digital Twins',
 		collapsed: true,
@@ -47,7 +47,7 @@ const guideItems = (prefix: string) => [
 	{
 		label: 'Customers & Users',
 		collapsed: true,
-		items: [`${prefix}/multi-tenancy`, `${prefix}/customers`, `${prefix}/users`, `${prefix}/roles`],
+		items: [`${prefix}/multi-tenancy`, `${prefix}/customers`, `${prefix}/users`, `${prefix}/roles`, ...(isPE ? [`${prefix}/groups`] : [])],
 	},
 	{
 		label: 'Alarms & Notifications',
@@ -475,6 +475,9 @@ const referenceItems = (prefix: string, extraConfigItems: SidebarConfig = []) =>
 		items: [
 			`${prefix}/notification-system/template-parameters`,
 			`${prefix}/notification-system/rule-triggers`,
+			`${basePrefix}/user-guide/ui/sms-provider-settings`,
+			`${basePrefix}/user-guide/ui/slack-settings`,
+			`${basePrefix}/user-guide/ui/microsoft-teams-settings`,
 		],
 	},
 	{
@@ -669,7 +672,7 @@ const mainSidebarItems = (prefix: string, extraRecipeItems: SidebarConfig = [], 
 		label: 'Guides',
 		collapsed: true,
 		translations: { uk: 'Посібники' },
-		items: guideItems(`${prefix}/user-guide`),
+		items: guideItems(`${prefix}/user-guide`, { isPE: prefix.includes('/pe') }),
 	},
 	{
 		label: 'Recipes',
