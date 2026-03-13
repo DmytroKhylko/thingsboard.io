@@ -796,6 +796,58 @@ export const paasSidebar: SidebarConfig = [
 		collapsed: true,
 		items: [
 			{
+				label: 'Digital Twins',
+				collapsed: true,
+				items: [
+					'docs/paas/user-guide/digital-twins/entities',
+					'docs/paas/user-guide/digital-twins/relations',
+					'docs/paas/user-guide/digital-twins/attributes',
+					'docs/paas/user-guide/digital-twins/time-series-data',
+				],
+			},
+			{
+				label: 'Devices & Assets',
+				collapsed: true,
+				items: [
+					'docs/paas/user-guide/devices',
+					'docs/paas/user-guide/device-profiles',
+					'docs/paas/user-guide/connectivity-guide',
+					'docs/paas/user-guide/assets',
+					'docs/paas/user-guide/asset-profiles',
+					'docs/paas/user-guide/connectivity-status',
+					'docs/paas/user-guide/claiming',
+					'docs/paas/user-guide/provisioning',
+					'docs/paas/user-guide/ota-updates',
+					'docs/paas/user-guide/command-and-control',
+				],
+			},
+			{
+				label: 'Data Visualization',
+				collapsed: true,
+				items: [
+					{ label: 'Key concepts', slug: 'docs/paas/user-guide/data-visualization' },
+					'docs/paas/user-guide/dashboards',
+					'docs/paas/user-guide/widgets',
+					'docs/paas/user-guide/time-window',
+					'docs/paas/user-guide/aliases',
+					'docs/paas/user-guide/layouts',
+					'docs/paas/user-guide/actions',
+					'docs/paas/user-guide/scada',
+					'docs/paas/user-guide/units',
+				],
+			},
+			{
+				label: 'Customers & Users',
+				collapsed: true,
+				items: [
+					'docs/paas/user-guide/multi-tenancy',
+					'docs/paas/user-guide/customers',
+					'docs/paas/user-guide/users',
+					'docs/paas/user-guide/roles',
+					'docs/paas/user-guide/groups',
+				],
+			},
+			{
 				label: 'Security',
 				collapsed: true,
 				items: [
@@ -821,6 +873,81 @@ export const paasSidebar: SidebarConfig = [
 					},
 				],
 			},
+			{
+				label: 'Alarms & Notifications',
+				collapsed: true,
+				items: [
+					'docs/paas/user-guide/alarms',
+					'docs/paas/user-guide/alarm-rules',
+					'docs/paas/user-guide/notifications',
+				],
+			},
+			{
+				label: 'Data Processing',
+				collapsed: true,
+				items: [
+					{
+						label: 'Calculated Fields',
+						collapsed: true,
+						items: [
+							{ label: 'Overview', slug: 'docs/paas/user-guide/calculated-fields' },
+							{ label: 'Simple', slug: 'docs/paas/user-guide/calculated-fields/simple' },
+							{ label: 'Script', slug: 'docs/paas/user-guide/calculated-fields/script' },
+							{ label: 'Propagation', slug: 'docs/paas/user-guide/calculated-fields/propagation' },
+							{ label: 'Geofencing', slug: 'docs/paas/user-guide/calculated-fields/geofencing' },
+							{
+								label: 'Entities Aggregation',
+								slug: 'docs/paas/user-guide/calculated-fields/related-entities-aggregation',
+							},
+							{
+								label: 'Time Series Aggregation',
+								slug: 'docs/paas/user-guide/calculated-fields/time-series-data-aggregation',
+							},
+						],
+					},
+					{
+						label: 'Rule Engine',
+						collapsed: true,
+						items: [
+							{ label: 'Overview', slug: 'docs/paas/user-guide/rule-engine' },
+							{ label: 'Queues', slug: 'docs/paas/user-guide/rule-engine/queues' },
+							{ label: 'Monitoring', slug: 'docs/paas/user-guide/rule-engine/monitoring' },
+						],
+					},
+					'docs/paas/user-guide/rule-nodes',
+				],
+			},
+			{
+				label: 'Reporting',
+				collapsed: true,
+				items: [
+					'docs/paas/user-guide/reporting/getting-started',
+					'docs/paas/user-guide/reporting/report-templates',
+					'docs/paas/user-guide/reporting/subreports',
+					'docs/paas/user-guide/reporting/scheduling',
+					'docs/paas/user-guide/reporting/notifications',
+					'docs/paas/user-guide/reporting/charts',
+					'docs/paas/user-guide/reporting/dashboards',
+				],
+			},
+			{
+				label: 'AI',
+				collapsed: true,
+				items: [
+					'docs/paas/user-guide/ai-models',
+					'docs/paas/user-guide/ai-predictive-maintenance',
+					'docs/paas/user-guide/local-ai-ollama',
+					'docs/paas/user-guide/mcp-server',
+					'docs/paas/user-guide/n8n-node',
+				],
+			},
+		],
+	},
+	{
+		label: 'Reference',
+		collapsed: true,
+		items: [
+			'docs/paas/reference/subscriptions',
 		],
 	},
 ];
@@ -853,6 +980,58 @@ export const paasEuSidebar: SidebarConfig = [
 		collapsed: true,
 		items: [
 			{
+				label: 'Digital Twins',
+				collapsed: true,
+				items: [
+					'docs/paas/eu/user-guide/digital-twins/entities',
+					'docs/paas/eu/user-guide/digital-twins/relations',
+					'docs/paas/eu/user-guide/digital-twins/attributes',
+					'docs/paas/eu/user-guide/digital-twins/time-series-data',
+				],
+			},
+			{
+				label: 'Devices & Assets',
+				collapsed: true,
+				items: [
+					'docs/paas/eu/user-guide/devices',
+					'docs/paas/eu/user-guide/device-profiles',
+					'docs/paas/eu/user-guide/connectivity-guide',
+					'docs/paas/eu/user-guide/assets',
+					'docs/paas/eu/user-guide/asset-profiles',
+					'docs/paas/eu/user-guide/connectivity-status',
+					'docs/paas/eu/user-guide/claiming',
+					'docs/paas/eu/user-guide/provisioning',
+					'docs/paas/eu/user-guide/ota-updates',
+					'docs/paas/eu/user-guide/command-and-control',
+				],
+			},
+			{
+				label: 'Data Visualization',
+				collapsed: true,
+				items: [
+					{ label: 'Key concepts', slug: 'docs/paas/eu/user-guide/data-visualization' },
+					'docs/paas/eu/user-guide/dashboards',
+					'docs/paas/eu/user-guide/widgets',
+					'docs/paas/eu/user-guide/time-window',
+					'docs/paas/eu/user-guide/aliases',
+					'docs/paas/eu/user-guide/layouts',
+					'docs/paas/eu/user-guide/actions',
+					'docs/paas/eu/user-guide/scada',
+					'docs/paas/eu/user-guide/units',
+				],
+			},
+			{
+				label: 'Customers & Users',
+				collapsed: true,
+				items: [
+					'docs/paas/eu/user-guide/multi-tenancy',
+					'docs/paas/eu/user-guide/customers',
+					'docs/paas/eu/user-guide/users',
+					'docs/paas/eu/user-guide/roles',
+					'docs/paas/eu/user-guide/groups',
+				],
+			},
+			{
 				label: 'Security',
 				collapsed: true,
 				items: [
@@ -878,6 +1057,81 @@ export const paasEuSidebar: SidebarConfig = [
 					},
 				],
 			},
+			{
+				label: 'Alarms & Notifications',
+				collapsed: true,
+				items: [
+					'docs/paas/eu/user-guide/alarms',
+					'docs/paas/eu/user-guide/alarm-rules',
+					'docs/paas/eu/user-guide/notifications',
+				],
+			},
+			{
+				label: 'Data Processing',
+				collapsed: true,
+				items: [
+					{
+						label: 'Calculated Fields',
+						collapsed: true,
+						items: [
+							{ label: 'Overview', slug: 'docs/paas/eu/user-guide/calculated-fields' },
+							{ label: 'Simple', slug: 'docs/paas/eu/user-guide/calculated-fields/simple' },
+							{ label: 'Script', slug: 'docs/paas/eu/user-guide/calculated-fields/script' },
+							{ label: 'Propagation', slug: 'docs/paas/eu/user-guide/calculated-fields/propagation' },
+							{ label: 'Geofencing', slug: 'docs/paas/eu/user-guide/calculated-fields/geofencing' },
+							{
+								label: 'Entities Aggregation',
+								slug: 'docs/paas/eu/user-guide/calculated-fields/related-entities-aggregation',
+							},
+							{
+								label: 'Time Series Aggregation',
+								slug: 'docs/paas/eu/user-guide/calculated-fields/time-series-data-aggregation',
+							},
+						],
+					},
+					{
+						label: 'Rule Engine',
+						collapsed: true,
+						items: [
+							{ label: 'Overview', slug: 'docs/paas/eu/user-guide/rule-engine' },
+							{ label: 'Queues', slug: 'docs/paas/eu/user-guide/rule-engine/queues' },
+							{ label: 'Monitoring', slug: 'docs/paas/eu/user-guide/rule-engine/monitoring' },
+						],
+					},
+					'docs/paas/eu/user-guide/rule-nodes',
+				],
+			},
+			{
+				label: 'Reporting',
+				collapsed: true,
+				items: [
+					'docs/paas/eu/user-guide/reporting/getting-started',
+					'docs/paas/eu/user-guide/reporting/report-templates',
+					'docs/paas/eu/user-guide/reporting/subreports',
+					'docs/paas/eu/user-guide/reporting/scheduling',
+					'docs/paas/eu/user-guide/reporting/notifications',
+					'docs/paas/eu/user-guide/reporting/charts',
+					'docs/paas/eu/user-guide/reporting/dashboards',
+				],
+			},
+			{
+				label: 'AI',
+				collapsed: true,
+				items: [
+					'docs/paas/eu/user-guide/ai-models',
+					'docs/paas/eu/user-guide/ai-predictive-maintenance',
+					'docs/paas/eu/user-guide/local-ai-ollama',
+					'docs/paas/eu/user-guide/mcp-server',
+					'docs/paas/eu/user-guide/n8n-node',
+				],
+			},
+		],
+	},
+	{
+		label: 'Reference',
+		collapsed: true,
+		items: [
+			'docs/paas/eu/reference/subscriptions',
 		],
 	},
 ];
