@@ -1621,7 +1621,45 @@ export const mobileSidebar: SidebarConfig = [
 	{
 		label: 'Getting Started',
 		translations: { uk: 'Початок роботи' },
-		items: ['docs/mobile'],
+		items: ['docs/mobile', 'docs/mobile/getting-started'],
+	},
+	{
+		label: 'Guides',
+		translations: { uk: 'Інструкції' },
+		collapsed: true,
+		items: [
+			{
+				label: 'Appearance',
+				collapsed: true,
+				items: [
+					'docs/mobile/customize-dashboards',
+					'docs/mobile/customize-devices',
+					'docs/mobile/device-dashboard',
+					'docs/mobile/alarm-dashboard',
+					'docs/mobile/app-icon-splash-screen',
+					'docs/mobile/mobile-actions',
+				],
+			},
+			{
+				label: 'Settings',
+				collapsed: true,
+				items: [
+					'docs/mobile/oauth2',
+					'docs/mobile/qr-code-settings',
+					'docs/mobile/localization',
+				],
+			},
+			'docs/mobile/release',
+		],
+	},
+	{
+		label: 'Releases',
+		translations: { uk: 'Релізи' },
+		collapsed: true,
+		items: [
+			'docs/mobile/releases',
+			'docs/mobile/compatibility',
+		],
 	},
 ];
 
@@ -1630,7 +1668,47 @@ export const mobilePeSidebar: SidebarConfig = [
 	{
 		label: 'Getting Started',
 		translations: { uk: 'Початок роботи' },
-		items: ['docs/mobile/pe'],
+		items: ['docs/mobile/pe', 'docs/mobile/pe/getting-started'],
+	},
+	{
+		label: 'Guides',
+		translations: { uk: 'Інструкції' },
+		collapsed: true,
+		items: [
+			{
+				label: 'Appearance',
+				collapsed: true,
+				items: [
+					'docs/mobile/pe/customize-dashboards',
+					'docs/mobile/pe/customize-devices',
+					'docs/mobile/pe/device-dashboard',
+					'docs/mobile/pe/alarm-dashboard',
+					'docs/mobile/pe/app-icon-splash-screen',
+					'docs/mobile/pe/mobile-actions',
+					'docs/mobile/pe/white-labeling',
+				],
+			},
+			{
+				label: 'Settings',
+				collapsed: true,
+				items: [
+					'docs/mobile/pe/oauth2',
+					'docs/mobile/pe/self-registration',
+					'docs/mobile/pe/qr-code-settings',
+					'docs/mobile/pe/localization',
+				],
+			},
+			'docs/mobile/pe/release',
+		],
+	},
+	{
+		label: 'Releases',
+		translations: { uk: 'Релізи' },
+		collapsed: true,
+		items: [
+			'docs/mobile/pe/releases',
+			'docs/mobile/pe/compatibility',
+		],
 	},
 ];
 
