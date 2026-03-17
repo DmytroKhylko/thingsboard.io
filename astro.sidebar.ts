@@ -203,6 +203,20 @@ const guideItems = (prefix: string, { isPE = false } = {}) => [
 		items: [
 			`${prefix}/contribution/rule-node-development`,
 			`${prefix}/scada-symbol-dev`,
+			{
+				label: 'Widget Development',
+				collapsed: true,
+				items: [
+					{ label: 'Overview', slug: `${prefix}/contribution/widgets-development` },
+					`${prefix}/contribution/widgets-development/latest-values`,
+					`${prefix}/contribution/widgets-development/embedded-chart`,
+					`${prefix}/contribution/widgets-development/rpc-control`,
+					`${prefix}/contribution/widgets-development/alarm-widget`,
+					`${prefix}/contribution/widgets-development/widget-api`,
+					`${prefix}/contribution/widgets-development/widget-patterns`,
+					`${prefix}/contribution/widgets-development/advanced`,
+				],
+			},
 		],
 	},
 	{
