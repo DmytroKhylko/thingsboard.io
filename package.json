@@ -16,6 +16,7 @@
     "format:imports": "echo 'Skipped formatting imports'",
     "lint:linkcheck": "SKIP_OG=true pnpm build && node --experimental-transform-types ./scripts/lint-linkcheck.ts",
     "lint:linkcheck:nobuild": "node --experimental-transform-types ./scripts/lint-linkcheck.ts",
+    "lint:linkcheck:nobuild:nocanonical": "node --experimental-transform-types ./scripts/lint-linkcheck.ts --no-canonical",
     "lint:slugcheck": "node ./scripts/lint-slugcheck.mjs",
     "lint:eslint": "eslint .",
     "lint:steps": "node --experimental-transform-types ./scripts/lint-steps.ts",

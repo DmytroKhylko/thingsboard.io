@@ -12,6 +12,10 @@ export interface CanonicalUrlOptions {
 	 * so adding `/example/` will also ignore `/example/some-subpath/`.
 	 * */
 	ignoreMissingCanonicalUrl?: string[];
+	/**
+	 * If true, skips the `can` check (links not using the canonical URL of the target page).
+	 */
+	ignoreNonCanonicalUrl?: boolean;
 }
 
 export class CanonicalUrl extends CheckBase {
@@ -32,11 +36,13 @@ export class CanonicalUrl extends CheckBase {
 	});
 
 	readonly ignoreMissingCanonicalUrl: string[];
+	readonly ignoreNonCanonicalUrl: boolean;
 
-	constructor({ ignoreMissingCanonicalUrl }: CanonicalUrlOptions = {}) {
+	constructor({ ignoreMissingCanonicalUrl, ignoreNonCanonicalUrl }: CanonicalUrlOptions = {}) {
 		super();
 
 		this.ignoreMissingCanonicalUrl = ignoreMissingCanonicalUrl || [];
+		this.ignoreNonCanonicalUrl = ignoreNonCanonicalUrl || false;
 	}
 
 	checkHtmlPage(context: CheckHtmlPageContext) {
@@ -101,16 +107,18 @@ export class CanonicalUrl extends CheckBase {
 
 			// It's an error if the link URL pathname does not match the
 			// canonical URL pathname of the linked page
-			const expectedPathname = linkedPage.getExpectedLinkPathname(context.page.pathnameLang);
-			if (url.pathname !== expectedPathname) {
-				const autofixHref = expectedPathname + decodeURIComponent(url.hash);
-				context.report({
-					type: CanonicalUrl.LinkToNonCanonicalUrl,
-					linkHref,
-					autofixHref,
-					annotationText: dedentMd`Please use the proper canonical URL of the target page.
-						This improves ranking in search engines and avoids unnecessary redirects.`,
-				});
+			if (!this.ignoreNonCanonicalUrl) {
+				const expectedPathname = linkedPage.getExpectedLinkPathname(context.page.pathnameLang);
+				if (url.pathname !== expectedPathname) {
+					const autofixHref = expectedPathname + decodeURIComponent(url.hash);
+					context.report({
+						type: CanonicalUrl.LinkToNonCanonicalUrl,
+						linkHref,
+						autofixHref,
+						annotationText: dedentMd`Please use the proper canonical URL of the target page.
+							This improves ranking in search engines and avoids unnecessary redirects.`,
+					});
+				}
 			}
 		});
 	}
