@@ -91,7 +91,6 @@ const linkChecker = new LinkChecker({
 		}),
 		new CanonicalUrl({
 			ignoreMissingCanonicalUrl: ['/lighthouse/'],
-			ignoreNonCanonicalUrl: process.argv.includes('--no-canonical'),
 		}),
 		new RelativeUrl(),
 		new GoodLabels(),
