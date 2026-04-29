@@ -19,6 +19,19 @@ import { getOgImageUrl } from '~/util/getOgImageUrl';
 import { getTutorialPages } from '~/util/getTutorialPages';
 
 /**
+ * Display names for `/reference/<api>-api/` sub-sections, used to build unique
+ * SEO titles for sibling pages that share short H1s like "Attributes" or "RPC".
+ */
+const API_SECTION_NAMES: Record<string, string> = {
+	'coap-api': 'CoAP API',
+	'gateway-api': 'Gateway API',
+	'http-api': 'HTTP API',
+	'lwm2m-api': 'LwM2M API',
+	'mqtt-api': 'MQTT API',
+	'snmp-api': 'SNMP API',
+};
+
+/**
  * Maps "free" product versions to their "professional" canonical equivalents.
  * Pages in free versions have their <link rel="canonical"> rewritten to the
  * corresponding professional URL for SEO consolidation, IF the professional
@@ -194,9 +207,20 @@ function updateHead(context: APIContext) {
 		const lang = getLanguageFromURL(pathname);
 		const versionBase = `/${getLanguagePrefix(lang)}docs/${getVersionPrefix(product)}`;
 		const isIndex = pathname === versionBase;
-		const escapedSep = TITLE_SEPARATOR.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+		const escapedSep = TITLE_SEPARATOR.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 		const docsSuffixMatcher = new RegExp(` ${escapedSep} ${DOCS_SUFFIX}$`);
-		const pageTitle = title.content.replace(docsSuffixMatcher, '');
+		let pageTitle = title.content.replace(docsSuffixMatcher, '');
+
+		// Auto-append API section name to disambiguate sibling reference pages
+		// (e.g. several `/reference/<x>-api/attributes/` pages all share H1 "Attributes").
+		// Skipped when the page sets its own <title> via frontmatter `head`.
+		if (!frontmatterTitle) {
+			const pageSlug = getPageSlugFromURL(pathname);
+			const apiMatch = pageSlug.match(/^reference\/([^/]+)\//);
+			const apiName = apiMatch ? API_SECTION_NAMES[apiMatch[1]!] : undefined;
+			if (apiName) pageTitle = `${pageTitle} - ${apiName}`;
+		}
+
 		title.content = formatDocsTitle(pageTitle, productTitleName, isIndex);
 
 		for (const item of head) {
@@ -213,21 +237,17 @@ function updateHead(context: APIContext) {
 	const ogImageUrl = getOgImageUrl(context.url.pathname, false);
 	const imageSrc = ogImageUrl ?? '/thingsboard-og.png';
 	const canonicalImageSrc = new URL(imageSrc, context.site);
-	const is404 = context.url.pathname.endsWith('/404/');
+	const isSearch = context.url.pathname.endsWith('/search/');
 
 	head.push({ tag: 'meta', attrs: { property: 'og:image', content: canonicalImageSrc.href } });
 	head.push({ tag: 'meta', attrs: { name: 'twitter:image', content: canonicalImageSrc.href } });
 	head.push({ tag: 'meta', attrs: { name: 'twitter:site', content: '@thingsboard' } });
 
-	head.push({
-		tag: 'script',
-		attrs: {
-			src: 'https://cdn.usefathom.com/script.js',
-			'data-site': 'EZBHTSIG',
-			'data-canonical': is404 ? 'false' : 'true',
-			defer: true,
-		},
-	});
+	// Search pages render a search widget with no indexable content. Keep them
+	// out of search results (consistent with the sitemap exclusion).
+	if (isSearch) {
+		head.push({ tag: 'meta', attrs: { name: 'robots', content: 'noindex, follow' } });
+	}
 
 	// Canonical consolidation: free product versions → professional equivalents.
 	// Only rewrite if the equivalent professional page actually exists, and the
@@ -267,6 +287,22 @@ function updateHead(context: APIContext) {
 				if (ogUrl) ogUrl.attrs!['content'] = targetCanonical;
 			}
 		}
+	}
+
+	// Per-page explicit canonical override (highest priority — wins over consolidation).
+	const explicitCanonical = (entry.data as { canonicalUrl?: string }).canonicalUrl;
+	if (explicitCanonical) {
+		const targetCanonical = new URL(explicitCanonical, context.site).href;
+
+		const canonical = head.find(
+			(item) => item.tag === 'link' && item.attrs?.['rel'] === 'canonical'
+		);
+		if (canonical) canonical.attrs!['href'] = targetCanonical;
+
+		const ogUrl = head.find(
+			(item) => item.tag === 'meta' && item.attrs?.['property'] === 'og:url'
+		);
+		if (ogUrl) ogUrl.attrs!['content'] = targetCanonical;
 	}
 }
 
