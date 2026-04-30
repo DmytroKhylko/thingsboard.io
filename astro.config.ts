@@ -105,7 +105,17 @@ export default defineConfig({
             }),
         ],
     },
-    integrations: [partytown({ config: { forward: ['dataLayer.push'] } }), icon(), devServerFileWatcher([
+    integrations: [partytown({
+			config: {
+				forward: ['dataLayer.push'],
+				resolveSendBeaconRequestParameters(url) {
+					if (/google-analytics\.com|analytics\.google\.com/.test(url.hostname)) {
+						return { keepalive: false };
+					}
+					return {};
+				},
+			},
+		}), icon(), devServerFileWatcher([
         './config/**', // Custom plugins and integrations
         './astro.sidebar.ts', // Sidebar configuration file
 		]), starlight({
