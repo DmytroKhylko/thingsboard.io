@@ -234,9 +234,16 @@ function updateHead(context: APIContext) {
 		}
 	}
 
-	const ogImageUrl = getOgImageUrl(context.url.pathname, false);
-	const imageSrc = ogImageUrl ?? '/thingsboard-og.png';
-	const canonicalImageSrc = new URL(imageSrc, context.site);
+	const ogImageUrl = getOgImageUrl(context.url.pathname);
+	let imageSrc = ogImageUrl ?? '/thingsboard-og.png';
+	// Astro dev with `trailingSlash: 'always'` requires dynamic-route URLs to end with '/'
+	// even when they have a file extension. Production (Cloudflare Pages serving static files)
+	// needs the clean .png URL with no trailing slash.
+	if (import.meta.env.DEV && /\.png$/.test(imageSrc) && imageSrc !== '/thingsboard-og.png') {
+		imageSrc = imageSrc + '/';
+	}
+	// Use request origin so dev shows localhost; in static build it equals context.site origin.
+	const canonicalImageSrc = new URL(imageSrc, context.url.origin);
 	const isSearch = context.url.pathname.endsWith('/search/');
 
 	head.push({ tag: 'meta', attrs: { property: 'og:image', content: canonicalImageSrc.href } });
