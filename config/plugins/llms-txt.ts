@@ -38,6 +38,14 @@ export const starlightPluginLlmsTxt = () =>
 			},
 		],
 
+		minify: {
+			customSelectors: [
+				'a.sl-anchor-link',
+				'img',
+				'astro-image',
+			],
+		},
+
 		promote: [
 			'docs/pe/index',
 			'docs/pe/getting-started/index',
@@ -131,8 +139,9 @@ export const starlightPluginLlmsTxt = () =>
 			'docs/mobile/self-registration',
 			'docs/mobile/white-labeling',
 
-			// PaaS EU — PaaS is canonical for cloud
-			'docs/paas/eu/**',
+			// PaaS — PE is canonical; PaaS wrappers import the same _includes with product={PAAS},
+			// so the rendered content is identical to PE and only inflates the file.
+			'docs/paas/**',
 
 			// Release notes, changelogs, roadmaps across all products
 			'docs/pe/releases/**',
@@ -146,5 +155,10 @@ export const starlightPluginLlmsTxt = () =>
 
 			// Rule engine nodes — very large, detailed reference
 			'docs/pe/reference/rule-engine/nodes/**',
+
+			// Per-version upgrade-instructions pages (vX-Y-x.mdx) across all products.
+			// Platform-level summary pages (centos.mdx, docker.mdx, ubuntu.mdx, windows.mdx)
+			// stay in — they already cover the latest upgrade steps via shared _includes.
+			'docs/**/upgrade-instructions/*/v*-*-x',
 		],
 	});
