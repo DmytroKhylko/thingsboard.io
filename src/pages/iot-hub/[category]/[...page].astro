@@ -12,7 +12,11 @@ export const getStaticPaths = (async ({ paginate }) => {
 	const all = await getCollection('iotHubListings');
 	return IOT_HUB_CATEGORIES.flatMap((cat) =>
 		paginate(
-			all.filter((e) => e.data.itemType === cat.itemType),
+			// Exclude pure-numeric slugs — the detail route filters them out, so listing them
+			// here would produce cards with hrefs that resolve to pagination pages instead.
+			all.filter(
+				(e) => e.data.itemType === cat.itemType && !/^\d+$/.test(e.data.slug)
+			),
 			{
 				params: { category: cat.slug },
 				props: { categoryLabel: cat.label },

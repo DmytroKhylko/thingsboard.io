@@ -333,29 +333,32 @@ export const collections = {
 	}),
 	iotHubListings: defineCollection({
 		loader: async () => {
-			try {
-				const all: Array<Record<string, unknown> & { id: string }> = [];
-				for (const { itemType } of IOT_HUB_CATEGORIES) {
-					let page = 0;
-					while (true) {
-						const url =
-							`${IOT_HUB_API_URL}/api/listings/published` +
-							`?pageSize=${API_FETCH_PAGE_SIZE}&page=${page}` +
-							`&type=${itemType}` +
-							`&sortProperty=installCount&sortOrder=DESC`;
-						const res = await fetchWithRetry(url);
-						const body = (await res.json()) as {
-							data: Array<Record<string, unknown> & { id: string }>;
-							hasNext: boolean;
-						};
-						for (const item of body.data) {
-							all.push({ ...item, id: item.slug as string });
-						}
-						if (!body.hasNext) break;
-						page++;
-					}
+			type RawItem = Record<string, unknown> & { slug: string };
+			const fetchCategory = async (itemType: string): Promise<RawItem[]> => {
+				const items: RawItem[] = [];
+				let page = 0;
+				while (true) {
+					const url =
+						`${IOT_HUB_API_URL}/api/listings/published` +
+						`?pageSize=${API_FETCH_PAGE_SIZE}&page=${page}` +
+						`&type=${itemType}` +
+						`&sortProperty=installCount&sortOrder=DESC`;
+					const res = await fetchWithRetry(url);
+					const body = (await res.json()) as { data: RawItem[]; hasNext: boolean };
+					items.push(...body.data);
+					if (!body.hasNext) break;
+					page++;
 				}
-				return all;
+				return items;
+			};
+			try {
+				// Fetch all categories in parallel; each category still paginates serially
+				// because `hasNext` is only known after the prior page lands.
+				const perCategory = await Promise.all(
+					IOT_HUB_CATEGORIES.map((cat) => fetchCategory(cat.itemType))
+				);
+				// Astro keys entries by the outer `id`; we want collection lookups by slug.
+				return perCategory.flat().map((item) => ({ ...item, id: item.slug }));
 			} catch (e) {
 				if (import.meta.env.DEV) {
 					const msg = e instanceof Error ? e.message : String(e);

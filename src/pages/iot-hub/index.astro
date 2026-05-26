@@ -7,14 +7,11 @@ import { IOT_HUB_CATEGORIES, HOME_PER_CATEGORY } from '~/config/iot-hub';
 
 const all = await getCollection('iotHubListings');
 
-// Collection already sorted by installCount DESC inside the loader, per category in API order.
-// Re-group by itemType to be defensive about any future loader changes.
+// The loader fetches each category from the API already sorted by `installCount`
+// (DESC) so we just slice the first N per category.
 const grouped = IOT_HUB_CATEGORIES.map((cat) => ({
 	cat,
-	entries: all
-		.filter((e) => e.data.itemType === cat.itemType)
-		.sort((a, b) => b.data.installCount - a.data.installCount)
-		.slice(0, HOME_PER_CATEGORY),
+	entries: all.filter((e) => e.data.itemType === cat.itemType).slice(0, HOME_PER_CATEGORY),
 }));
 
 const title = 'IoT Hub | ThingsBoard';

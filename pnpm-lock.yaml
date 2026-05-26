@@ -11,6 +11,9 @@ importers:
       '@astrojs/check':
         specifier: ^0.9.8
         version: 0.9.8(prettier-plugin-astro@0.14.1)(prettier@3.8.3)(typescript@5.6.2)
+      '@astrojs/markdown-remark':
+        specifier: ^7.1.2
+        version: 7.1.2
       '@astrojs/rss':
         specifier: 4.0.18
         version: 4.0.18
@@ -48,9 +51,6 @@ importers:
       '@actions/core':
         specifier: ^1.11.1
         version: 1.11.1
-      '@astrojs/markdown-remark':
-        specifier: ^7.1.2
-        version: 7.1.2
       '@eslint/js':
         specifier: ^9.39.4
         version: 9.39.4

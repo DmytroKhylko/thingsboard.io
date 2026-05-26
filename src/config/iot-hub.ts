@@ -37,15 +37,25 @@ export const screenshotResourceSchema = z.object({
 	type: z.string().nullable().optional(),
 });
 
+// Conservative CSS-color allowlist: `#hex` (3/4/6/8 chars) or bare named color
+// (letters only). API values that don't match are coerced to null so we never
+// interpolate untrusted strings into inline `style` attributes.
+const cssColorSchema = z
+	.string()
+	.regex(/^(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)$/)
+	.nullable()
+	.catch(null);
+
 export const listingViewSchema = z.object({
-	id: z.string(),
+	// Astro keys entries by the outer `id` (set to slug by the loader).
+	// We don't model the API's UUID here — use `slug` everywhere instead.
 	slug: z.string(),
 	itemType: itemTypeEnum,
 	name: z.string(),
 	description: z.string().nullable(),
 	image: z.string().nullable(),
 	icon: z.string().nullable(),
-	color: z.string().nullable(),
+	color: cssColorSchema,
 	seoTitle: z.string().nullable(),
 	seoMetaDescription: z.string().nullable(),
 	ogImage: z.string().nullable(),
@@ -90,7 +100,9 @@ export async function fetchWithRetry(url: string): Promise<Response> {
 				const body = await res.text();
 				throw new NonRetryableError(`${url} → ${res.status} ${body}`);
 			}
-			// 5xx — fall through to next iteration
+			// 5xx — drain the body so the connection can be reused and fall
+			// through to the next iteration.
+			await res.text().catch(() => undefined);
 			lastError = new Error(`${url} → ${res.status}`);
 		} catch (e) {
 			clearTimeout(timer);

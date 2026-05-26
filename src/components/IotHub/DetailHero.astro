@@ -16,7 +16,7 @@ const placeholderBg = detail.color ?? '#e5e7eb';
 		{heroImg ? <img src={heroImg} alt={detail.name} decoding="async" /> : null}
 	</div>
 	<div class="iot-hub-detail-hero__meta">
-		<h1 class="iot-hub-detail-hero__title">{detail.name}</h1>
+		<p class="iot-hub-detail-hero__title">{detail.name}</p>
 		{detail.description ? <p class="iot-hub-detail-hero__desc">{detail.description}</p> : null}
 		<dl class="iot-hub-detail-hero__stats">
 			{
@@ -73,7 +73,7 @@ const placeholderBg = detail.color ?? '#e5e7eb';
 
 	.iot-hub-detail-hero__title {
 		font-size: 2rem;
-		font-weight: 700;
+		font-weight: $font-weight-bold;
 		margin: 0;
 	}
 

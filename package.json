@@ -27,7 +27,6 @@
   },
   "devDependencies": {
     "@actions/core": "^1.11.1",
-    "@astrojs/markdown-remark": "^7.1.2",
     "@eslint/js": "^9.39.4",
     "@iconify-json/simple-icons": "^1.2.80",
     "@iconify-json/tabler": "^1.2.33",
@@ -63,6 +62,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
+    "@astrojs/markdown-remark": "^7.1.2",
     "@astrojs/rss": "4.0.18",
     "@astrojs/sitemap": "^3.7.2",
     "@astrojs/starlight": "^0.38.4",
