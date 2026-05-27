@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { resolveImage } from '~/config/iot-hub';
 
 interface Props {
 	entry: CollectionEntry<'iotHubListings'>;
@@ -8,31 +7,39 @@ interface Props {
 }
 
 const { entry, categorySlug } = Astro.props;
-const { name, image, creatorDisplayName, creatorVerified, installCount, itemType } = entry.data;
-const imageUrl = resolveImage(image);
+const { name, color, creatorDisplayName, creatorVerified, installCount, itemType } = entry.data;
 const href = `/iot-hub/${categorySlug}/${entry.data.slug}/`;
-const cta = itemType === 'DEVICE' ? 'Connect' : 'Install';
 const author = creatorDisplayName ?? 'ThingsBoard';
+
+// Per-category fallback color when listing color is null.
+const fallbackByType: Record<string, string> = {
+	CALCULATED_FIELD: '#21b91b',
+	ALARM_RULE: '#f59e0b',
+	RULE_CHAIN: '#7a4dc3',
+};
+const tile = color ?? fallbackByType[itemType] ?? '#4c63cc';
+
+// Per-category icon glyph (rendered on the colored tile).
+const glyphByType: Record<string, string> = {
+	CALCULATED_FIELD: 'fx',
+	ALARM_RULE: '!',
+	RULE_CHAIN: '↳',
+};
+const glyph = glyphByType[itemType] ?? '·';
 ---
 
-<a class="iot-hub-card" href={href}>
-	<div class="iot-hub-card__image">
-		{
-			imageUrl ? (
-				<img src={imageUrl} alt={name} loading="lazy" decoding="async" />
-			) : (
-				<div class="iot-hub-card__image-fallback" aria-hidden="true" />
-			)
-		}
+<a class="iot-hub-card-sm" href={href}>
+	<div class="iot-hub-card-sm__icon" style={`background-color:${tile};`} aria-hidden="true">
+		<span class="iot-hub-card-sm__glyph">{glyph}</span>
 	</div>
-	<div class="iot-hub-card__body">
-		<h3 class="iot-hub-card__title">{name}</h3>
-		<div class="iot-hub-card__meta">
-			<div class="iot-hub-card__author">
+	<div class="iot-hub-card-sm__body">
+		<h3 class="iot-hub-card-sm__title">{name}</h3>
+		<div class="iot-hub-card-sm__meta">
+			<div class="iot-hub-card-sm__author">
 				{
 					creatorVerified ? (
 						<svg
-							class="iot-hub-card__author-icon iot-hub-card__author-icon--verified"
+							class="iot-hub-card-sm__author-icon"
 							width="16"
 							height="16"
 							viewBox="0 0 16 16"
@@ -53,7 +60,7 @@ const author = creatorDisplayName ?? 'ThingsBoard';
 						</svg>
 					) : (
 						<svg
-							class="iot-hub-card__author-icon"
+							class="iot-hub-card-sm__author-icon"
 							width="16"
 							height="16"
 							viewBox="0 0 16 16"
@@ -70,10 +77,10 @@ const author = creatorDisplayName ?? 'ThingsBoard';
 						</svg>
 					)
 				}
-				<span class="iot-hub-card__author-name">{author}</span>
+				<span>{author}</span>
 			</div>
-			<span class="iot-hub-card__dot" aria-hidden="true"></span>
-			<div class="iot-hub-card__installs" title={`${installCount} installs`}>
+			<span class="iot-hub-card-sm__dot" aria-hidden="true"></span>
+			<div class="iot-hub-card-sm__installs" title={`${installCount} installs`}>
 				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
 					<path
 						d="M8 2v8.667M4.667 7.333 8 10.667l3.333-3.334M2.667 13.333h10.666"
@@ -85,90 +92,78 @@ const author = creatorDisplayName ?? 'ThingsBoard';
 				<span>{installCount}</span>
 			</div>
 		</div>
-		<span class="iot-hub-card__cta">{cta}</span>
 	</div>
+	<span class="iot-hub-card-sm__cta">Install</span>
 </a>
 
 <style lang="scss">
 	@use '~/styles/_variables.scss' as *;
 
-	.iot-hub-card {
+	.iot-hub-card-sm {
 		display: flex;
-		flex-direction: column;
+		align-items: stretch;
 		gap: 1rem;
-		padding-bottom: 1rem;
+		padding: 1rem;
 		background: var(--color-bg-surface);
 		border: 1px solid var(--color-border);
 		border-radius: 8px;
-		overflow: hidden;
 		text-decoration: none;
 		color: inherit;
+		min-height: 104px;
 		transition: transform $transition-fast, box-shadow $transition-fast, border-color $transition-fast;
 
 		&:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+			transform: translateY(-1px);
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 			border-color: var(--color-border-light);
 			text-decoration: none;
 		}
 
 		[data-theme='dark'] &:hover {
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 		}
 	}
 
-	.iot-hub-card__image {
-		position: relative;
-		aspect-ratio: 305 / 172;
-		width: 100%;
+	.iot-hub-card-sm__icon {
+		flex-shrink: 0;
+		width: 72px;
+		height: 72px;
+		border-radius: 8px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 10px;
-		background: var(--color-bg-light);
-		border-bottom: 1px solid var(--color-border);
-		overflow: hidden;
-
-		img {
-			max-width: 100%;
-			max-height: 100%;
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-			display: block;
-		}
+		color: #fff;
 	}
 
-	.iot-hub-card__image-fallback {
-		width: 100%;
-		height: 100%;
-		background: linear-gradient(
-			135deg,
-			var(--color-bg-light) 0%,
-			var(--color-bg-muted) 100%
-		);
+	.iot-hub-card-sm__glyph {
+		font-size: 28px;
+		font-weight: $font-weight-bold;
+		line-height: 1;
 	}
 
-	.iot-hub-card__body {
+	.iot-hub-card-sm__body {
+		flex: 1;
+		min-width: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
-		padding: 0 1rem;
-		position: relative;
+		justify-content: center;
+		gap: 0.25rem;
 	}
 
-	.iot-hub-card__title {
+	.iot-hub-card-sm__title {
 		font-size: 16px;
 		font-weight: $font-weight-semibold;
-		line-height: 28px;
+		line-height: 24px;
 		margin: 0;
+		color: var(--color-text);
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
-		color: var(--color-text);
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
 	}
 
-	.iot-hub-card__meta {
+	.iot-hub-card-sm__meta {
 		display: flex;
 		align-items: center;
 		gap: 6px;
@@ -177,25 +172,22 @@ const author = creatorDisplayName ?? 'ThingsBoard';
 		color: var(--color-text-muted);
 	}
 
-	.iot-hub-card__author {
+	.iot-hub-card-sm__author {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
 		min-width: 0;
-	}
-
-	.iot-hub-card__author-icon {
-		flex-shrink: 0;
-		color: var(--color-text-muted);
-	}
-
-	.iot-hub-card__author-name {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
-	.iot-hub-card__dot {
+	.iot-hub-card-sm__author-icon {
+		flex-shrink: 0;
+		color: var(--color-text-muted);
+	}
+
+	.iot-hub-card-sm__dot {
 		flex-shrink: 0;
 		width: 3px;
 		height: 3px;
@@ -203,30 +195,27 @@ const author = creatorDisplayName ?? 'ThingsBoard';
 		background: var(--color-border);
 	}
 
-	.iot-hub-card__installs {
+	.iot-hub-card-sm__installs {
 		display: inline-flex;
 		align-items: center;
 		gap: 2px;
 		flex-shrink: 0;
 	}
 
-	.iot-hub-card__cta {
-		position: absolute;
-		right: 1rem;
-		bottom: 0;
+	.iot-hub-card-sm__cta {
+		align-self: center;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		padding: 4px 8px;
+		padding: 6px 14px;
 		font-size: 14px;
 		font-weight: $font-weight-semibold;
 		line-height: 24px;
 		border: 1px solid var(--color-border);
 		border-radius: 4px;
 		color: var(--color-primary);
-		background: transparent;
 
-		.iot-hub-card:hover & {
+		.iot-hub-card-sm:hover & {
 			border-color: var(--color-primary);
 		}
 	}

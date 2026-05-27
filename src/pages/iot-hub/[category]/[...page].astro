@@ -3,10 +3,11 @@ import type { GetStaticPaths } from 'astro';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import CategoryHeader from '~/components/IotHub/CategoryHeader.astro';
 import ListingCard from '~/components/IotHub/ListingCard.astro';
+import ListingCardSmall from '~/components/IotHub/ListingCardSmall.astro';
 import ListingGrid from '~/components/IotHub/ListingGrid.astro';
 import PaginationLink from '~/components/IotHub/PaginationLink.astro';
 import { getCollection } from 'astro:content';
-import { IOT_HUB_CATEGORIES, PAGE_SIZE } from '~/config/iot-hub';
+import { IOT_HUB_CATEGORIES, PAGE_SIZE, getCardVariant } from '~/config/iot-hub';
 
 export const getStaticPaths = (async ({ paginate }) => {
 	const all = await getCollection('iotHubListings');
@@ -30,6 +31,7 @@ const { page } = Astro.props;
 const { categoryLabel } = Astro.props as { categoryLabel: string };
 const { category } = Astro.params;
 const basePath = `/iot-hub/${category}/`;
+const variant = getCardVariant(page.data[0]?.data.itemType ?? '');
 
 const title = `${categoryLabel} | IoT Hub | ThingsBoard`;
 const description = `Browse ${categoryLabel.toLowerCase()} published to the ThingsBoard IoT Hub.`;
@@ -41,10 +43,14 @@ const description = `Browse ${categoryLabel.toLowerCase()} published to the Thin
 		{
 			page.data.length > 0 ? (
 				<>
-					<ListingGrid>
-						{page.data.map((entry) => (
-							<ListingCard entry={entry} categorySlug={category!} />
-						))}
+					<ListingGrid variant={variant}>
+						{page.data.map((entry) =>
+							variant === 'small' ? (
+								<ListingCardSmall entry={entry} categorySlug={category!} />
+							) : (
+								<ListingCard entry={entry} categorySlug={category!} />
+							)
+						)}
 					</ListingGrid>
 					{page.lastPage > 1 ? (
 						<PaginationLink

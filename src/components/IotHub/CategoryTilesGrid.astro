@@ -1,0 +1,42 @@
+---
+import { IOT_HUB_CATEGORIES } from '~/config/iot-hub';
+import CategoryTile from './CategoryTile.astro';
+---
+
+<section class="iot-hub-tiles" aria-label="IoT Hub categories">
+	<div class="iot-hub-tiles__grid">
+		{
+			IOT_HUB_CATEGORIES.map((cat) => (
+				<CategoryTile
+					slug={cat.slug}
+					label={cat.tileLabel}
+					color={cat.tileColor}
+					itemType={cat.itemType}
+				/>
+			))
+		}
+	</div>
+</section>
+
+<style lang="scss">
+	@use '~/styles/_variables.scss' as *;
+
+	.iot-hub-tiles {
+		margin: 0 auto;
+		padding: 0 1rem;
+	}
+
+	.iot-hub-tiles__grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+
+		@include media-down(lg) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		@include media-down(sm) {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

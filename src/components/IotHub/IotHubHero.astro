@@ -1,34 +1,201 @@
 ---
-// Simple hero for /iot-hub/ home page. No props for v1.
+const highlights = [
+	'Devices,',
+	'Solution Templates,',
+	'Widgets,',
+	'Calculated Fields,',
+	'Alarm Rules',
+	'& Rule Chains',
+];
+const total = highlights.length;
 ---
 
-<header class="iot-hub-hero">
-	<h1 class="iot-hub-hero__title">IoT Hub</h1>
-	<p class="iot-hub-hero__intro">
-		Discover devices, solution templates, widgets, and more — published by the ThingsBoard
-		community and partners.
-	</p>
-</header>
+<section class="iot-hub-hero">
+	<div class="iot-hub-hero__inner">
+		<h1 class="iot-hub-hero__title">ThingsBoard IoT Hub</h1>
+		<p class="iot-hub-hero__subtitle">
+			<span class="iot-hub-hero__subtitle-lead">Discover ready-to-use</span>
+			{
+				highlights.map((label, i) => (
+					<span
+						class="iot-hub-hero__hl"
+						style={`--i:${i};--total:${total};`}
+					>
+						{label}
+					</span>
+				))
+			}
+		</p>
+		<form
+			class="iot-hub-hero__search"
+			role="search"
+			action="/iot-hub/"
+			method="get"
+			onsubmit="event.preventDefault();"
+		>
+			<label class="iot-hub-hero__search-label" for="iot-hub-search">Search IoT Hub</label>
+			<input
+				id="iot-hub-search"
+				class="iot-hub-hero__search-input"
+				type="search"
+				name="q"
+				placeholder="Search in IoT Hub..."
+				autocomplete="off"
+			/>
+			<button class="iot-hub-hero__search-button" type="submit" aria-label="Search">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path
+						d="m21 21-4.3-4.3M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"></path>
+				</svg>
+			</button>
+		</form>
+	</div>
+</section>
 
 <style lang="scss">
 	@use '~/styles/_variables.scss' as *;
 
 	.iot-hub-hero {
-		padding: 3rem 0 2rem;
+		position: relative;
+		padding: 6rem 1rem 3rem;
 		text-align: center;
+
+		@include media-down(md) {
+			padding: 4rem 1rem 2rem;
+		}
+	}
+
+	.iot-hub-hero__inner {
+		max-width: 640px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2.5rem;
 	}
 
 	.iot-hub-hero__title {
-		font-size: 2.5rem;
-		font-weight: $font-weight-bold;
-		margin: 0 0 0.75rem;
+		@include page-title;
+		font-size: 60px;
+		line-height: 1.2;
+		margin: 0;
+		color: var(--color-text);
+
+		@include media-down(md) {
+			font-size: 40px;
+		}
 	}
 
-	.iot-hub-hero__intro {
-		font-size: 1.125rem;
-		line-height: 1.5;
-		max-width: 640px;
-		margin: 0 auto;
-		color: var(--color-text-muted, #6b7280);
+	.iot-hub-hero__subtitle {
+		font-size: 18px;
+		line-height: 32px;
+		margin: 0;
+		max-width: 520px;
+		color: var(--color-text-secondary);
+		text-align: center;
+		word-spacing: 0.1rem;
+	}
+
+	.iot-hub-hero__subtitle-lead {
+		color: var(--color-text-secondary);
+		margin-right: 0.2rem;
+	}
+
+	.iot-hub-hero__hl {
+		display: inline;
+		font-weight: $font-weight-semibold;
+		color: var(--color-text);
+		animation: iot-hub-highlight calc(var(--total) * 2s) infinite;
+		animation-delay: calc(var(--i) * 2s);
+		transition: color $transition-fast;
+	}
+
+	@keyframes iot-hub-highlight {
+		0%,
+		12% {
+			color: var(--color-primary);
+		}
+		18%,
+		100% {
+			color: var(--color-text);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.iot-hub-hero__hl {
+			animation: none;
+			color: var(--color-text);
+		}
+	}
+
+	.iot-hub-hero__search {
+		width: 100%;
+		max-width: 528px;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 0.5rem 0.5rem 1rem;
+		min-height: 56px;
+		background: var(--color-bg-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 8px;
+		box-shadow: 0 7px 8px rgba(0, 0, 0, 0.04), 0 29px 14.5px rgba(0, 0, 0, 0.03);
+		transition: border-color $transition-fast;
+
+		&:focus-within {
+			border-color: var(--color-primary);
+		}
+	}
+
+	.iot-hub-hero__search-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.iot-hub-hero__search-input {
+		flex: 1;
+		min-width: 0;
+		border: none;
+		outline: none;
+		background: transparent;
+		font-size: 16px;
+		line-height: 28px;
+		color: var(--color-text);
+		font-family: inherit;
+
+		&::placeholder {
+			color: var(--color-text-muted);
+		}
+	}
+
+	.iot-hub-hero__search-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border: none;
+		background: transparent;
+		border-radius: 8px;
+		color: var(--color-text-secondary);
+		cursor: pointer;
+		transition: background $transition-fast, color $transition-fast;
+
+		&:hover,
+		&:focus-visible {
+			background: var(--color-bg-light);
+			color: var(--color-text);
+		}
 	}
 </style>

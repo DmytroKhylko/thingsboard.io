@@ -4,16 +4,64 @@ export const IOT_HUB_API_URL =
 	import.meta.env.IOT_HUB_API_URL ?? 'https://iot-hub.tbqa.cloud';
 
 export const IOT_HUB_CATEGORIES = [
-	{ slug: 'devices', itemType: 'DEVICE', label: 'Devices' },
-	{ slug: 'solution-templates', itemType: 'SOLUTION_TEMPLATE', label: 'Solution Templates' },
-	{ slug: 'widgets', itemType: 'WIDGET', label: 'Widgets' },
-	{ slug: 'calculated-fields', itemType: 'CALCULATED_FIELD', label: 'Calculated Fields' },
-	{ slug: 'alarm-rules', itemType: 'ALARM_RULE', label: 'Alarm Rules' },
-	{ slug: 'rule-chains', itemType: 'RULE_CHAIN', label: 'Rule Chains' },
+	{
+		slug: 'devices',
+		itemType: 'DEVICE',
+		label: 'Devices',
+		tileLabel: 'Device Library',
+		card: 'big',
+		tileColor: '#ccd5ff',
+	},
+	{
+		slug: 'solution-templates',
+		itemType: 'SOLUTION_TEMPLATE',
+		label: 'Solution Templates',
+		tileLabel: 'Solution Templates',
+		card: 'big',
+		tileColor: '#b8d9ff',
+	},
+	{
+		slug: 'widgets',
+		itemType: 'WIDGET',
+		label: 'Widgets',
+		tileLabel: 'Widgets',
+		card: 'big',
+		tileColor: '#a3ffc3',
+	},
+	{
+		slug: 'calculated-fields',
+		itemType: 'CALCULATED_FIELD',
+		label: 'Calculated Fields',
+		tileLabel: 'Calculated Fields',
+		card: 'small',
+		tileColor: '#bdedff',
+	},
+	{
+		slug: 'alarm-rules',
+		itemType: 'ALARM_RULE',
+		label: 'Alarm Rules',
+		tileLabel: 'Alarm Rules',
+		card: 'small',
+		tileColor: '#ffe6cc',
+	},
+	{
+		slug: 'rule-chains',
+		itemType: 'RULE_CHAIN',
+		label: 'Rule Chains',
+		tileLabel: 'Rule Chains',
+		card: 'small',
+		tileColor: '#ecd1ff',
+	},
 ] as const;
 
 export type IotHubCategorySlug = (typeof IOT_HUB_CATEGORIES)[number]['slug'];
 export type IotHubItemType = (typeof IOT_HUB_CATEGORIES)[number]['itemType'];
+export type IotHubCardVariant = 'big' | 'small';
+
+export const getCardVariant = (itemType: string): IotHubCardVariant => {
+	const cat = IOT_HUB_CATEGORIES.find((c) => c.itemType === itemType);
+	return cat?.card ?? 'big';
+};
 
 export const PAGE_SIZE = 12;
 export const HOME_PER_CATEGORY = 4;

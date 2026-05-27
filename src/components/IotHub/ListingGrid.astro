@@ -1,8 +1,14 @@
 ---
-// Responsive CSS grid container for ListingCards. No interactivity.
+import type { IotHubCardVariant } from '~/config/iot-hub';
+
+interface Props {
+	variant?: IotHubCardVariant;
+}
+
+const { variant = 'big' } = Astro.props;
 ---
 
-<div class="iot-hub-grid">
+<div class:list={['iot-hub-grid', `iot-hub-grid--${variant}`]}>
 	<slot />
 </div>
 
@@ -11,7 +17,30 @@
 
 	.iot-hub-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-		gap: 1.5rem;
+		gap: 16px;
+	}
+
+	.iot-hub-grid--big {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+
+		@include media-down(lg) {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+
+		@include media-down(md) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		@include media-down(sm) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.iot-hub-grid--small {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+
+		@include media-down(md) {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

@@ -1,6 +1,8 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { getCardVariant } from '~/config/iot-hub';
 import ListingCard from './ListingCard.astro';
+import ListingCardSmall from './ListingCardSmall.astro';
 import ListingGrid from './ListingGrid.astro';
 
 interface Props {
@@ -11,19 +13,41 @@ interface Props {
 
 const { categorySlug, categoryLabel, entries } = Astro.props;
 const indexHref = `/iot-hub/${categorySlug}/`;
+const variant = getCardVariant(entries[0]?.data.itemType ?? '');
 ---
 
 <section class="iot-hub-section">
-	<header class="iot-hub-section__header">
-		<h2 class="iot-hub-section__title">{categoryLabel}</h2>
-		<a class="iot-hub-section__view-all" href={indexHref}>View all <span aria-hidden="true">→</span></a>
-	</header>
+	<a class="iot-hub-section__header" href={indexHref}>
+		<span class="iot-hub-section__indicator" aria-hidden="true"></span>
+		<h2 class="iot-hub-section__title">
+			<span class="iot-hub-section__label">{categoryLabel}</span>
+			<svg
+				class="iot-hub-section__chevron"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				aria-hidden="true"
+			>
+				<path
+					d="m9 6 6 6-6 6"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"></path>
+			</svg>
+		</h2>
+	</a>
 	{
 		entries.length > 0 ? (
-			<ListingGrid>
-				{entries.map((entry) => (
-					<ListingCard entry={entry} categorySlug={categorySlug} />
-				))}
+			<ListingGrid variant={variant}>
+				{entries.map((entry) =>
+					variant === 'small' ? (
+						<ListingCardSmall entry={entry} categorySlug={categorySlug} />
+					) : (
+						<ListingCard entry={entry} categorySlug={categorySlug} />
+					)
+				)}
 			</ListingGrid>
 		) : (
 			<p class="iot-hub-section__empty">No items available yet.</p>
@@ -35,35 +59,53 @@ const indexHref = `/iot-hub/${categorySlug}/`;
 	@use '~/styles/_variables.scss' as *;
 
 	.iot-hub-section {
-		margin: 3rem 0;
+		margin: 2.5rem 0;
+		padding: 0 1rem;
 	}
 
 	.iot-hub-section__header {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		margin-bottom: 1.25rem;
-		gap: 1rem;
-	}
-
-	.iot-hub-section__title {
-		font-size: 1.5rem;
-		font-weight: $font-weight-semibold;
-		margin: 0;
-	}
-
-	.iot-hub-section__view-all {
-		font-size: 0.875rem;
+		display: inline-flex;
+		align-items: center;
+		gap: 14px;
+		margin-bottom: 1rem;
 		text-decoration: none;
-		color: var(--color-accent, #305680);
+		color: inherit;
 
 		&:hover {
-			text-decoration: underline;
+			text-decoration: none;
+
+			.iot-hub-section__chevron {
+				transform: translateX(2px);
+			}
 		}
 	}
 
+	.iot-hub-section__indicator {
+		display: inline-block;
+		width: 2px;
+		height: 32px;
+		border-radius: 1px;
+		background: var(--color-border);
+	}
+
+	.iot-hub-section__title {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		margin: 0;
+		font-size: 20px;
+		font-weight: $font-weight-semibold;
+		line-height: 24px;
+		color: var(--color-text);
+	}
+
+	.iot-hub-section__chevron {
+		transition: transform $transition-fast;
+		color: var(--color-text);
+	}
+
 	.iot-hub-section__empty {
-		color: var(--color-text-muted, #6b7280);
+		color: var(--color-text-muted);
 		font-size: 0.95rem;
 	}
 </style>

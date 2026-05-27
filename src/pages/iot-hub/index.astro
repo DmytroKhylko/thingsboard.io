@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import IotHubHero from '~/components/IotHub/IotHubHero.astro';
+import CategoryTilesGrid from '~/components/IotHub/CategoryTilesGrid.astro';
 import CategorySection from '~/components/IotHub/CategorySection.astro';
+import CreatorCTA from '~/components/IotHub/CreatorCTA.astro';
 import { getCollection } from 'astro:content';
 import { IOT_HUB_CATEGORIES, HOME_PER_CATEGORY } from '~/config/iot-hub';
 
@@ -21,16 +23,34 @@ const description =
 
 <BaseLayout title={title} description={description}>
 	<main class="iot-hub-home">
-		<IotHubHero />
-		{
-			grouped.map(({ cat, entries }) => (
-				<CategorySection
-					categorySlug={cat.slug}
-					categoryLabel={cat.label}
-					entries={entries}
-				/>
-			))
-		}
+		<section class="iot-hub-home__top">
+			<div class="iot-hub-home__bg" aria-hidden="true">
+				<div class="iot-hub-home__pattern"></div>
+				<span class="iot-hub-home__blob iot-hub-home__blob--left"></span>
+				<span class="iot-hub-home__blob iot-hub-home__blob--right"></span>
+			</div>
+			<div class="iot-hub-home__top-inner">
+				<IotHubHero />
+				<CategoryTilesGrid />
+			</div>
+		</section>
+		<div class="iot-hub-home__divider"></div>
+		<div class="iot-hub-home__container">
+			<div class="iot-hub-home__items">
+				<h2 class="iot-hub-home__heading">Most popular in IoT Hub</h2>
+				{
+					grouped.map(({ cat, entries }) => (
+						<CategorySection
+							categorySlug={cat.slug}
+							categoryLabel={cat.label}
+							entries={entries}
+						/>
+					))
+				}
+			</div>
+			<div class="iot-hub-home__divider"></div>
+			<CreatorCTA />
+		</div>
 	</main>
 </BaseLayout>
 
@@ -38,8 +58,120 @@ const description =
 	@use '~/styles/_variables.scss' as *;
 
 	.iot-hub-home {
-		max-width: 1200px;
+		padding-bottom: 4rem;
+	}
+
+	.iot-hub-home__top {
+		position: relative;
+		overflow: hidden;
+		isolation: isolate;
+	}
+
+	.iot-hub-home__top-inner {
+		position: relative;
+		max-width: 1080px;
 		margin: 0 auto;
-		padding: 0 1.5rem 4rem;
+		padding-bottom: 4rem;
+	}
+
+	.iot-hub-home__bg {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		overflow: hidden;
+	}
+
+	.iot-hub-home__pattern {
+		position: absolute;
+		inset: 0;
+		background-image: radial-gradient(
+			circle,
+			rgba(23, 24, 28, 0.1) 1px,
+			transparent 1.2px
+		);
+		background-size: 24px 24px;
+		background-position: 0 0;
+
+		[data-theme='dark'] & {
+			background-image: radial-gradient(
+				circle,
+				rgba(228, 229, 231, 0.05) 1px,
+				transparent 1.2px
+			);
+		}
+	}
+
+	.iot-hub-home__blob {
+		position: absolute;
+		width: 568px;
+		height: 568px;
+		border-radius: 50%;
+		pointer-events: none;
+
+		&--left {
+			top: 120px;
+			left: -284px;
+			background: radial-gradient(
+				circle,
+				rgba(76, 99, 204, 0.18) 0%,
+				rgba(76, 99, 204, 0) 60%
+			);
+		}
+
+		&--right {
+			top: 335px;
+			right: -284px;
+			background: radial-gradient(
+				circle,
+				rgba(76, 99, 204, 0.18) 0%,
+				rgba(76, 99, 204, 0) 60%
+			);
+		}
+
+		[data-theme='dark'] & {
+			&--left {
+				background: radial-gradient(
+					circle,
+					rgba(120, 140, 220, 0.12) 0%,
+					rgba(120, 140, 220, 0) 60%
+				);
+			}
+
+			&--right {
+				background: radial-gradient(
+					circle,
+					rgba(120, 140, 220, 0.1) 0%,
+					rgba(120, 140, 220, 0) 60%
+				);
+			}
+		}
+	}
+
+	.iot-hub-home__container {
+		max-width: 1080px;
+		margin: 0 auto;
+	}
+
+	.iot-hub-home__divider {
+		height: 1px;
+		background: var(--color-border);
+	}
+
+	.iot-hub-home__items {
+		padding-top: 1.5rem;
+	}
+
+	.iot-hub-home__heading {
+		font-size: 32px;
+		font-weight: $font-weight-semibold;
+		line-height: 40px;
+		margin: 1.5rem 1rem 0.5rem;
+		color: var(--color-text);
+
+		@include media-down(md) {
+			font-size: 24px;
+			line-height: 32px;
+		}
 	}
 </style>
