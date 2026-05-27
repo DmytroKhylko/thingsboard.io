@@ -22,6 +22,9 @@ import CategoryTile from './CategoryTile.astro';
 	@use '~/styles/_variables.scss' as *;
 
 	.iot-hub-tiles {
+		// Override the global `:where(section)` white fill so the top-section
+		// pattern / blobs show through behind the category tiles.
+		background-color: transparent;
 		margin: 0 auto;
 		padding: 0 1rem;
 	}

@@ -61,11 +61,16 @@ const total = highlights.length;
 
 	.iot-hub-hero {
 		position: relative;
-		padding: 6rem 1rem 3rem;
+		// Override the global `:where(section)` white fill so the dotted pattern
+		// and blobs behind the top section show through (Figma: transparent hero).
+		background-color: transparent;
+		// The fixed header ($header-height) overlays page content with no global
+		// offset, so add it to the 180px Figma gap between header and title top.
+		padding: calc(#{$header-height} + 180px) 1rem 3rem;
 		text-align: center;
 
 		@include media-down(md) {
-			padding: 4rem 1rem 2rem;
+			padding: calc(#{$header-height} + 96px) 1rem 2rem;
 		}
 	}
 
@@ -117,7 +122,11 @@ const total = highlights.length;
 	@keyframes iot-hub-highlight {
 		0%,
 		12% {
-			color: var(--color-primary);
+			// Per-index accent comes from `--iot-hub-active-accent`, which is
+			// animated on `.iot-hub-home__top` (index.astro) in sync with this
+			// stagger, so the active word and the background blobs always show
+			// the same current category color.
+			color: var(--iot-hub-active-accent, var(--color-primary));
 		}
 		18%,
 		100% {

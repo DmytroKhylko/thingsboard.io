@@ -61,10 +61,58 @@ const description =
 		padding-bottom: 4rem;
 	}
 
+	// Registered so the accent color interpolates (smooth cross-fade) as it
+	// cycles; where @property is unsupported it falls back to discrete steps.
+	@property --iot-hub-active-accent {
+		syntax: '<color>';
+		inherits: true;
+		initial-value: #4c63cc;
+	}
+
 	.iot-hub-home__top {
 		position: relative;
 		overflow: hidden;
 		isolation: isolate;
+		// Cycles the active category accent (6 highlights x 2s = 12s), in sync
+		// with the IotHubHero word stagger. Inherited by the highlighted word
+		// (IotHubHero) and the background blobs below, keeping them the same hue.
+		animation: iot-hub-accent-cycle 12s infinite;
+	}
+
+	@keyframes iot-hub-accent-cycle {
+		0%,
+		13.333% {
+			--iot-hub-active-accent: #4c63cc; // Devices
+		}
+		16.667%,
+		30% {
+			--iot-hub-active-accent: #2c6cb4; // Solution Templates
+		}
+		33.333%,
+		46.667% {
+			--iot-hub-active-accent: #2c9755; // Widgets
+		}
+		50%,
+		63.333% {
+			--iot-hub-active-accent: #3db5e0; // Calculated Fields
+		}
+		66.667%,
+		80% {
+			--iot-hub-active-accent: #d7702f; // Alarm Rules
+		}
+		83.333%,
+		96.667% {
+			--iot-hub-active-accent: #bb7ce9; // Rule Chains
+		}
+		100% {
+			--iot-hub-active-accent: #4c63cc;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.iot-hub-home__top {
+			animation: none;
+		}
 	}
 
 	.iot-hub-home__top-inner {
@@ -108,43 +156,19 @@ const description =
 		height: 568px;
 		border-radius: 50%;
 		pointer-events: none;
+		// Follows the active category accent (see `.iot-hub-home__top` above).
+		background-color: var(--iot-hub-active-accent, #4c63cc);
+		opacity: 0.16;
+		filter: blur(120px);
 
 		&--left {
 			top: 120px;
 			left: -284px;
-			background: radial-gradient(
-				circle,
-				rgba(76, 99, 204, 0.18) 0%,
-				rgba(76, 99, 204, 0) 60%
-			);
 		}
 
 		&--right {
 			top: 335px;
 			right: -284px;
-			background: radial-gradient(
-				circle,
-				rgba(76, 99, 204, 0.18) 0%,
-				rgba(76, 99, 204, 0) 60%
-			);
-		}
-
-		[data-theme='dark'] & {
-			&--left {
-				background: radial-gradient(
-					circle,
-					rgba(120, 140, 220, 0.12) 0%,
-					rgba(120, 140, 220, 0) 60%
-				);
-			}
-
-			&--right {
-				background: radial-gradient(
-					circle,
-					rgba(120, 140, 220, 0.1) 0%,
-					rgba(120, 140, 220, 0) 60%
-				);
-			}
 		}
 	}
 
