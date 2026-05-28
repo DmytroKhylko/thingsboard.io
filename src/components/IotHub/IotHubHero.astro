@@ -113,6 +113,26 @@ const highlights = [
 		// Sit above the cluster overlays.
 		position: relative;
 		z-index: 1;
+		// Page-load entrance: title/subtitle/search fade in and settle down
+		// (port of tb-iot-hub-home's hero animation).
+		animation: iot-hub-fade-slide-down 1s cubic-bezier(0.19, 1, 0.22, 1) 0.2s both;
+	}
+
+	@keyframes iot-hub-fade-slide-down {
+		from {
+			opacity: 0;
+			transform: translateY(-20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.iot-hub-hero__inner {
+			animation: none;
+		}
 	}
 
 	// Per-category cluster overlay (ported from tb-iot-hub-home). All six are
@@ -340,13 +360,16 @@ const highlights = [
 			});
 		});
 
-		// One-frame delay so the initial cluster paints in the hidden state
-		// (opacity 0, scale 0.8) before .is-active is added — gives the entry
-		// fade + burst a starting point to transition from (mirrors
-		// `heroIconsReady` in the platform component).
+		// Double rAF so the browser actually paints the initial hidden state
+		// (opacity 0, scale 0.8) BEFORE .is-active is added — without this,
+		// a single rAF still runs before the first paint, so the transition
+		// has nothing to interpolate from and the Devices cluster appears at
+		// scale 1 instantly. Mirrors `heroIconsReady` in the platform.
 		requestAnimationFrame(() => {
-			setActive(0);
-			startCycle();
+			requestAnimationFrame(() => {
+				setActive(0);
+				startCycle();
+			});
 		});
 	})();
 </script>

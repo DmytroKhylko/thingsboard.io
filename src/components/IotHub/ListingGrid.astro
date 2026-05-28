@@ -18,6 +18,9 @@ const { variant = 'big' } = Astro.props;
 	.iot-hub-grid {
 		display: grid;
 		gap: 16px;
+		// 16px gutter so cards align with Figma's x=16 first-card inset while
+		// the parent section's header indicator stays flush with the container.
+		padding: 0 1rem;
 	}
 
 	.iot-hub-grid--big {

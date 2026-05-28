@@ -59,8 +59,13 @@ const variant = getCardVariant(entries[0]?.data.itemType ?? '');
 	@use '~/styles/_variables.scss' as *;
 
 	.iot-hub-section {
-		margin: 2.5rem 0;
-		padding: 0 1rem;
+		// 64px top + 64px bottom — collapses with adjacent section margins so
+		// section-to-section gap is 64px, and provides the 64px gap from the
+		// "Most popular" heading to the first section (Figma).
+		// No horizontal padding: per Figma, the section header's indicator
+		// sits flush with the container's left edge while only the grid's
+		// cards are inset (16px padding on .iot-hub-grid).
+		margin: 4rem 0;
 	}
 
 	.iot-hub-section__header {
@@ -85,7 +90,8 @@ const variant = getCardVariant(entries[0]?.data.itemType ?? '');
 		width: 2px;
 		height: 32px;
 		border-radius: 1px;
-		background: var(--color-border);
+		// Per Figma token neutral/--sl-color-gray-4 (#888c96).
+		background: var(--neutral---sl-color-gray-4, #888c96);
 	}
 
 	.iot-hub-section__title {

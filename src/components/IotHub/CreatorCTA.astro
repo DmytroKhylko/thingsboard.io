@@ -1,5 +1,8 @@
 ---
-const submitUrl = 'https://github.com/thingsboard/thingsboard';
+import { IOT_HUB_API_URL } from '@models/iot-hub';
+
+// Matches the platform's openSignup() in tb-iot-hub-home.
+const submitUrl = `${IOT_HUB_API_URL}/signup`;
 ---
 
 <section class="iot-hub-cta-wrap">

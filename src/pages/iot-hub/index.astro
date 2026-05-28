@@ -48,7 +48,9 @@ const description =
 					))
 				}
 			</div>
-			<div class="iot-hub-home__divider"></div>
+		</div>
+		<div class="iot-hub-home__divider"></div>
+		<div class="iot-hub-home__container">
 			<CreatorCTA />
 		</div>
 	</main>
@@ -56,10 +58,6 @@ const description =
 
 <style lang="scss">
 	@use '~/styles/_variables.scss' as *;
-
-	.iot-hub-home {
-		padding-bottom: 4rem;
-	}
 
 	.iot-hub-home__top {
 		position: relative;
@@ -77,6 +75,9 @@ const description =
 		margin: 0 auto;
 		// Figma: 80px gap from the category tiles to the divider that follows.
 		padding-bottom: 80px;
+		// Hairline side borders flanking the 1080px content column (Figma).
+		border-right: 1px solid var(--hairline---sl-color-hairline, #edeef3);
+		border-left: 1px solid var(--hairline---sl-color-hairline, #edeef3);
 	}
 
 	.iot-hub-home__bg {
@@ -134,22 +135,35 @@ const description =
 	.iot-hub-home__container {
 		max-width: 1080px;
 		margin: 0 auto;
+		// Hairline side borders flanking the 1080px content column (Figma).
+		border-right: 1px solid var(--hairline---sl-color-hairline, #edeef3);
+		border-left: 1px solid var(--hairline---sl-color-hairline, #edeef3);
 	}
 
 	.iot-hub-home__divider {
 		height: 1px;
-		background: var(--color-border);
+		// Hairline token from Figma; falls back to the literal #EDEEF3 if the
+		// CSS variable isn't defined in the active theme.
+		background: var(--hairline---sl-color-hairline, #edeef3);
 	}
 
 	.iot-hub-home__items {
-		padding-top: 1.5rem;
+		// 80px gap from the divider above to the "Most popular" heading (Figma).
+		// Owns the full distance so the heading itself carries no top margin.
+		padding-top: 80px;
+		// 16px bottom padding so the last section's 64px margin-bottom can't
+		// collapse through this wrapper — combined gap to the divider below
+		// is then 64px + 16px = 80px (Figma).
+		padding-bottom: 16px;
 	}
 
 	.iot-hub-home__heading {
 		font-size: 32px;
 		font-weight: $font-weight-semibold;
 		line-height: 40px;
-		margin: 1.5rem 1rem 0.5rem;
+		// No bottom spacing — the first iot-hub-section's 64px margin-top
+		// alone provides the heading -> first section gap (Figma).
+		margin: 0 1rem;
 		color: var(--color-text);
 
 		@include media-down(md) {

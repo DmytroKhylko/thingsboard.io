@@ -27,12 +27,15 @@ import CategoryTile from './CategoryTile.astro';
 		background-color: transparent;
 		margin: 0 auto;
 		padding: 0 1rem;
+		// Page-load entrance: tiles fade in and settle up
+		// (port of tb-iot-hub-home's categories animation).
+		animation: iot-hub-fade-slide-up 1s cubic-bezier(0.19, 1, 0.22, 1) 0.2s both;
 	}
 
 	.iot-hub-tiles__grid {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		gap: 20px;
+		gap: 16px;
 
 		@include media-down(lg) {
 			grid-template-columns: repeat(2, 1fr);
@@ -40,6 +43,23 @@ import CategoryTile from './CategoryTile.astro';
 
 		@include media-down(sm) {
 			grid-template-columns: 1fr;
+		}
+	}
+
+	@keyframes iot-hub-fade-slide-up {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.iot-hub-tiles {
+			animation: none;
 		}
 	}
 </style>
