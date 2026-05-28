@@ -1,28 +1,56 @@
 ---
+// Composite cluster SVGs ported from the platform's tb-iot-hub-home component
+// (assets/iot-hub/hero-*-cluster.svg). One per category, layered absolutely
+// over the hero; the active one fades + scales in while the rest collapse out.
+import devicesCluster from '@root/assets/iot-hub/hero-device-cluster.svg';
+import solutionsCluster from '@root/assets/iot-hub/hero-solution-template-cluster.svg';
+import widgetsCluster from '@root/assets/iot-hub/hero-widget-cluster.svg';
+import calcFieldsCluster from '@root/assets/iot-hub/hero-calculated-field-cluster.svg';
+import alarmRulesCluster from '@root/assets/iot-hub/hero-alarm-rule-cluster.svg';
+import ruleChainsCluster from '@root/assets/iot-hub/hero-rule-chain-cluster.svg';
+
+// Each highlight is an anchor to its category index (same routing as the
+// tiles below), and hovering one immediately makes it the active accent.
+// Colors per Figma node 1158:14803; slugs mirror IOT_HUB_CATEGORIES.
+// `clusterTop` is the cluster's `y` inside the Figma hero frame (1158:14803);
+// since the hero frame starts at y=80 (header height), this is also the gap
+// from the header bottom — added to `$header-height` in the CSS.
 const highlights = [
-	'Devices,',
-	'Solution Templates,',
-	'Widgets,',
-	'Calculated Fields,',
-	'Alarm Rules',
-	'& Rule Chains',
+	{ slug: 'devices', label: 'Devices,', color: '#4c63cc', cluster: devicesCluster, clusterTop: 57 },
+	{ slug: 'solution-templates', label: 'Solution Templates,', color: '#2c6cb4', cluster: solutionsCluster, clusterTop: 40 },
+	{ slug: 'widgets', label: 'Widgets,', color: '#2c9755', cluster: widgetsCluster, clusterTop: 60 },
+	{ slug: 'calculated-fields', label: 'Calculated Fields,', color: '#3db5e0', cluster: calcFieldsCluster, clusterTop: 80 },
+	{ slug: 'alarm-rules', label: 'Alarm Rules', color: '#d7702f', cluster: alarmRulesCluster, clusterTop: 64 },
+	{ slug: 'rule-chains', label: '& Rule Chains', color: '#bb7ce9', cluster: ruleChainsCluster, clusterTop: 40 },
 ];
-const total = highlights.length;
 ---
 
 <section class="iot-hub-hero">
+	{
+		highlights.map(({ slug, cluster, clusterTop }) => (
+			<div class="iot-hub-hero__cluster" data-hl-cluster={slug} aria-hidden="true">
+				<img
+					class="iot-hub-hero__cluster-img"
+					src={cluster.src}
+					alt=""
+					style={`--cluster-top: ${clusterTop}px;`}
+				/>
+			</div>
+		))
+	}
 	<div class="iot-hub-hero__inner">
 		<h1 class="iot-hub-hero__title">ThingsBoard IoT Hub</h1>
 		<p class="iot-hub-hero__subtitle">
 			<span class="iot-hub-hero__subtitle-lead">Discover ready-to-use</span>
 			{
-				highlights.map((label, i) => (
-					<span
+				highlights.map(({ slug, label, color }) => (
+					<a
 						class="iot-hub-hero__hl"
-						style={`--i:${i};--total:${total};`}
+						href={`/iot-hub/${slug}/`}
+						data-hl-color={color}
 					>
 						{label}
-					</span>
+					</a>
 				))
 			}
 		</p>
@@ -66,7 +94,8 @@ const total = highlights.length;
 		background-color: transparent;
 		// The fixed header ($header-height) overlays page content with no global
 		// offset, so add it to the 180px Figma gap between header and title top.
-		padding: calc(#{$header-height} + 180px) 1rem 3rem;
+		// Bottom padding is 80px per Figma (search input -> hero bottom gap).
+		padding: calc(#{$header-height} + 180px) 1rem 80px;
 		text-align: center;
 
 		@include media-down(md) {
@@ -81,6 +110,51 @@ const total = highlights.length;
 		flex-direction: column;
 		align-items: center;
 		gap: 2.5rem;
+		// Sit above the cluster overlays.
+		position: relative;
+		z-index: 1;
+	}
+
+	// Per-category cluster overlay (ported from tb-iot-hub-home). All six are
+	// rendered absolutely on top of each other; the active one fades + scales
+	// in while the rest collapse back toward the centre. The outer wrapper
+	// handles the entry/exit animation around the hero centre; the inner img
+	// positions and sizes the cluster art itself.
+	.iot-hub-hero__cluster {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		opacity: 0;
+		transform: scale(0.8);
+		transform-origin: 50% 50%;
+		transition: opacity 0.4s ease-out, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+		z-index: 0;
+
+		&.is-active {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	.iot-hub-hero__cluster-img {
+		position: absolute;
+		// Per-cluster `--cluster-top` is set inline per highlight (its `y`
+		// inside the Figma hero frame, which itself starts at $header-height).
+		// Fallback matches the Devices state, which is the initial active.
+		top: calc(#{$header-height} + var(--cluster-top, 57px));
+		left: 50%;
+		transform: translateX(-50%);
+		width: min(890px, calc(100% - 80px));
+		height: auto;
+		display: block;
+		pointer-events: none;
+
+		@include media-down(md) {
+			// Mobile uses a single top for all clusters (Figma node is
+			// desktop-only); the per-cluster var is intentionally overridden.
+			top: calc(#{$header-height} + 16px);
+			width: calc(100% - 32px);
+		}
 	}
 
 	.iot-hub-hero__title {
@@ -106,38 +180,25 @@ const total = highlights.length;
 	}
 
 	.iot-hub-hero__subtitle-lead {
-		color: var(--color-text-secondary);
+		// Lead text per Figma (token: neutral/--sl-color-gray-2 = #353841).
+		color: var(--sl-color-gray-2);
 		margin-right: 0.2rem;
 	}
 
 	.iot-hub-hero__hl {
 		display: inline;
 		font-weight: $font-weight-semibold;
-		color: var(--color-text);
-		animation: iot-hub-highlight calc(var(--total) * 2s) infinite;
-		animation-delay: calc(var(--i) * 2s);
+		// Muted gray for the off-state per Figma (token: neutral/--sl-color-gray-5 = #c1c3c8).
+		color: var(--sl-color-gray-5);
+		text-decoration: none;
+		cursor: pointer;
 		transition: color $transition-fast;
-	}
 
-	@keyframes iot-hub-highlight {
-		0%,
-		12% {
-			// Per-index accent comes from `--iot-hub-active-accent`, which is
-			// animated on `.iot-hub-home__top` (index.astro) in sync with this
-			// stagger, so the active word and the background blobs always show
-			// the same current category color.
+		&.is-active {
+			// Active accent is set by the cycle script (or hover/focus) on a
+			// shared ancestor, so the blob background and this color always
+			// match. See script at the bottom of this component.
 			color: var(--iot-hub-active-accent, var(--color-primary));
-		}
-		18%,
-		100% {
-			color: var(--color-text);
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.iot-hub-hero__hl {
-			animation: none;
-			color: var(--color-text);
 		}
 	}
 
@@ -208,3 +269,84 @@ const total = highlights.length;
 		}
 	}
 </style>
+
+<script is:inline>
+	// Drives the active highlight in the IoT Hub hero. Mirrors the platform
+	// behaviour in `tb-iot-hub-home` (Angular): auto-cycle every 3s, hover or
+	// focus a highlight to immediately become active and pause the cycle, leave
+	// to resume from the current one. The active accent is published as
+	// `--iot-hub-active-accent` on the nearest `.iot-hub-home__top` so the
+	// background blobs follow the same color via CSS custom-property inheritance.
+	(function () {
+		const hero = document.querySelector('.iot-hub-hero');
+		if (!hero) return;
+		const hls = Array.from(hero.querySelectorAll('.iot-hub-hero__hl'));
+		const clusters = Array.from(hero.querySelectorAll('.iot-hub-hero__cluster'));
+		if (!hls.length) return;
+		const accentHost = hero.closest('.iot-hub-home__top') ?? document.documentElement;
+		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const CYCLE_MS = 3000;
+		let activeIdx = 0;
+		let hoverPaused = false;
+		let timer = null;
+
+		function setActive(idx) {
+			activeIdx = idx;
+			const el = hls[idx];
+			for (let i = 0; i < hls.length; i++) {
+				hls[i].classList.toggle('is-active', i === idx);
+			}
+			for (let i = 0; i < clusters.length; i++) {
+				clusters[i].classList.toggle('is-active', i === idx);
+			}
+			if (el && el.dataset.hlColor) {
+				accentHost.style.setProperty('--iot-hub-active-accent', el.dataset.hlColor);
+			}
+		}
+
+		function stopCycle() {
+			if (timer) {
+				clearInterval(timer);
+				timer = null;
+			}
+		}
+
+		function startCycle() {
+			if (reduceMotion) return;
+			stopCycle();
+			timer = setInterval(() => {
+				if (!hoverPaused) setActive((activeIdx + 1) % hls.length);
+			}, CYCLE_MS);
+		}
+
+		hls.forEach((el, i) => {
+			el.addEventListener('mouseenter', () => {
+				hoverPaused = true;
+				stopCycle();
+				setActive(i);
+			});
+			el.addEventListener('mouseleave', () => {
+				hoverPaused = false;
+				startCycle();
+			});
+			el.addEventListener('focus', () => {
+				hoverPaused = true;
+				stopCycle();
+				setActive(i);
+			});
+			el.addEventListener('blur', () => {
+				hoverPaused = false;
+				startCycle();
+			});
+		});
+
+		// One-frame delay so the initial cluster paints in the hidden state
+		// (opacity 0, scale 0.8) before .is-active is added — gives the entry
+		// fade + burst a starting point to transition from (mirrors
+		// `heroIconsReady` in the platform component).
+		requestAnimationFrame(() => {
+			setActive(0);
+			startCycle();
+		});
+	})();
+</script>
