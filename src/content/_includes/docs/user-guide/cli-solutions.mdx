@@ -26,7 +26,7 @@ The AI-first workflow is short: ask Claude for a solution, review what it built,
 3. **You deploy.** When Claude says the solution is ready, run `tb push <slug>`. Add `--run-tasks` to also generate demo telemetry and backfill calculated fields with historical inputs:
 
    ```bash
-   tb push smart-house --run-tasks
+   tb push smart-building --run-tasks
    ```
 
 4. **You iterate.** Ask Claude for changes — *"add a humidity sensor to each room"*, *"split the kitchen dashboard"*. Claude regenerates the affected pieces, and you re-run `tb push`. Push is idempotent: ThingsBoard tracks entity identity by external ID, so the same solution can be pushed many times with no duplication.
@@ -71,13 +71,13 @@ Each entity directory under the project root holds entities that aren't part of 
 To start a new solution by hand (without Claude):
 
 ```bash
-tb solution new smart-house
+tb solution new smart-building
 ```
 
 When a solution is on disk, you can target it from anywhere in the project with the `--solution` flag:
 
 ```bash
-tb device save --solution smart-house --json '{"name": "Sensor-01", "type": "Temperature Sensor"}'
+tb device save --solution smart-building --json '{"name": "Sensor-01", "type": "Temperature Sensor"}'
 ```
 
 ### Pulling an Existing Solution
@@ -107,9 +107,9 @@ Once pulled, the entities land in your project files and are tracked by the CLI 
 The same solution can be deployed to multiple ThingsBoard environments by pushing it under different config profiles:
 
 ```bash
-tb push smart-house --profile dev
-tb push smart-house --profile staging
-tb push smart-house --profile prod
+tb push smart-building --profile dev
+tb push smart-building --profile staging
+tb push smart-building --profile prod
 ```
 
 The CLI writes **no state files** to your project — push to the same target twice and existing entities are updated, not duplicated. Develop and test against dev, promote to staging once you're happy, and ship to prod with the exact same files.
@@ -118,7 +118,7 @@ The CLI writes **no state files** to your project — push to the same target tw
 
 ```bash
 tb validate              # validate root entities
-tb validate smart-house  # validate one solution
+tb validate smart-building  # validate one solution
 ```
 
 Validation is a dry-run against the target ThingsBoard instance. Combine it with `--profile <name>` to validate against any environment.
@@ -142,7 +142,7 @@ Claude generates emulators automatically for devices it creates. If you're drivi
 
 ```bash
 tb pull                                # refresh every locally-tracked entity in the current solution (auto-detected from cwd)
-tb pull --solution smart-house         # same, with the solution named explicitly
+tb pull --solution smart-building         # same, with the solution named explicitly
 tb pull dashboard --all                # refresh every dashboard in the current solution
 tb pull device <uuid>                  # fetch a single entity by its server-internal UUID
 tb pull device <uuid1> <uuid2>         # …or several at once
