@@ -12,7 +12,7 @@ interface Props {
 
 const { slug, itemType, name, affiliateId = null, variant = 'card' } = Astro.props;
 // "Connect" for devices, "Install" otherwise — same wording in both variants.
-const label = getInstallVerb(itemType);
+const label = getInstallVerb(itemType, variant);
 ---
 
 <button
@@ -74,6 +74,10 @@ const label = getInstallVerb(itemType);
 
 		:global(svg) {
 			display: block;
+		}
+		:global([data-theme='dark']) & {
+			background: #b3c7ff;
+			color: #17181c;
 		}
 	}
 </style>

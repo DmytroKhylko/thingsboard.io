@@ -11,6 +11,7 @@ import IotHubChevron from './IotHubChevron.astro';
 import InstallButton from './InstallButton.astro';
 import IotHubIcon from './IotHubIcon.astro';
 import DetailGallery from './DetailGallery.astro';
+import IotHubMarkdown from '@components/IotHub/IotHubMarkdown.astro';
 
 interface Props {
 	detail: ListingDetail;
@@ -221,7 +222,9 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 					</div>
 				</div>
 				{detail.description && (
-					<p class="iot-hub-detail-hero__desc">{detail.description}</p>
+					<div class="iot-hub-detail-hero__desc">
+						<IotHubMarkdown markdown={detail.description} />
+					</div>
 				)}
 				<InstallButton
 					variant="hero"
@@ -339,7 +342,9 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 					</div>
 					<div class="iot-hub-detail-hero__big-text">
 						{detail.description && (
-							<p class="iot-hub-detail-hero__desc">{detail.description}</p>
+							<div class="iot-hub-detail-hero__desc">
+								<IotHubMarkdown markdown={detail.description} />
+							</div>
 						)}
 						<InstallButton
 							variant="hero"
@@ -488,15 +493,6 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 		&--pe {
 			background: #00695c;
 		}
-	}
-
-	// --- Description (CTA is the shared <InstallButton variant="hero">) ------
-
-	.iot-hub-detail-hero__desc {
-		font-size: 16px;
-		line-height: 24px;
-		margin: 0;
-		color: var(--color-text-secondary);
 	}
 
 	// --- Variant A: big preview -------------------------------------------

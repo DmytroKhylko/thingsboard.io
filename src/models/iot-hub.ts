@@ -415,5 +415,5 @@ export const buildInstallUrl = (
 
 // `itemType` is `string` (not `IotHubItemType`) because one caller passes a raw
 // value read from a DOM data-attribute.
-export const getInstallVerb = (itemType: string): 'Install' | 'Connect' =>
-	itemType === 'DEVICE' ? 'Connect' : 'Install';
+export const getInstallVerb = (itemType: string, variant = 'card'): string =>
+	itemType === 'DEVICE' ? (variant === 'hero' ? 'Connect device' : 'Connect') : 'Install';

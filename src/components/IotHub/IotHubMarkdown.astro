@@ -52,70 +52,123 @@ if (markdown && markdown.trim().length > 0) {
 <style lang="scss">
 	@use '~/styles/_variables.scss' as *;
 
+	:root {
+		--md-table-border-color: #edeef3;
+		--md-table-header-background-color: #F6F7F9;
+		--md-table-header-text-color: #555962;
+		--md-table-text-color: var(--color-text-secondary);
+	}
+
+	:global([data-theme='dark']) {
+		--md-table-border-color: #23262F;
+		--md-table-header-background-color: #23262F;
+		--md-table-header-text-color: #888C96;
+	}
+
+	$text-color: var(--color-text-secondary);
+	$link-color: var(--color-primary);
+	$copy-button-color: var(--color-primary);
+
+	$code-block-border-color: rgba(42, 125, 236, .2);
+	$code-default-color: #212529;
+	$code-text-color: #eb5757;
+	$code-keyword-color: #2a7dec;
+
+
+
+	$table-border-color: var(--md-table-border-color);
+	$table-header-background-color: var(--md-table-header-background-color);
+	$table-header-text-color: var(--md-table-header-text-color);
+	$table-text-color: var(--md-table-text-color);
+
+	$gallery-border-hover-color: var(--color-primary);
+
+
 	// :global() is required throughout because the markdown HTML is injected
 	// via set:html so its elements don't carry this component's Astro scope.
 	.iot-hub-md {
-		color: var(--color-text);
 		font-size: 16px;
-		line-height: 28px;
+		line-height: 24px;
+		letter-spacing: 0.2px;
+		color: $text-color;
 
-		// First paragraph reads as the lead summary line (the design: 18px / 24px,
-		// content/body-l-bold-adjacent). The size matches the readme intro on
-		// both detail variants.
-		&.iot-hub-md--lead > :global(p):first-of-type {
-			font-size: 18px;
-			line-height: 24px;
-			margin: 0 0 1.5rem;
-			color: var(--color-text);
+		:global(h1, h2, h3, h4, h5, h6) {
+			font-size: 24px;
+			font-weight: 600;
+			line-height: 32px;
+			letter-spacing: 0.1px;
+			color: $text-color;
+			margin: 0;
+			padding: 0;
 		}
 
+		:global(> h1), :global(> h2), :global(> h3), :global(> h4), :global(> h5), :global(> h6) {
+			padding: 0 0 6px;
+			margin-top: 20px;
+		}
+		
 		:global(h1) {
 			font-size: 32px;
-			font-weight: $font-weight-semibold;
-			line-height: 40px;
-			margin: 2.5rem 0 1rem;
-			color: var(--color-text);
-		}
-
-		:global(h2) {
-			font-size: 24px;
-			font-weight: $font-weight-semibold;
-			line-height: 32px;
-			margin: 2.5rem 0 1rem;
-			color: var(--color-text);
-		}
-
-		:global(h3) {
-			font-size: 20px;
-			font-weight: $font-weight-semibold;
-			line-height: 28px;
-			margin: 2rem 0 0.75rem;
-			color: var(--color-text);
-		}
-
-		:global(h4),
-		:global(h5),
-		:global(h6) {
-			font-size: 16px;
-			font-weight: $font-weight-semibold;
-			line-height: 24px;
-			margin: 1.5rem 0 0.5rem;
-			color: var(--color-text);
+			line-height: 48px;
+			padding-right: 0;
 		}
 
 		:global(p) {
-			margin: 0 0 1rem;
+			font-size: 16px;
+			font-weight: 400;
+			line-height: 24px;
+			letter-spacing: 0.2px;
+			color: $text-color;
+			margin: 0;
 		}
 
-		:global(ul),
-		:global(ol) {
-			margin: 0 0 1rem;
-			padding-left: 1.5rem;
+		:global(> p), :global(> div) {
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		:global(p + p) {
+			margin-top: 8px;
+		}
+
+		:global(h1 + p), :global(h2 + p), :global(h3 + p),
+		:global(h1 + ul), :global(h2 + ul), :global(h3 + ul),
+		:global(h1 + ol), :global(h2 + ol), :global(h3 + ol) {
+			margin-top: 8px;
+		}
+
+		:global(ul, ol) {
+			padding-left: 21px;
+			padding-right: 0;
+			margin: 0;
+			font-size: 16px;
+			line-height: 24px;
+			letter-spacing: 0.2px;
+			color: $text-color;
+
+			:global(+ h1), :global(+ h2), :global(+ h3), :global(+ h4), :global(+ h5), :global(+ h6) {
+				padding-top: 0;
+				margin-top: 20px;
+			}
+		}
+
+		:global(ul) {
+			margin-top: 8px;
+			margin-bottom: 8px;
+		}
+
+	  :global(ul), :global(li) {
+			list-style: disc;
 		}
 
 		:global(li) {
-			margin: 0.25rem 0;
+			padding-bottom: 4px;
+			margin-bottom: 0;
 			line-height: 24px;
+		}
+
+		:global(img) {
+			max-width: 100%;
 		}
 
 		:global(li > p) {
@@ -127,89 +180,263 @@ if (markdown && markdown.trim().length > 0) {
 		}
 
 		:global(a) {
-			color: var(--color-primary);
-			text-decoration: underline;
-			text-underline-offset: 2px;
+			font-weight: 500;
+			color: $link-color;
+			text-decoration: none;
+			border: none;
 
 			&:hover {
-				text-decoration: none;
+				color: $link-color;
+				text-decoration: underline;
+				border: none;
 			}
 		}
 
-		// Specifications table — two-column key/value rows with thin row
-		// dividers (the design: table-header rows with a 1px border).
-		:global(table) {
+		:global(code:not([class*=language-])) {
+			color: $code-text-color;
+			font-family: monospace;
+			font-size: 14px;
+		}
+
+		:global(div.code-wrapper) {
+			position: relative;
+
+			:global(button.clipboard-btn) {
+				pointer-events: none;
+				outline: none;
+				position: absolute;
+				width: 206px;
+				height: 32px;
+				top: 0;
+				right: 0;
+				background: 0 0;
+				border: none;
+				user-select: none;
+
+				&.multiline {
+					right: 6px;
+				}
+
+				:global(p) {
+					padding: 6px 8px 0;
+					top: 1px;
+					transition: .2s;
+					color: $copy-button-color;
+					background: rgba(255, 255, 255, .85);
+					backdrop-filter: blur(4px);
+					opacity: 0;
+					font-weight: 500;
+					right: 32px;
+					position: absolute;
+				}
+
+				:global(div) {
+					background-color: #fff;
+					position: absolute;
+					width: 38px;
+					height: 28px;
+					top: 3px;
+					right: 3px;
+					padding: 8px 10px 0;
+
+					:global(img) {
+						position: initial;
+						width: 18px;
+						height: 18px;
+						filter: invert(51%) sepia(6%) saturate(172%) hue-rotate(177deg) brightness(94%) contrast(92%);
+					}
+				}
+			}
+
+			&:hover {
+				cursor: pointer;
+
+				:global(pre[class*="language-"]) {
+					border: solid 1px $copy-button-color;
+				}
+
+				:global(button.clipboard-btn) {
+					:global(p) {
+						opacity: 1;
+					}
+
+					:global(div img) {
+						filter: invert(49%) sepia(97%) saturate(3730%) hue-rotate(200deg) brightness(95%) contrast(95%);
+					}
+				}
+			}
+		}
+
+	  :global(th), :global(td) {
+			:global(div.code-wrapper) {
+				display: inline-block;
+				width: 100%;
+
+				:global(button.clipboard-btn) {
+					top: -6px;
+					padding: 0 3px;
+				}
+			}
+		}
+			
+		:global(pre[class*="language-"]) {
+			font-size: 14px;
+			border: 1px solid $code-block-border-color;
+			border-radius: 4px;
+			background: 0 0;
+			padding: 8px 16px;
+			color: $code-default-color;
+
+			:global(.token.atrule), :global(.token.attr-value), :global(.token.keyword) {
+				color: $code-keyword-color;
+			}
+
+			:global(.token.selector), :global(.token.attr-name), :global(.token.string), :global(.token.char), :global(.token.builtin), :global(.token.inserted) {
+				color: $code-text-color;
+			}
+
+			:global(.token.punctuation) {
+				color: $code-default-color;
+			}
+
+			&.line-numbers {
+				padding-left: 66px;
+
+				:global(> code span.line-numbers-rows) {
+					top: -11px;
+					bottom: -11px;
+					left: -66px;
+					width: 50px;
+					border: none;
+					padding: 8px 12px 8px 18px;
+					text-align: right;
+					background: #f9fbff;
+
+					:global(> span:before) {
+						color: rgba(33, 37, 41, .6);
+						padding-right: 0;
+					}
+				}
+
+				&.no-line-numbers {
+					padding-left: 16px;
+
+					:global(> code span.line-numbers-rows) {
+						display: none;
+					}
+				}
+			}
+		}
+
+		:global(> table) {
 			width: 100%;
-			border-collapse: collapse;
-			margin: 0.5rem 0 1.5rem;
+			border: 1px solid $table-border-color;
+			border-radius: 4px;
+			border-collapse: unset;
+			border-spacing: 0;
+			margin-top: 20px;
+			margin-bottom: 20px;
+			overflow: hidden;
+			table-layout: fixed;
+
+			&.auto {
+				table-layout: auto;
+			}
+			:global(> thead) {
+				background-color: $table-header-background-color;
+				color: $table-header-text-color;
+
+				:global(> tr > th) {
+					border-bottom: 1px solid $table-border-color;
+					font-size: 16px;
+					padding: 8px 12px;
+					text-align: left;
+					margin: 0;
+					@media screen and (max-width: 400px) {
+						font-size: 12px;
+						padding: 8px 4px;
+						:global(code:not([class*=language-])) {
+							font-size: 12px;
+						}
+					}
+				}
+			}
+
+			:global(> tbody) {
+				:global(> tr:not(:last-child) > td) {
+					border-bottom: 1px solid $table-border-color;
+				}
+
+				:global(> tr > td) {
+					font-size: 16px;
+					padding: 8px 12px;
+					text-align: left;
+					margin: 0;
+					color: $table-text-color;
+					@media screen and (max-width: 400px) {
+						font-size: 12px;
+						padding: 8px 4px;
+						:global(code:not([class*=language-])) {
+							font-size: 12px;
+						}
+					}
+				}
+			}
+
+			:global(th), :global(td) {
+				font-size: 16px;
+				padding: 8px;
+				margin: 0;
+				text-align: left;
+			}
+
+			:global(td[align=center]), :global(th[align=center]) {
+				text-align: center;
+			}
+
+			:global(td[align=right]), :global(th[align=right]) {
+				text-align: right;
+			}
+
+			:global(tr td div) {
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
+		
+		:global(.tb-callout) {
+			display: flex;
+			align-items: flex-start;
+			gap: 10px;
+			padding: 12px 16px;
+			border-radius: 4px;
+			border: 1px solid;
+			margin: 12px 0;
 			font-size: 16px;
 			line-height: 24px;
-		}
 
-		:global(thead th) {
-			text-align: left;
-			font-weight: $font-weight-semibold;
-			padding: 12px 16px;
-			border-bottom: 1px solid var(--iot-hub-hairline, #edeef3);
-			color: var(--color-text);
-		}
-
-		:global(tbody td) {
-			padding: 12px 16px;
-			border-bottom: 1px solid var(--iot-hub-hairline, #edeef3);
-			vertical-align: top;
-		}
-
-		:global(tbody tr:last-child td) {
-			border-bottom: 0;
-		}
-
-		// First column reads as the label, second as the value.
-		:global(tbody td:first-child) {
-			color: var(--color-text-secondary);
-			width: 50%;
-		}
-
-		:global(code) {
-			background: var(--color-bg-light);
-			padding: 2px 6px;
-			border-radius: 4px;
-			font-size: 0.875em;
-			font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-		}
-
-		:global(pre) {
-			background: var(--color-bg-light);
-			padding: 1rem;
-			border-radius: 8px;
-			overflow-x: auto;
-			margin: 0 0 1.5rem;
-			line-height: 1.5;
-
-			code {
-				background: none;
-				padding: 0;
+			:global(.tb-callout-icon) {
+				font-size: 20px;
+				flex-shrink: 0;
 			}
-		}
 
-		:global(img) {
-			max-width: 100%;
-			height: auto;
-			border-radius: 8px;
-			margin: 0.5rem 0;
-		}
+			&.tb-callout-note {
+				background: #e3f2fd;
+				border-color: #90caf9;
+				color: #1565c0;
+			}
 
-		:global(blockquote) {
-			border-left: 3px solid var(--color-primary);
-			padding: 0 0 0 1rem;
-			margin: 0 0 1rem;
-			color: var(--color-text-secondary);
-		}
+			&.tb-callout-warn {
+				background: #fff8e1;
+				border-color: #ffe082;
+				color: #f57f17;
+			}
 
-		:global(hr) {
-			border: 0;
-			border-top: 1px solid var(--iot-hub-hairline, #edeef3);
-			margin: 1.5rem 0;
+			&.tb-callout-error {
+				background: #fce4ec;
+				border-color: #ef9a9a;
+				color: #c62828;
+			}
 		}
 	}
 </style>
