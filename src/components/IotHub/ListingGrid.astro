@@ -15,7 +15,7 @@ const { variant = 'big', home = false } = Astro.props;
 
 <style is:global lang="scss">
 	@use '~/styles/_variables.scss' as *;
-	
+
 	.iot-hub-grid--big {
 		&.iot-hub-grid--home {
 			@include media-down(lg) {
@@ -43,7 +43,7 @@ const { variant = 'big', home = false } = Astro.props;
 	.iot-hub-grid {
 		display: grid;
 		gap: 16px;
-		// 16px gutter so cards align with Figma's x=16 first-card inset while
+		// 16px gutter so cards align with the design's x=16 first-card inset while
 		// the parent section's header indicator stays flush with the container.
 		padding: 0 1rem;
 

@@ -34,7 +34,7 @@ const description =
 					<IotHubHero />
 					<CategoryTilesGrid />
 				</div>
-			</div>	
+			</div>
 		</section>
 		<div class="iot-hub-home__divider"></div>
 		<div class="iot-hub-home__center_wrapper">
@@ -53,13 +53,13 @@ const description =
 					}
 				</div>
 			</div>
-		</div>	
+		</div>
 		<div class="iot-hub-home__divider"></div>
 		<div class="iot-hub-home__center_wrapper">
 			<div class="iot-hub-home__container">
 				<CreatorCTA />
 			</div>
-		</div>	
+		</div>
 	</main>
 </BaseLayout>
 
@@ -68,7 +68,7 @@ const description =
 
 	.iot-hub-home {
 		// Hairline token used by the side borders and dividers below.
-		// Light theme falls back to #edeef3, dark theme to #23262f (Figma).
+		// Light theme falls back to #edeef3, dark theme to #23262f (the design).
 		// `:global()` is required because `data-theme` lives on <html>, which
 		// is outside this component's Astro scope.
 		--iot-hub-hairline: var(--hairline---sl-color-hairline, #edeef3);
@@ -90,10 +90,10 @@ const description =
 	.iot-hub-home__container {
 		max-width: $container-max-width;
 		margin: 0 16px;
-		// Hairline side borders flanking the 1080px content column (Figma).
+		// Hairline side borders flanking the 1080px content column (the design).
 		border-right: 1px solid var(--iot-hub-hairline);
 		border-left: 1px solid var(--iot-hub-hairline);
-		
+
 		@include media-down(sm) {
 			margin: 0 8px;
 		}
@@ -111,7 +111,7 @@ const description =
 
 	.iot-hub-home__top-inner {
 		position: relative;
-		// Figma: 80px gap from the category tiles to the divider that follows.
+		// The design: 80px gap from the category tiles to the divider that follows.
 		padding-bottom: 80px;
 
 		@include media-down(xl) {
@@ -173,18 +173,18 @@ const description =
 
 	.iot-hub-home__divider {
 		height: 1px;
-		// Hairline token from Figma; light = #edeef3, dark = #23262f
+		// Hairline token from the design; light = #edeef3, dark = #23262f
 		// (resolved by `--iot-hub-hairline` on .iot-hub-home above).
 		background: var(--iot-hub-hairline);
 	}
 
 	.iot-hub-home__items {
-		// 80px gap from the divider above to the "Most popular" heading (Figma).
+		// 80px gap from the divider above to the "Most popular" heading (the design).
 		// Owns the full distance so the heading itself carries no top margin.
 		padding-top: 80px;
 		// 16px bottom padding so the last section's 64px margin-bottom can't
 		// collapse through this wrapper — combined gap to the divider below
-		// is then 64px + 16px = 80px (Figma).
+		// is then 64px + 16px = 80px (the design).
 		padding-bottom: 16px;
 
 		@include media-down(xl) {
@@ -199,7 +199,7 @@ const description =
 		font-weight: $font-weight-semibold;
 		line-height: 40px;
 		// No bottom spacing — the first iot-hub-section's 64px margin-top
-		// alone provides the heading -> first section gap (Figma).
+		// alone provides the heading -> first section gap (the design).
 		margin: 0 1rem;
 		color: var(--color-text);
 

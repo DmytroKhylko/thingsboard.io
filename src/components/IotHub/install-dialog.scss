@@ -114,7 +114,7 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	// Light accent-indigo tile (Figma --sl-color-accent-low); a tint of the
+	// Light accent-indigo tile (the design --sl-color-accent-low); a tint of the
 	// primary keeps it theme-aware in both light and dark.
 	background: rgba(var(--color-primary-rgb), 0.12);
 	color: var(--color-primary);
@@ -158,7 +158,7 @@
 	}
 }
 
-// Edit mode (Figma 1189-9698): icon stays; the text + actions are swapped for
+// Edit mode: icon stays; the text + actions are swapped for
 // a full-width input and save/cancel buttons.
 .iot-hub-install-dialog__edit-row {
 	flex: 1;

@@ -76,7 +76,7 @@ function rowMarkup(inst: InstallInstance): string {
 		: '';
 	const errorId = `iot-hub-install-${inst.key}-error`;
 	// Edit mode replaces the text + action area with an inline input + save/cancel
-	// (Figma node 1189-9698); it's a row-level sibling toggled via `.is-editing`.
+	//; it's a row-level sibling toggled via `.is-editing`.
 	const editCluster = inst.editable
 		? `<div class="iot-hub-install-dialog__edit-row" data-edit-row hidden>
 				<div class="iot-hub-install-dialog__edit-controls">

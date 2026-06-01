@@ -1,11 +1,16 @@
 ---
-import { resolveImage, type ListingDetail } from '@models/iot-hub';
+import {
+	getSubtypeLabel,
+	resolveImage,
+	type IotHubItemType,
+	type ListingDetail,
+} from '@models/iot-hub';
 import '@fontsource/material-icons';
 
-// Renders the 4-column "tags" row beneath the detail hero. Figma nodes
-// 1281:28214 (variant A: DEVICE/WIDGET/SOLUTION_TEMPLATE) and 1286:31895
-// (variant B: CALCULATED_FIELD/RULE_CHAIN/ALARM_RULE). Layout is the same in
-// both variants — only the second/third column labels differ by item type.
+// Renders the 4-column "tags" row beneath the detail hero, per the design.
+// Two variants — A: DEVICE / WIDGET / SOLUTION_TEMPLATE and B:
+// CALCULATED_FIELD / RULE_CHAIN / ALARM_RULE — share the same layout and
+// only differ in which subtype field drives the second/third columns.
 // Chip color tint follows the design: type/secondary→blue, third→purple,
 // use cases→green (via Starlight's `--sl-color-{blue,purple,green}-{low,high}`
 // tokens, which auto-invert between light/dark themes).
@@ -18,7 +23,12 @@ const { detail } = Astro.props;
 
 type Column = { label: string; values: string[]; tint: 'blue' | 'purple' | 'green' };
 
-// Column 2 — secondary type (Hardware Type / Widget Type / Type).
+// Column 2 — secondary type (Hardware Type / Widget Type / Type). Raw API
+// keys for widgetType / cfType / ruleChainType (`timeseries`, `SIMPLE`,
+// `CORE`, …) are mapped to their human-readable label via
+// `getSubtypeLabel`, mirroring the platform helper of the same name in
+// /data/git/thingsboard/ui-ngx/.../iot-hub-item-detail-dialog.component.ts.
+const itemType = detail.itemType as IotHubItemType;
 const secondColumn: Column | null = (() => {
 	switch (detail.itemType) {
 		case 'DEVICE':
@@ -27,18 +37,34 @@ const secondColumn: Column | null = (() => {
 				: null;
 		case 'WIDGET':
 			return detail.widgetType
-				? { label: 'Widget Type', values: [detail.widgetType], tint: 'blue' }
+				? {
+						label: 'Widget Type',
+						values: [getSubtypeLabel(itemType, detail.widgetType)],
+						tint: 'blue',
+					}
 				: null;
 		case 'CALCULATED_FIELD':
+		case 'ALARM_RULE':
+			// ALARM_RULE shares cfType (and cfTypeTranslations) with
+			// CALCULATED_FIELD on the platform — see getCompactSubtypeLabel in
+			// iot-hub-item-detail-dialog.component.ts. Force the lookup
+			// itemType to CALCULATED_FIELD so the translation hits.
 			return detail.cfType
-				? { label: 'Type', values: [detail.cfType], tint: 'blue' }
+				? {
+						label: 'Type',
+						values: [getSubtypeLabel('CALCULATED_FIELD', detail.cfType)],
+						tint: 'blue',
+					}
 				: null;
 		case 'RULE_CHAIN':
 			return detail.ruleChainType
-				? { label: 'Type', values: [detail.ruleChainType], tint: 'blue' }
+				? {
+						label: 'Type',
+						values: [getSubtypeLabel(itemType, detail.ruleChainType)],
+						tint: 'blue',
+					}
 				: null;
 		case 'SOLUTION_TEMPLATE':
-		case 'ALARM_RULE':
 		default:
 			return detail.vendor
 				? { label: 'Vendor', values: [detail.vendor], tint: 'blue' }
@@ -179,7 +205,7 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 <style lang="scss">
 	@use '~/styles/_variables.scss' as *;
 
-	// Horizontal row of columns (Figma 1281:28215 / 1286:31896): all columns
+	// Horizontal row of columns: all columns
 	// inline, vertically centred, fixed-content sized except for Use Cases
 	// which absorbs the remaining width. On narrow screens we fall back to a
 	// wrapped/stacked layout to keep the chips legible.
@@ -206,12 +232,12 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 4px;
-		// Non-wide columns hold their content width (Figma's `shrink-0`) and
+		// Non-wide columns hold their content width (the design's `shrink-0`) and
 		// don't compete with Use Cases for the remaining row space.
 		flex-shrink: 0;
 
 		// Use Cases stretches to fill the remainder of the row (matches the
-		// Figma use-cases column being flex: 1 0 0).
+		// The design use-cases column being flex: 1 0 0).
 		&--wide {
 			flex: 1 1 0;
 		}
@@ -265,7 +291,7 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 	}
 
 	// Small verified badge overlapping the top-right of the avatar circle
-	// (Figma 1281:28221 — left=18, top=-6, size=20).
+	//.
 	.iot-hub-detail-meta__avatar-verified {
 		position: absolute;
 		line-height: 20px;
@@ -298,7 +324,7 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 		flex-wrap: wrap;
 		gap: 4px;
 		// 8px vertical padding around the chip row so it shares the same
-		// 40px column height as the Creator avatar block — matches Figma.
+		// 40px column height as the Creator avatar block — matches the design.
 		padding-block: 8px;
 	}
 

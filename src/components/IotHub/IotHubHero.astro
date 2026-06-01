@@ -11,8 +11,8 @@ import ruleChainsCluster from '@root/assets/iot-hub/hero-rule-chain-cluster.svg'
 
 // Each highlight is an anchor to its category index (same routing as the
 // tiles below), and hovering one immediately makes it the active accent.
-// Colors per Figma node 1158:14803; slugs mirror IOT_HUB_CATEGORIES.
-// `clusterTop` is the cluster's `y` inside the Figma hero frame (1158:14803);
+// Colors per the design; slugs mirror IOT_HUB_CATEGORIES.
+// `clusterTop` is the cluster's `y` inside the design hero frame;
 // since the hero frame starts at y=80 (header height), this is also the gap
 // from the header bottom — added to `$header-height` in the CSS.
 const highlights = [
@@ -90,11 +90,11 @@ const highlights = [
 	.iot-hub-hero {
 		position: relative;
 		// Override the global `:where(section)` white fill so the dotted pattern
-		// and blobs behind the top section show through (Figma: transparent hero).
+		// and blobs behind the top section show through (the design: transparent hero).
 		background-color: transparent;
 		// The fixed header ($header-height) overlays page content with no global
-		// offset, so add it to the 180px Figma gap between header and title top.
-		// Bottom padding is 80px per Figma (search input -> hero bottom gap).
+		// offset, so add it to the 180px the design gap between header and title top.
+		// Bottom padding is 80px per the design (search input -> hero bottom gap).
 		padding: calc(#{$header-height} + 180px) 1rem 80px;
 		text-align: center;
 
@@ -163,7 +163,7 @@ const highlights = [
 	.iot-hub-hero__cluster-img {
 		position: absolute;
 		// Per-cluster `--cluster-top` is set inline per highlight (its `y`
-		// inside the Figma hero frame, which itself starts at $header-height).
+		// inside the design hero frame, which itself starts at $header-height).
 		// Fallback matches the Devices state, which is the initial active.
 		top: calc(#{$header-height} + var(--cluster-top, 57px));
 		left: 50%;
@@ -176,9 +176,9 @@ const highlights = [
 		@include media-down(lg) {
 			top: calc(#{$header-height} + 80px);
 		}
-		
+
 		@include media-down(md) {
-			// Mobile uses a single top for all clusters (Figma node is
+			// Mobile uses a single top for all clusters (the design node is
 			// desktop-only); the per-cluster var is intentionally overridden.
 			top: calc(#{$header-height} + 90px);
 			width: calc(100% - 32px);
@@ -222,7 +222,7 @@ const highlights = [
 	}
 
 	.iot-hub-hero__subtitle-lead {
-		// Lead text per Figma (token: neutral/--sl-color-gray-2 = #353841).
+		// Lead text per the design (token: neutral/--sl-color-gray-2 = #353841).
 		color: var(--sl-color-gray-2);
 		margin-right: 0.2rem;
 	}
@@ -230,7 +230,7 @@ const highlights = [
 	.iot-hub-hero__hl {
 		display: inline;
 		font-weight: $font-weight-semibold;
-		// Muted gray for the off-state per Figma (token: neutral/--sl-color-gray-5 = #c1c3c8).
+		// Muted gray for the off-state per the design (token: neutral/--sl-color-gray-5 = #c1c3c8).
 		color: var(--sl-color-gray-5);
 		text-decoration: none;
 		cursor: pointer;
@@ -254,7 +254,7 @@ const highlights = [
 		margin-top: 1rem;
 		min-height: 56px;
 		background: var(--color-bg-surface);
-		// Border + shadow per Figma node 1169:2786. Border uses the gray-4
+		// Border + shadow per the design. Border uses the gray-4
 		// token (#888c96 light / #555962 dark — see dark override below).
 		border: 1px solid var(--neutral---sl-color-gray-4, #888c96);
 		border-radius: 8px;

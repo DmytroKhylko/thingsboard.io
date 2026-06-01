@@ -3,8 +3,8 @@ import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import {
 	IOT_HUB_API_URL,
-	getCardVariant,
 	resolveImage,
+	type IotHubNodeInfo,
 	type ListingDetail,
 } from '@models/iot-hub';
 import BaseLayout from '@layouts/BaseLayout.astro';
@@ -58,11 +58,15 @@ const ogImageUrl =
 	resolveImage(detail?.image ?? item.image) ??
 	undefined;
 
-// Variant B (CALCULATED_FIELD / ALARM_RULE / RULE_CHAIN) gets the rule-node
-// tag chip row beneath the meta block (Figma node 1286:31922).
-const showRuleNodes = detail
-	? getCardVariant(detail.itemType) === 'small' && detail.tags.length > 0
-	: false;
+// Rule-chain only: extract NodeInfo[] from the primary variant's
+// dataDescriptor and render the chip row. Other item
+// types skip this section entirely.
+const ruleNodes: IotHubNodeInfo[] =
+	detail?.itemType === 'RULE_CHAIN' &&
+	detail.dataDescriptor &&
+	typeof detail.dataDescriptor === 'object'
+		? ((detail.dataDescriptor as { nodes?: IotHubNodeInfo[] }).nodes ?? [])
+		: [];
 ---
 
 <BaseLayout title={title} description={description} ogImage={ogImageUrl}>
@@ -74,7 +78,7 @@ const showRuleNodes = detail
 						<div class="iot-hub-detail__container">
 							<DetailHero detail={detail} categorySlug={category!} />
 							<DetailMeta detail={detail} />
-							{showRuleNodes && <DetailRuleNodes tags={detail.tags} />}
+							{ruleNodes.length > 0 && <DetailRuleNodes nodes={ruleNodes} />}
 							{detail.readmeContent && (
 								<div class="iot-hub-detail__readme">
 									<IotHubMarkdown markdown={detail.readmeContent} />

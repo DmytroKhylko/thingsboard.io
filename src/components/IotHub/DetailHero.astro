@@ -36,7 +36,7 @@ const showGallery =
 	detail.screenshots.length > 0;
 const heroImg = !isCompact && !showGallery ? resolveImage(detail.image) : null;
 // Compact variants render a colored icon tile next to the title (same as
-// the compact ListingCard renderer, but at 80x80 to match Figma 1286:31864).
+// the compact ListingCard renderer, but at 80x80 to match the design).
 // IotHubIcon handles the `mdi:`-prefix branching internally.
 const tileColor = detail.color ?? '#4caf50';
 const placeholderIcon = isCompact ? getPlaceholderIcon(detail) : null;
@@ -102,7 +102,7 @@ const versionLabel = detail.version
 		: `v${detail.version}`
 	: null;
 
-// License is always shown last per the Figma sub-title row (1279:52023);
+// License is always shown last per the design sub-title row;
 // listings on the IoT Hub are published under Apache-2.0.
 const licenseLabel = 'Apache-2.0 license';
 
@@ -530,7 +530,7 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 		}
 
 		// Device variant — neutral white frame with a hairline border so the
-		// product image reads cleanly regardless of theme (Figma 1281:28209).
+		// product image reads cleanly regardless of theme.
 		&--device {
 			background: #fff;
 			border: 1px solid var(--hairline---sl-color-hairline, #edeef3);
@@ -570,7 +570,6 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 		display: flex;
 		flex-direction: column;
 		gap: 24px;
-		margin-top: 32px;
 	}
 
 	.iot-hub-detail-hero__icon-row {

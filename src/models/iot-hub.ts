@@ -148,7 +148,7 @@ export const IOT_HUB_STRINGS = {
 		title: 'Install item',
 		titleConnect: 'Connect item',
 		// `\n` is a hard line break, rendered via `white-space: pre-line` to match
-		// the two-line layout in the design (Figma node 1189-9364).
+		// the two-line layout in the design.
 		subtitle:
 			'Choose a ThingsBoard instance to install this item into.\nCopy the install link or open it directly in a new tab.',
 		closeAriaLabel: 'Close',
@@ -188,6 +188,16 @@ export const ITEM_SUBTYPE_LABELS: Partial<Record<IotHubItemType, Record<string, 
 
 export const getSubtypeLabel = (itemType: IotHubItemType, key: string): string =>
 	ITEM_SUBTYPE_LABELS[itemType]?.[key] ?? key;
+
+// Rule-chain node info — mirrors the platform `NodeInfo` interface in
+// /data/git/thingsboard/ui-ngx/src/app/shared/models/iot-hub/iot-hub-version.models.ts.
+// `type` is one of the NodeComponentType values
+// (ENRICHMENT / FILTER / TRANSFORMATION / ACTION / ANALYTICS / EXTERNAL /
+// FLOW / UNKNOWN) and drives the chip color in DetailRuleNodes.
+export interface IotHubNodeInfo {
+	name: string;
+	type: string;
+}
 
 export const PAGE_SIZE = 12;
 export const HOME_PER_CATEGORY = 4;
@@ -356,7 +366,7 @@ export interface InstallInstance {
 	editable?: boolean;
 }
 
-// Order matches the Figma frame (node 1189-8154): NA, EU, Local.
+// Order matches the design: NA, EU, Local.
 export const INSTALL_INSTANCES: readonly InstallInstance[] = [
 	{
 		key: 'na',

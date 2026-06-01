@@ -276,6 +276,7 @@ Use the `release` skill for the full checklist. Key files:
 - Tabs for indentation in code files; spaces for JSON, Markdown, MDX, YAML, TOML
 - Prettier with `prettier-plugin-astro`, printWidth 100, single quotes, trailing commas
 - ESLint flat config with TypeScript and Astro plugins
+- **No Figma references in comments.** Don't write "Figma", "Figma node 1234:5678", or any tool-specific node IDs in source comments — they're meaningless to anyone without access to the Figma file and rot fast. Refer to the visual spec as "the design" (or "per the design", "matches the design") and describe what's actually being implemented (sizes, colors, behaviors) so the comment stands on its own.
 
 ## CI Checks
 
