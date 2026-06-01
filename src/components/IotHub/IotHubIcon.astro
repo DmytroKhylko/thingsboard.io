@@ -1,22 +1,26 @@
 ---
 import '@fontsource/material-icons';
-import { getMdiSvg } from '@util/mdi-icons';
+import { getMdiSvg, svgIcons } from '@util/icons';
 
 // Renders an IoT Hub icon — same convention as the Angular `<hub-icon>`
 // (/data/git/iot-hub/ui/src/app/shared/components/icon.component.ts):
-//   * names without a prefix ("memory", "widgets", …) → Material Icons font
-//     glyph rendered via ligature substitution
+//   * bare names registered in `svgIcons` (e.g. `thingsboard`) → SVG inlined
+//     from the in-memory registry
 //   * names prefixed `mdi:` → SVG fetched from
 //     `${IOT_HUB_API_URL}/assets/mdi/{name}.svg` and inlined
+//   * everything else (bare Material Icons name) → Material Icons font glyph
+//     rendered via ligature substitution
 //
-// SVGs are fetched server-side at component render and cached per build
-// worker, so each unique MDI icon is fetched once regardless of how many
+// MDI SVGs are fetched server-side at component render and cached per build
+// worker, so each unique icon is fetched once regardless of how many
 // listings use it.
 
 interface Props {
 	/**
-	 * Icon name. Bare strings render as a Material Icons font glyph; strings
-	 * starting with `mdi:` are fetched and inlined as SVG.
+	 * Icon name. Bare names registered in `svgIcons` render from the
+	 * in-memory registry; `mdi:`-prefixed names are fetched from the IoT Hub
+	 * asset endpoint and inlined; any other bare name renders as a Material
+	 * Icons font glyph.
 	 */
 	icon: string;
 	/**
@@ -30,18 +34,20 @@ interface Props {
 const { icon, size = '1em', class: className } = Astro.props;
 const sizeCss = typeof size === 'number' ? `${size}px` : size;
 
+const inlineSvg = icon in svgIcons ? svgIcons[icon] : null;
 const isMdi = icon.startsWith('mdi:');
 const mdiName = isMdi ? icon.slice(4) : null;
-const svgMarkup = mdiName ? await getMdiSvg(mdiName) : null;
+const svgMarkup = inlineSvg ?? (mdiName ? await getMdiSvg(mdiName) : null);
+const isSvg = svgMarkup !== null;
 ---
 
 {
-	isMdi ? (
+	isSvg ? (
 		<span
 			class:list={['iot-hub-icon', 'iot-hub-icon--svg', className]}
 			style={`width:${sizeCss};height:${sizeCss};`}
 			aria-hidden="true"
-			set:html={svgMarkup ?? ''}
+			set:html={svgMarkup}
 		/>
 	) : (
 		<span

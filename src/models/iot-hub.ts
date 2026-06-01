@@ -183,6 +183,25 @@ export const API_FETCH_PAGE_SIZE = 100;
 export const resolveImage = (path: string | null | undefined): string | null =>
 	path ? `${IOT_HUB_API_URL}${path}` : null;
 
+// Format the supported ThingsBoard version range for a listing — mirrors the
+// platform helper `getTbVersionLabel` in
+// /data/git/iot-hub/ui/src/app/shared/models/mp-item.models.ts. Backend stores
+// versions as int hundreds (e.g. 420 = 4.2), so divide by 100 and show as
+// `v{min}` / `v{min} - {max}` / `v{min}+` depending on whether `maxTbVersion`
+// is set. Returns an empty string when `minTbVersion` is missing.
+export const getTbVersionLabel = (
+	minTbVersion?: number | null,
+	maxTbVersion?: number | null
+): string => {
+	if (!minTbVersion) return '';
+	const min = (minTbVersion / 100).toFixed(1);
+	if (maxTbVersion) {
+		const max = (maxTbVersion / 100).toFixed(1);
+		return `v${min} - ${max}`;
+	}
+	return `v${min}+`;
+};
+
 export const itemTypeEnum = z.enum([
 	'WIDGET',
 	'DASHBOARD',
@@ -243,6 +262,8 @@ export const listingDetailSchema = listingViewSchema.extend({
 	// `widgetType`, `cfType`, `ruleChainType` are read off this without
 	// walking the variants list. Kept untyped here; narrow at the use site.
 	dataDescriptor: z.unknown().nullable(),
+	// Primary variant's published version string (e.g. "1.0.0").
+	version: z.string().nullable(),
 	// Aggregated edition + supported-TB-version envelope across all variants
 	// (computed by MpListingServiceImpl.findDetailById):
 	//   ceOnly       — true when ALL variants have ceOnly=true
