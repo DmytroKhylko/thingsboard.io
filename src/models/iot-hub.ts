@@ -203,9 +203,7 @@ export const ITEM_SUBTYPE_LABELS: Partial<Record<IotHubItemType, Record<string, 
 export const getSubtypeLabel = (itemType: IotHubItemType, key: string): string =>
 	ITEM_SUBTYPE_LABELS[itemType]?.[key] ?? key;
 
-// Rule-chain node info — mirrors the platform `NodeInfo` interface in
-// /data/git/thingsboard/ui-ngx/src/app/shared/models/iot-hub/iot-hub-version.models.ts.
-// `type` is one of the NodeComponentType values
+// Rule-chain node info. `type` is one of the NodeComponentType values
 // (ENRICHMENT / FILTER / TRANSFORMATION / ACTION / ANALYTICS / EXTERNAL /
 // FLOW / UNKNOWN) and drives the chip color in DetailRuleNodes.
 export interface IotHubNodeInfo {
@@ -222,12 +220,10 @@ export const API_FETCH_PAGE_SIZE = 100;
 export const resolveImage = (path: string | null | undefined): string | null =>
 	path ? `${IOT_HUB_API_URL}${path}` : null;
 
-// Format the supported ThingsBoard version range for a listing — mirrors the
-// platform helper `getTbVersionLabel` in
-// /data/git/iot-hub/ui/src/app/shared/models/mp-item.models.ts. Backend stores
-// versions as int hundreds (e.g. 420 = 4.2), so divide by 100 and show as
-// `v{min}` / `v{min} - {max}` / `v{min}+` depending on whether `maxTbVersion`
-// is set. Returns an empty string when `minTbVersion` is missing.
+// Format the supported ThingsBoard version range for a listing. Backend
+// stores versions as int hundreds (e.g. 420 = 4.2), so divide by 100 and
+// render as `v{min}` / `v{min} - {max}` / `v{min}+` depending on whether
+// `maxTbVersion` is set. Empty string when `minTbVersion` is missing.
 export const getTbVersionLabel = (
 	minTbVersion?: number | null,
 	maxTbVersion?: number | null

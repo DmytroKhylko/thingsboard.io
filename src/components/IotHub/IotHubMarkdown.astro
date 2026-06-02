@@ -3,6 +3,7 @@ import '@astrojs/starlight/style/markdown.css';
 import 'node_modules/@astrojs/starlight/style/asides.css';
 import { Aside, Code, Icon, LinkButton } from '@astrojs/starlight/components';
 import ImageGallery from '@components/ImageGallery.astro';
+import IotHubListingLink from '@components/IotHub/IotHubListingLink.astro';
 import { resolveImage, type ListingDetail } from '@models/iot-hub';
 import { getMarkdownProcessor } from '@util/markdown-processor';
 
@@ -37,11 +38,13 @@ type AsideType = 'note' | 'caution' | 'danger';
 type AsideSlotProps = { type: AsideType; content: string };
 type IconName = Parameters<typeof Icon>[0]['name'];
 type DocLinkSlotProps = { href: string; label: string; icon: IconName };
+type ListingLinkSlotProps = { slug: string };
 type Slot =
 	| { kind: 'code'; props: CodeSlotProps }
 	| { kind: 'gallery'; props: GallerySlotProps }
 	| { kind: 'aside'; props: AsideSlotProps }
-	| { kind: 'docLink'; props: DocLinkSlotProps };
+	| { kind: 'docLink'; props: DocLinkSlotProps }
+	| { kind: 'listingLink'; props: ListingLinkSlotProps };
 
 // Sentinel: HTML comments survive markdown→HTML conversion unmodified, so
 // we can splice slots back into the rendered HTML by plain string matching.
@@ -92,12 +95,9 @@ function rewriteResourceUrls(src: string): string {
 }
 
 // Image galleries: `${images.gallery({src:'…',alt:'…',caption:'…'}, {src:'…'}, …)}`.
-// Ported from `resolveVariables` in the platform's iot-hub-markdown.component.ts:
-// outer regex captures everything between the parens; inner regex pulls out
-// each `{…}` object literal; per-field regexes extract the quoted strings
-// (preserving the quote type via back-reference so single- and double-quoted
-// values both work). Run AFTER rewriteResourceUrls so any `/api/resources/…`
-// paths inside `src:` fields are already absolute.
+// The per-field regexes capture the opening quote so single- and
+// double-quoted values both work. Runs AFTER rewriteResourceUrls so any
+// `/api/resources/…` paths inside `src:` are already absolute by then.
 const GALLERY_RE = /\$\{\s*images\.gallery\(([\s\S]*?)\)\s*}/g;
 const GALLERY_OBJ_RE = /\{[\s\S]*?}/g;
 const GALLERY_SRC_RE = /src\s*:\s*(['"])((?:(?!\1).)*)\1/;
@@ -126,12 +126,10 @@ function extractImageGalleries(src: string, slots: Slot[]): string {
 	});
 }
 
-// Callouts: `${note(…)}`, `${warn(…)}`, `${error(…)}` — mapped to Starlight's
-// <Aside> with type note / caution / danger respectively. Content can include
-// inline HTML (e.g. `<span style="…">`, `<b>…</b>`) so we pass it through to
-// the Aside body via set:html. Lazy `[\s\S]*?` paired with `\)\s*}` skips
-// over nested `(…)` parens correctly, matching the platform's
-// `resolveVariables` callout branch in iot-hub-markdown.component.ts.
+// Callouts: `${note(…)}`, `${warn(…)}`, `${error(…)}` → Starlight <Aside>
+// with type note / caution / danger. Content can include inline HTML
+// (e.g. `<span style="…">`, `<b>…</b>`) so we render via set:html. Lazy
+// `[\s\S]*?` paired with `\)\s*}` skips over nested `(…)` parens.
 const CALLOUT_RE = /\$\{(note|warn|error)\(([\s\S]*?)\)\s*}/g;
 const CALLOUT_TYPE_TO_ASIDE: Record<string, AsideType> = {
 	note: 'note',
@@ -149,13 +147,22 @@ function extractCallouts(src: string, slots: Slot[]): string {
 
 // Documentation link buttons: `${product.button}` and `${datasheet.button}`,
 // resolved against the listing's `dataDescriptor.{productURL,datasheetURL}`.
-// Mirrors `resolveDocLinkPlaceholders` in the platform's
-// iot-hub-markdown.utils.ts — a placeholder whose URL isn't set on the
-// dataDescriptor is dropped from the output, rather than rendered as an
-// empty button.
+// A placeholder whose URL isn't set is dropped from the output instead of
+// rendering an empty button.
 type DataDescriptor = { productURL?: string | null; datasheetURL?: string | null };
 const PRODUCT_BUTTON_RE = /\$\{product\.button}/g;
 const DATASHEET_BUTTON_RE = /\$\{datasheet\.button}/g;
+// Listing-link cards: `${listing-link:<slug>}` → IotHubListingLink, which
+// fetches the referenced listing at build time and renders a thumb / name /
+// creator card. Slug accepts the same `[\w-]` shape as the route param.
+const LISTING_LINK_RE = /\$\{listing-link:([a-zA-Z0-9_-]+)}/g;
+function extractListingLinks(src: string, slots: Slot[]): string {
+	return src.replace(LISTING_LINK_RE, (_full, linkSlug: string) => {
+		const i = slots.push({ kind: 'listingLink', props: { slug: linkSlug } }) - 1;
+		return `\n\n${slotComment(i)}\n\n`;
+	});
+}
+
 function extractDocLinks(src: string, slots: Slot[], detail: ListingDetail | undefined): string {
 	const dd = (detail?.dataDescriptor ?? null) as DataDescriptor | null;
 	const name = detail?.name ?? '';
@@ -192,6 +199,7 @@ if (markdown && markdown.trim().length > 0) {
 	src = extractImageGalleries(src, slots);
 	src = extractCallouts(src, slots);
 	src = extractDocLinks(src, slots, listingDetail);
+	src = extractListingLinks(src, slots);
 
 	// 4. Markdown → HTML.
 	const processor = await getMarkdownProcessor();
@@ -240,6 +248,8 @@ if (markdown && markdown.trim().length > 0) {
 								{p.slot.props.label}
 							</LinkButton>
 						);
+					case 'listingLink':
+						return <IotHubListingLink slug={p.slot.props.slug} />;
 					// Future: more cases here.
 					default:
 						return null;
@@ -251,140 +261,130 @@ if (markdown && markdown.trim().length > 0) {
 
 <style lang="scss">
 	@use '~/styles/_variables.scss' as *;
-	
-	.sl-markdown-content {
-		line-height: var(--sl-line-height);
-		-webkit-font-smoothing: antialiased;
-		color: var(--sl-color-text);
-		background-color: var(--sl-color-bg);
 
-		@layer reset {
-			:global(p) { 
+	@layer reset {
+		.sl-markdown-content {
+			:global(p) {
 				line-height: var(--sl-line-height);
 				-webkit-font-smoothing: antialiased;
 				color: var(--sl-color-text);
 				font-size: var(--sl-font-size);
 			}
-	
-			:global(h1), :global(h2), :global(h3), :global(h4), :global(h5), :global(h6) {
-				font-size: 24px;
-				font-weight: 600;
-				line-height: 32px;
-				letter-spacing: 0.1px;
-				color: var(--sl-color-text);
-				margin: 0;
-				padding: 0;
-			}
-	  }
-
-		:global(> h1), :global(> h2), :global(> h3), :global(> h4), :global(> h5), :global(> h6) {
-			padding: 0 0 6px;
-			margin-top: 20px;
-		}
-
-		:global(h1) {
-			font-size: 32px;
-			line-height: 48px;
-			padding-right: 0;
-		}
-
-		:global(ul) { 
-			:global(li) {
-				list-style: disc;
-			}
-		}
-
-		:global(ol) {
-			:global(li) {
-				list-style: decimal;
-			}
-		}
-
-		:global(:is(dir, menu, ol, ul)) {
-			:global(ul) {
-				:global(li) {
-					list-style: circle;
-				}
-			}
-		}
-
-		:global(> p), :global(> div) {
-			padding-left: 0;
-			padding-right: 0;
-		}
-
-		:global(p + p) {
-			margin-top: 8px;
-		}
-
-		:global(h1 + p), :global(h2 + p), :global(h3 + p),
-		:global(h1 + ul), :global(h2 + ul), :global(h3 + ul),
-		:global(h1 + ol), :global(h2 + ol), :global(h3 + ol) {
-			margin-top: 8px;
-		}
-
-		:global(ul, ol) {
-			padding-left: 21px;
-			padding-right: 0;
-			margin: 0;
-			font-size: 16px;
-			line-height: 24px;
-			letter-spacing: 0.2px;
-
-			:global(+ h1), :global(+ h2), :global(+ h3), :global(+ h4), :global(+ h5), :global(+ h6) {
-				padding-top: 0;
-				margin-top: 20px;
-			}
-		}
-
-		:global(ul) {
-			margin-top: 8px;
-			margin-bottom: 8px;
-		}
-
-		:global(img) {
-			max-width: 100%;
-		}
-
-		:global(li > p) {
-			margin: 0;
-		}
-
-		:global(table:not(:where(.not-content *))) {
-			display: block;
-			overflow-x: auto;
-			border-collapse: collapse;
-		}
-
-		:global(:is(th, td):not(:where(.not-content *))) {
-			border: 1px solid var(--sl-color-hairline-light);
-			padding: 0.5rem 1rem;
-		}
-
-		:global(:is(th:first-child, td:first-child):not(:where(.not-content *))) {
-			padding-inline-start: 1rem;
-		}
-
-		:global(:is(th:last-child, td:last-child):not(:where(.not-content *))) {
-			padding-inline-end: 1rem;
-		}
-
-		:global(thead tr:not(:where(.not-content *))) {
-			background-color: var(--sl-color-gray-7, var(--sl-color-gray-6));
-		}
-
-		:global(tbody) {
-			:global(tr:nth-child(even):not(:where(.not-content *))) {
-				background-color: var(--sl-color-gray-7, var(--sl-color-gray-6));
-			}
-		}
-
-		:global(.starlight-aside) {
-			:global(tbody) {
-				:global(tr:nth-child(odd):not(:where(.not-content *))) {
-					background-color: var(--sl-color-bg);
-				}
-			}
 		}
 	}
+
+	@layer starlight.content {
+		.sl-markdown-content {
+			line-height: var(--sl-line-height);
+			-webkit-font-smoothing: antialiased;
+			color: var(--sl-color-text);
+			background-color: var(--sl-color-bg);
+
+			:global(h1) {
+				font-size: 32px;
+				line-height: 48px;
+				padding-right: 0;
+			}
+
+			:global(ul) {
+				:global(li) {
+					list-style: disc;
+				}
+			}
+
+			:global(ol) {
+				:global(li) {
+					list-style: decimal;
+				}
+			}
+
+			:global(:is(dir, menu, ol, ul)) {
+				:global(ul) {
+					:global(li) {
+						list-style: circle;
+					}
+				}
+			}
+
+			:global(> p), :global(> div) {
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			:global(p + p) {
+				margin-top: 8px;
+			}
+
+			:global(h1 + p), :global(h2 + p), :global(h3 + p),
+			:global(h1 + ul), :global(h2 + ul), :global(h3 + ul),
+			:global(h1 + ol), :global(h2 + ol), :global(h3 + ol) {
+				margin-top: 8px;
+			}
+
+			:global(ul, ol) {
+				padding-left: 21px;
+				padding-right: 0;
+				margin: 0;
+				font-size: 16px;
+				line-height: 24px;
+				letter-spacing: 0.2px;
+
+				:global(+ h1), :global(+ h2), :global(+ h3), :global(+ h4), :global(+ h5), :global(+ h6) {
+					padding-top: 0;
+					margin-top: 20px;
+				}
+			}
+
+			:global(ul) {
+				margin-top: 8px;
+				margin-bottom: 8px;
+			}
+
+			:global(img) {
+				max-width: 100%;
+			}
+
+			:global(li > p) {
+				margin: 0;
+			}
+
+			:global(table:not(:where(.not-content *))) {
+				display: block;
+				overflow-x: auto;
+				border-collapse: collapse;
+			}
+
+			:global(:is(th, td):not(:where(.not-content *))) {
+				border: 1px solid var(--sl-color-hairline-light);
+				padding: 0.5rem 1rem;
+			}
+
+			:global(:is(th:first-child, td:first-child):not(:where(.not-content *))) {
+				padding-inline-start: 1rem;
+			}
+
+			:global(:is(th:last-child, td:last-child):not(:where(.not-content *))) {
+				padding-inline-end: 1rem;
+			}
+
+			:global(thead tr:not(:where(.not-content *))) {
+				background-color: var(--sl-color-gray-7, var(--sl-color-gray-6));
+			}
+
+			:global(tbody) {
+				:global(tr:nth-child(even):not(:where(.not-content *))) {
+					background-color: var(--sl-color-gray-7, var(--sl-color-gray-6));
+				}
+			}
+
+			:global(.starlight-aside) {
+				:global(tbody) {
+					:global(tr:nth-child(odd):not(:where(.not-content *))) {
+						background-color: var(--sl-color-bg);
+					}
+				}
+			}
+		}
+	}	
+
 </style>

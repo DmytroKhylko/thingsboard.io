@@ -27,9 +27,7 @@ type Column = { label: string; values: string[]; tint: 'blue' | 'purple' | 'gree
 
 // Column 2 — secondary type (Hardware Type / Widget Type / Type). Raw API
 // keys for widgetType / cfType / ruleChainType (`timeseries`, `SIMPLE`,
-// `CORE`, …) are mapped to their human-readable label via
-// `getSubtypeLabel`, mirroring the platform helper of the same name in
-// /data/git/thingsboard/ui-ngx/.../iot-hub-item-detail-dialog.component.ts.
+// `CORE`, …) go through `getSubtypeLabel` to become human-readable.
 const itemType = detail.itemType as IotHubItemType;
 const secondColumn: Column | null = (() => {
 	switch (detail.itemType) {
@@ -48,9 +46,8 @@ const secondColumn: Column | null = (() => {
 		case 'CALCULATED_FIELD':
 		case 'ALARM_RULE':
 			// ALARM_RULE shares cfType (and cfTypeTranslations) with
-			// CALCULATED_FIELD on the platform — see getCompactSubtypeLabel in
-			// iot-hub-item-detail-dialog.component.ts. Force the lookup
-			// itemType to CALCULATED_FIELD so the translation hits.
+			// CALCULATED_FIELD — force the lookup itemType to CALCULATED_FIELD
+			// so the translation hits.
 			return detail.cfType
 				? {
 						label: 'Type',
@@ -83,15 +80,12 @@ const thirdColumn: Column | null = (() => {
 	return null;
 })();
 
-// Column 4 — Use Cases, with a "+N" overflow chip when more than 3 entries
-// (matches the design's `+1` chip shown after 3 visible items).
-const USE_CASES_VISIBLE = 3;
-const useCasesAll = detail.useCases;
-const useCasesVisible = useCasesAll.slice(0, USE_CASES_VISIBLE);
-const useCasesOverflow = useCasesAll.length - useCasesVisible.length;
+// Column 4 — Use Cases. All entries render; the runtime chip-overflow
+// script at the bottom of this file hides those that don't fit the
+// available row width and appends a "+N" counter chip.
 const useCasesColumn: Column | null =
-	useCasesAll.length > 0
-		? { label: 'Use Cases', values: useCasesVisible, tint: 'green' }
+	detail.useCases.length > 0
+		? { label: 'Use Cases', values: detail.useCases, tint: 'green' }
 		: null;
 
 const creator = detail.creatorDisplayName || null;
@@ -171,23 +165,34 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 			{useCasesColumn && (
 				<div class="iot-hub-detail-meta__group iot-hub-detail-meta__group--wide">
 					<span class="iot-hub-detail-meta__label">{useCasesColumn.label}</span>
-					<ul class="iot-hub-detail-meta__chips" role="list">
+					<ul
+						class="iot-hub-detail-meta__chips iot-hub-detail-meta__chips--overflow"
+						role="list"
+						data-chip-overflow
+						data-chip-overflow-gap="4"
+					>
 						{useCasesColumn.values.map((v) => (
-							<li class:list={['iot-hub-detail-meta__chip', `iot-hub-detail-meta__chip--${useCasesColumn.tint}`]}>
+							<li
+								class:list={['iot-hub-detail-meta__chip', `iot-hub-detail-meta__chip--${useCasesColumn.tint}`]}
+								data-chip-overflow-item
+							>
 								{v}
 							</li>
 						))}
-						{useCasesOverflow > 0 && (
-							<li
-								class:list={[
-									'iot-hub-detail-meta__chip',
-									`iot-hub-detail-meta__chip--${useCasesColumn.tint}`,
-								]}
-								title={useCasesAll.slice(USE_CASES_VISIBLE).join(', ')}
-							>
-								+{useCasesOverflow}
-							</li>
-						)}
+						{/* Hidden until the runtime script measures and decides
+						    how many chips overflow. Inline `display:none` so
+						    the chip doesn't flash before the script runs. */}
+						<li
+							class:list={[
+								'iot-hub-detail-meta__chip',
+								`iot-hub-detail-meta__chip--${useCasesColumn.tint}`,
+								'iot-hub-detail-meta__chip--counter',
+							]}
+							data-chip-overflow-counter
+							style="display:none"
+						>
+							+0
+						</li>
 					</ul>
 				</div>
 			)}
@@ -207,6 +212,12 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		// Wrap is always on so the Use Cases column drops to its own row
+		// when its flex-basis (see `--wide` below) can't fit alongside the
+		// fixed-content columns. Without this, between the natural break and
+		// the `md` viewport breakpoint the wide column would just shrink
+		// and overflow:hidden would clip both its label and its first chip.
+		flex-wrap: wrap;
 		gap: 20px;
 		padding: 20px 16px 16px 16px;
 		border-bottom: 1px solid var(--iot-hub-hairline);
@@ -216,7 +227,6 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 		}
 
 		@include media-down(md) {
-			flex-wrap: wrap;
 			align-items: flex-start;
 		}
 	}
@@ -231,9 +241,16 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 		flex-shrink: 0;
 
 		// Use Cases stretches to fill the remainder of the row (matches the
-		// The design use-cases column being flex: 1 0 0).
+		// design's use-cases column flex: 1 0 0). The 14em flex-basis is the
+		// wrap trigger: when there's less than ~14em of space remaining
+		// alongside the fixed-content columns, the parent's `flex-wrap: wrap`
+		// drops this column onto its own row where it gets the full width.
+		// `min-width: 0` still lets the chips row's `overflow: hidden` clip
+		// in the case where 14em is available but the chips themselves don't
+		// all fit (the runtime overflow script handles that with `+N`).
 		&--wide {
-			flex: 1 1 0;
+			flex: 1 1 14em;
+			min-width: 0;
 		}
 	}
 
@@ -339,6 +356,22 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 		padding-block: 8px;
 	}
 
+	// Use Cases column — chips occupy a single row and the runtime
+	// chip-overflow script (bottom of this file) hides items that don't fit
+	// the available width, surfacing them through a "+N" counter chip.
+	// `width: 100%` forces the ul to the wide column's full width — the
+	// parent `.iot-hub-detail-meta__group` uses `align-items: flex-start`,
+	// so without this the ul would size to its intrinsic content width
+	// (sum of all chip widths) and `overflow: hidden` would have nothing
+	// narrower than itself to clip against.
+	.iot-hub-detail-meta__chips--overflow {
+		width: 100%;
+		flex-wrap: nowrap;
+		overflow: hidden;
+		min-width: 0;
+		white-space: nowrap;
+	}
+
 	.iot-hub-detail-meta__chip {
 		display: inline-flex;
 		align-items: center;
@@ -365,6 +398,10 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 			background: var(--sl-color-green-low);
 			color: var(--sl-color-green-high);
 		}
+
+		&--counter {
+			user-select: none;
+		}
 	}
 
 	.material-icons {
@@ -372,3 +409,112 @@ const hasAnyColumn = creator || secondColumn || thirdColumn || useCasesColumn;
 		display: inline-block;
 	}
 </style>
+
+<script>
+	// Runtime chip-overflow. For each `[data-chip-overflow]` container,
+	// measure every `[data-chip-overflow-item]` chip, hide the ones that
+	// don't fit, and update the `[data-chip-overflow-counter]` chip with
+	// `+N`. Re-runs on container resize, on `astro:page-load`, and once
+	// after web fonts settle so widths re-measure with final glyph metrics.
+
+	type ChipDataset = { chipOverflowGap?: string; chipOverflowTemplate?: string; chipOverflowMin?: string; chipOverflowInited?: string };
+
+	function setupChipOverflow(container: HTMLElement) {
+		const ds = container.dataset as ChipDataset;
+		if (ds.chipOverflowInited) return;
+		ds.chipOverflowInited = 'true';
+
+		const gap = Number.parseInt(ds.chipOverflowGap ?? '4', 10);
+		const template = ds.chipOverflowTemplate ?? '+{n}';
+		const minChips = Math.max(1, Number.parseInt(ds.chipOverflowMin ?? '1', 10));
+		const counter = container.querySelector<HTMLElement>('[data-chip-overflow-counter]');
+		if (!counter) return;
+
+		const reflow = () => {
+			const chips = Array.from(
+				container.querySelectorAll<HTMLElement>('[data-chip-overflow-item]')
+			);
+			if (chips.length === 0) {
+				counter.style.display = 'none';
+				return;
+			}
+
+			// 1. Reveal everything to measure each chip's natural width.
+			for (const chip of chips) chip.style.display = '';
+			counter.style.display = 'none';
+			const widths = chips.map((c) => Math.ceil(c.offsetWidth));
+
+			// 2. Hide everything to read the container's true available width
+			//    without the chips' intrinsic content inflating any flex/grid
+			//    parent.
+			for (const chip of chips) chip.style.display = 'none';
+			const availableWidth = container.clientWidth;
+			if (!availableWidth) {
+				for (const chip of chips) chip.style.display = '';
+				return;
+			}
+
+			// 3. Measure the counter chip with a "+9" placeholder so we know
+			//    how much space to reserve for it before deciding which chips
+			//    fit.
+			counter.textContent = template.replace('{n}', '9');
+			counter.style.display = 'inline-flex';
+			const minOverflowWidth = counter.offsetWidth;
+			counter.style.display = 'none';
+
+			// 4. Pack chips left-to-right. Always keep the first `minChips`,
+			//    even if they overflow on very narrow screens.
+			let used = 0;
+			let hidden = 0;
+			const hiddenTitles: string[] = [];
+			for (let i = 0; i < chips.length; i++) {
+				const w = widths[i];
+				const next = used ? used + gap + w : w;
+				const withOverflow = next + (next ? gap : 0) + minOverflowWidth;
+				if (i < minChips || withOverflow <= availableWidth) {
+					chips[i].style.display = 'inline-flex';
+					used = next;
+				} else {
+					hidden++;
+					hiddenTitles.push(chips[i].textContent?.trim() ?? '');
+				}
+			}
+
+			if (hidden > 0) {
+				counter.textContent = template.replace('{n}', String(hidden));
+				counter.style.display = 'inline-flex';
+				counter.title = hiddenTitles.join(', ');
+			} else {
+				counter.style.display = 'none';
+				counter.removeAttribute('title');
+			}
+		};
+
+		const ro = new ResizeObserver(() => {
+			requestAnimationFrame(reflow);
+		});
+		ro.observe(container);
+
+		requestAnimationFrame(reflow);
+		// Web fonts may finish loading after first paint — re-measure once
+		// glyph metrics are final, otherwise chips packed with the fallback
+		// font can mis-fit by a few pixels.
+		if (document.fonts) {
+			document.fonts.ready.then(() => requestAnimationFrame(reflow));
+		}
+	}
+
+	function initAll() {
+		document
+			.querySelectorAll<HTMLElement>('[data-chip-overflow]')
+			.forEach(setupChipOverflow);
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initAll);
+	} else {
+		initAll();
+	}
+	// Re-init after Starlight / Astro view transitions swap the DOM.
+	document.addEventListener('astro:page-load', initAll);
+</script>

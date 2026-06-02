@@ -2,18 +2,15 @@
 import '@fontsource/material-icons';
 import { getMdiSvg, svgIcons } from '@util/icons';
 
-// Renders an IoT Hub icon — same convention as the Angular `<hub-icon>`
-// (/data/git/iot-hub/ui/src/app/shared/components/icon.component.ts):
-//   * bare names registered in `svgIcons` (e.g. `thingsboard`) → SVG inlined
-//     from the in-memory registry
-//   * names prefixed `mdi:` → SVG fetched from
+// Renders an IoT Hub icon by name:
+//   * bare names registered in `svgIcons` (e.g. `thingsboard`) → SVG
+//     inlined from the in-memory registry
+//   * `mdi:`-prefixed names → SVG fetched from
 //     `${IOT_HUB_API_URL}/assets/mdi/{name}.svg` and inlined
-//   * everything else (bare Material Icons name) → Material Icons font glyph
-//     rendered via ligature substitution
+//   * everything else → Material Icons font glyph via ligature substitution
 //
-// MDI SVGs are fetched server-side at component render and cached per build
-// worker, so each unique icon is fetched once regardless of how many
-// listings use it.
+// MDI SVGs are fetched at build time and cached per worker so each unique
+// icon hits the network once regardless of how many listings use it.
 
 interface Props {
 	/**

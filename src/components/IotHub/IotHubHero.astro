@@ -1,7 +1,6 @@
 ---
-// Composite cluster SVGs ported from the platform's tb-iot-hub-home component
-// (assets/iot-hub/hero-*-cluster.svg). One per category, layered absolutely
-// over the hero; the active one fades + scales in while the rest collapse out.
+// Composite cluster SVGs — one per category, layered absolutely over the
+// hero; the active one fades + scales in while the rest collapse out.
 import devicesCluster from '@root/assets/iot-hub/hero-device-cluster.svg';
 import solutionsCluster from '@root/assets/iot-hub/hero-solution-template-cluster.svg';
 import widgetsCluster from '@root/assets/iot-hub/hero-widget-cluster.svg';
@@ -332,12 +331,11 @@ const highlights = [
 </style>
 
 <script is:inline>
-	// Drives the active highlight in the IoT Hub hero. Mirrors the platform
-	// behaviour in `tb-iot-hub-home` (Angular): auto-cycle every 3s, hover or
-	// focus a highlight to immediately become active and pause the cycle, leave
-	// to resume from the current one. The active accent is published as
-	// `--iot-hub-active-accent` on the nearest `.iot-hub-home__top` so the
-	// background blobs follow the same color via CSS custom-property inheritance.
+	// Drives the active highlight in the IoT Hub hero: auto-cycle every 3s;
+	// hover or focus a highlight to become active and pause the cycle, leave
+	// to resume. The active accent is published as `--iot-hub-active-accent`
+	// on the nearest `.iot-hub-home__top` so the background blobs follow the
+	// same color via CSS custom-property inheritance.
 	document
 		.querySelectorAll('[data-iot-hub-hero-search]')
 		.forEach((form) => form.addEventListener('submit', (e) => e.preventDefault()));
@@ -406,10 +404,9 @@ const highlights = [
 		});
 
 		// Double rAF so the browser actually paints the initial hidden state
-		// (opacity 0, scale 0.8) BEFORE .is-active is added — without this,
-		// a single rAF still runs before the first paint, so the transition
-		// has nothing to interpolate from and the Devices cluster appears at
-		// scale 1 instantly. Mirrors `heroIconsReady` in the platform.
+		// (opacity 0, scale 0.8) BEFORE .is-active is added — a single rAF
+		// runs before the first paint, leaving the transition nothing to
+		// interpolate from and the first cluster appears at scale 1 instantly.
 		requestAnimationFrame(() => {
 			requestAnimationFrame(() => {
 				setActive(0);

@@ -1,14 +1,11 @@
 ---
 import { IOT_HUB_API_URL } from '@models/iot-hub';
 
-// Interactive image carousel for solution-template screenshots. Drop-in for
-// the detail hero's preview slot when a listing has multiple screenshots —
-// single screenshot listings get a still image rendered by DetailHero
-// directly. Same overall UX as the platform's .dlg-hero-carousel
-// (/data/git/thingsboard/ui-ngx/src/app/modules/home/components/iot-hub/iot-hub-item-detail-dialog.component.html)
-// but a fresh implementation: scoped Astro markup + a small is:inline script
-// for prev/next + dot navigation and gentle auto-advance. No third-party
-// carousel library.
+// Interactive image carousel for solution-template screenshots. Drop-in
+// for the detail hero's preview slot when a listing has multiple
+// screenshots — single-screenshot listings get a still image rendered by
+// DetailHero directly. Scoped Astro markup + a small is:inline script for
+// prev/next + dot navigation and gentle auto-advance; no carousel library.
 
 interface Props {
 	screenshots: Array<{ id: string }>;
@@ -168,10 +165,9 @@ const resourceUrl = (id: string) => `${IOT_HUB_API_URL}/api/resources/${id}`;
 		}
 	}
 
-	// Bottom controls row: [prev] [dots, centred + flex:1] [next]. Mirrors
-	// the platform's `.dlg-carousel-controls` — both chevrons sit at the row
-	// edges, the dots float in the centre so the layout reads symmetrically
-	// regardless of how many dots there are.
+	// Bottom controls row: [prev] [dots, centred + flex:1] [next] — chevrons
+	// sit at the row edges, dots float in the centre so the layout reads
+	// symmetrically regardless of dot count.
 	.iot-hub-gallery__controls {
 		display: flex;
 		align-items: center;
@@ -217,10 +213,9 @@ const resourceUrl = (id: string) => `${IOT_HUB_API_URL}/api/resources/${id}`;
 		}
 	}
 
-	// Pagination dots — same visual language as the platform: 6px dots,
-	// transparent-black inactive, opaque-black active, with a soft scale-up
-	// on the active dot so it reads clearly without changing layout. Takes
-	// `flex: 1` so it centres within the controls row.
+	// Pagination dots — 6px, transparent inactive, opaque active, with a
+	// soft scale-up on the active dot so it reads clearly without changing
+	// layout. `flex: 1` centres the strip within the controls row.
 	.iot-hub-gallery__dots {
 		display: flex;
 		align-items: center;

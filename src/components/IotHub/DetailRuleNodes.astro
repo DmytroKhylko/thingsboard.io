@@ -1,12 +1,9 @@
 ---
 import type { IotHubNodeInfo } from '@models/iot-hub';
 
-// Rule-chain node chips. Ports the platform `.dlg-nodes`
-// row from
-// /data/git/thingsboard/ui-ngx/src/app/modules/home/components/iot-hub/iot-hub-item-detail-dialog.component.html
-// and the `.dlg-node-chip` styling from the sibling .scss. Each chip uses
-// `node.name` as label and a `--{type}` modifier class for the colored
-// background + border. Only rendered for RULE_CHAIN listings (see [slug].astro).
+// Rule-chain node chips. Each chip uses `node.name` as label and a
+// `--{type}` modifier class for the colored background + border.
+// Rendered only for RULE_CHAIN listings (see [slug].astro).
 
 interface Props {
 	nodes: IotHubNodeInfo[];
@@ -73,12 +70,6 @@ const classFor = (type: string) => {
 		gap: 8px;
 	}
 
-	// Pill chip — ported 1:1 from .dlg-node-chip
-	// (iot-hub-item-detail-dialog.component.scss): 32px tall, pill radius,
-	// 1px border at full color, background at 16% alpha. Body text reads
-	// at rgba(0,0,0,0.76) on both themes (the saturated tinted backgrounds
-	// keep the chip surface lighter than the page background even in dark
-	// mode, so dark text stays legible).
 	.iot-hub-rule-nodes__chip {
 		display: inline-flex;
 		align-items: center;
@@ -91,7 +82,6 @@ const classFor = (type: string) => {
 		letter-spacing: 0.2px;
 		white-space: nowrap;
 		border: 1px solid;
-		color: rgba(0, 0, 0, 0.76);
 
 		&--filter {
 			background: rgba(241, 232, 97, 0.16);
