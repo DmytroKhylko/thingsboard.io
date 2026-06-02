@@ -69,6 +69,20 @@ const highlights = [
 				placeholder="Search in IoT Hub..."
 				autocomplete="off"
 			/>
+			<button
+				class="iot-hub-hero__search-clear"
+				type="button"
+				aria-label="Clear search"
+				data-iot-hub-hero-clear
+			>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path
+						d="M5 5 19 19M19 5 5 19"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"></path>
+				</svg>
+			</button>
 			<button class="iot-hub-hero__search-button" type="submit" aria-label="Search">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 					<path
@@ -307,9 +321,19 @@ const highlights = [
 		&::placeholder {
 			color: var(--color-text-muted);
 		}
+
+		// Hide the browser's built-in `×` so our custom clear button (styled
+		// to match the submit button) is the only one visible.
+		&::-webkit-search-cancel-button,
+		&::-webkit-search-decoration {
+			-webkit-appearance: none;
+			appearance: none;
+		}
 	}
 
-	.iot-hub-hero__search-button {
+	// Submit + clear share the same 40×40 icon-button chrome.
+	.iot-hub-hero__search-button,
+	.iot-hub-hero__search-clear {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -328,6 +352,23 @@ const highlights = [
 			color: var(--color-text);
 		}
 	}
+
+	// Clear button only matters when the user has typed something. The
+	// `:placeholder-shown` pseudo-class flips false as soon as the input
+	// has a value, revealing the button — pure CSS, no JS needed for the
+	// show/hide toggle (clicking the button still needs JS to wipe the
+	// value; see the inline script below).
+	.iot-hub-hero__search-input:placeholder-shown ~ .iot-hub-hero__search-clear {
+		display: none;
+	}
+
+	// Tighten the clear→search gap to 4px (the form's flex gap is 8px).
+	// Only applies when the clear button is visible (input has value);
+	// when empty, the search button sits adjacent to the input at the
+	// default 8px gap.
+	.iot-hub-hero__search-input:not(:placeholder-shown) ~ .iot-hub-hero__search-button {
+		margin-left: -4px;
+	}
 </style>
 
 <script is:inline>
@@ -336,6 +377,23 @@ const highlights = [
 	// to resume. The active accent is published as `--iot-hub-active-accent`
 	// on the nearest `.iot-hub-home__top` so the background blobs follow the
 	// same color via CSS custom-property inheritance.
+	// Clear-button click handler: wipe the search input, return focus to it
+	// so the user can keep typing, and dispatch `input` so any listeners
+	// (and the :placeholder-shown re-eval) pick up the change.
+	document.querySelectorAll('[data-iot-hub-hero-clear]').forEach((btn) => {
+		btn.addEventListener('click', () => {
+			const form = btn.closest('form');
+			const input = form && form.querySelector('input[type="search"]');
+			// instanceof check both narrows the type for the editor and
+			// guards against the (impossible at runtime) null case.
+			if (input instanceof HTMLInputElement) {
+				input.value = '';
+				input.dispatchEvent(new Event('input', { bubbles: true }));
+				input.focus();
+			}
+		});
+	});
+
 	(function () {
 		const hero = document.querySelector('.iot-hub-hero');
 		if (!hero) return;
