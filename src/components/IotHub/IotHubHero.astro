@@ -1,7 +1,6 @@
 ---
-// Material Icons font for the popup result cards (person glyph, type
-// fallbacks). Each per-component import is deduped by Vite.
-import '@fontsource/material-icons';
+import IotHubListingLinkTemplate from './IotHubListingLinkTemplate.astro';
+import IotHubRuntimeConfig from './IotHubRuntimeConfig.astro';
 
 // Composite cluster SVGs — one per category, layered absolutely over the
 // hero; the active one fades + scales in while the rest collapse out.
@@ -115,6 +114,8 @@ const highlights = [
 			</div>
 		</form>
 	</div>
+	<IotHubListingLinkTemplate variant="row" />
+	<IotHubRuntimeConfig />
 </section>
 
 <style lang="scss">
@@ -458,8 +459,10 @@ const highlights = [
 	}
 
 	// --- Popup body content (client-rendered) ---------------------------------
-	// All of these target classes that JS creates inside [data-popup-body].
-	// They're :global so the unscoped JS-built DOM picks them up.
+	// Result cards themselves come from IotHubListingLinkTemplate (cloned at
+	// runtime by the popup script); their chrome lives in IotHubListingLink's
+	// own scoped styles. The rules below only cover the group header and
+	// the status/empty messages — bits that don't exist outside the popup.
 
 	:global(.iot-hub-hero__search-popup-group) {
 		padding-bottom: 4px;
@@ -479,102 +482,6 @@ const highlights = [
 		line-height: 20px;
 		letter-spacing: 0.25px;
 		color: var(--color-text-muted);
-	}
-
-	:global(.iot-hub-hero__search-popup-item) {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		padding: 8px 16px;
-		text-decoration: none;
-		color: inherit;
-
-		&:hover,
-		&:focus-visible {
-			background: var(--color-bg-light);
-			text-decoration: none;
-		}
-	}
-
-	:global(.iot-hub-hero__search-popup-thumb) {
-		flex-shrink: 0;
-		width: 99px;
-		height: 56px;
-		border-radius: 4px;
-		border: 1px solid var(--iot-hub-hairline, rgba(0, 0, 0, 0.12));
-		background: rgba(0, 0, 0, 0.04);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
-
-		img {
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-			display: block;
-		}
-	}
-
-	:global([data-theme='dark']) :global(.iot-hub-hero__search-popup-thumb) {
-		background: rgba(255, 255, 255, 0.04);
-	}
-
-	:global(.iot-hub-hero__search-popup-thumb--compact) {
-		width: 56px;
-		height: 56px;
-		border: none;
-		border-radius: 4.667px;
-		color: #fff;
-	}
-
-	:global(.iot-hub-hero__search-popup-thumb-icon),
-	:global(.iot-hub-hero__search-popup-thumb-fallback) {
-		@include iot-hub-material-icon;
-		font-size: 28px;
-		line-height: 1;
-	}
-
-	:global(.iot-hub-hero__search-popup-thumb-fallback) {
-		font-size: 24px;
-		color: var(--color-text-muted);
-	}
-
-	:global(.iot-hub-hero__search-popup-text) {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		flex: 1 1 0;
-		min-width: 0;
-	}
-
-	:global(.iot-hub-hero__search-popup-name) {
-		font-size: 14px;
-		font-weight: $font-weight-medium;
-		line-height: 20px;
-		letter-spacing: 0.25px;
-		color: var(--color-text);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		text-align: start;
-	}
-
-	:global(.iot-hub-hero__search-popup-author) {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-		font-size: 12px;
-		line-height: 16px;
-		letter-spacing: 0.25px;
-		color: var(--color-text-muted);
-		white-space: nowrap;
-	}
-
-	:global(.iot-hub-hero__search-popup-author-icon) {
-		@include iot-hub-material-icon;
-		font-size: 16px;
-		line-height: 1;
 	}
 
 	:global(.iot-hub-hero__search-popup-status) {
@@ -709,29 +616,26 @@ const highlights = [
 	// linking to the listing detail. "See all results" footer keeps its
 	// href in sync with the input so it always jumps to the same query as
 	// the submit button would.
+	//
+	// Result cards are cloned from <IotHubListingLinkTemplate variant="row" />
+	// and bound via bindListingCard(), so the popup shares its visual
+	// definition with the build-time listing-card path — no duplicated card
+	// markup in this script.
+	// IOT_HUB_API_URL resolves to window.__IOT_HUB_API_URL at runtime, which
+	// IotHubRuntimeConfig.astro publishes from the server-side env value
+	// before bundled modules evaluate. See @models/iot-hub.ts for the
+	// resolution logic.
 	import {
 		IOT_HUB_API_URL,
 		IOT_HUB_CATEGORIES,
-		getCardVariant,
-		getPlaceholderIcon,
-		resolveImage,
 		type IotHubItemType,
 		type ListingView,
 	} from '@models/iot-hub';
+	import { bindListingCard } from './iot-hub-listing-link-bind';
 
 	const DEBOUNCE_MS = 300;
 	const PAGE_SIZE = 10;
 	const SEARCH_PATH = '/iot-hub/search/';
-
-	// Fallback type icons mirror IotHubListingLink's getTypeIcon switch.
-	const TYPE_FALLBACK_ICON: Record<string, string> = {
-		WIDGET: 'widgets',
-		SOLUTION_TEMPLATE: 'integration_instructions',
-		CALCULATED_FIELD: 'functions',
-		ALARM_RULE: 'notification_important',
-		RULE_CHAIN: 'account_tree',
-		DEVICE: 'memory',
-	};
 
 	const ITEM_TYPE_BY_CATEGORY = new Map(
 		IOT_HUB_CATEGORIES.map((c) => [c.itemType, c])
@@ -777,71 +681,10 @@ const highlights = [
 			.map((c) => ({ label: c.label, items: byType.get(c.itemType)! }));
 	}
 
-	// Build one result card. Mirrors IotHubListingLink visually; uses the
-	// same class names (declared :global in the component's <style>).
-	function renderCard(item: ListingView): HTMLAnchorElement {
-		const cat = ITEM_TYPE_BY_CATEGORY.get(item.itemType as IotHubItemType);
-		const href = cat ? `/iot-hub/${cat.slug}/${item.slug}/` : '#';
-		const a = document.createElement('a');
-		a.className = 'iot-hub-hero__search-popup-item';
-		a.href = href;
-
-		const isCompact = getCardVariant(item.itemType) === 'small';
-		const thumb = document.createElement('span');
-		thumb.className = 'iot-hub-hero__search-popup-thumb';
-		thumb.setAttribute('aria-hidden', 'true');
-		if (isCompact) {
-			thumb.classList.add('iot-hub-hero__search-popup-thumb--compact');
-			thumb.style.background = item.color ?? '#048ad3';
-			const glyph = document.createElement('span');
-			glyph.className = 'iot-hub-hero__search-popup-thumb-icon';
-			glyph.textContent = textIcon(getPlaceholderIcon(item), item.itemType);
-			thumb.appendChild(glyph);
-		} else {
-			const imageUrl = resolveImage(item.image);
-			if (imageUrl) {
-				const img = document.createElement('img');
-				img.src = imageUrl;
-				img.alt = '';
-				img.loading = 'lazy';
-				img.decoding = 'async';
-				thumb.appendChild(img);
-			} else {
-				const fallback = document.createElement('span');
-				fallback.className = 'iot-hub-hero__search-popup-thumb-fallback';
-				fallback.textContent = TYPE_FALLBACK_ICON[item.itemType] ?? 'category';
-				thumb.appendChild(fallback);
-			}
-		}
-		a.appendChild(thumb);
-
-		const text = document.createElement('span');
-		text.className = 'iot-hub-hero__search-popup-text';
-		const name = document.createElement('span');
-		name.className = 'iot-hub-hero__search-popup-name';
-		name.textContent = item.name;
-		text.appendChild(name);
-		if (item.creatorDisplayName) {
-			const author = document.createElement('span');
-			author.className = 'iot-hub-hero__search-popup-author';
-			const icon = document.createElement('span');
-			icon.className = 'iot-hub-hero__search-popup-author-icon';
-			icon.textContent = 'person';
-			author.appendChild(icon);
-			author.append(' ', item.creatorDisplayName);
-			text.appendChild(author);
-		}
-		a.appendChild(text);
-		return a;
-	}
-
-	// MDI icons aren't in the Material Icons font; substitute a type fallback
-	// rather than render a junk glyph.
-	function textIcon(rawIcon: string, itemType: string): string {
-		if (rawIcon.startsWith('mdi:')) {
-			return TYPE_FALLBACK_ICON[itemType] ?? 'category';
-		}
-		return rawIcon;
+	function getCardTemplate(): HTMLTemplateElement | null {
+		return document.querySelector<HTMLTemplateElement>(
+			'[data-iot-hub-listing-link-tmpl]'
+		);
 	}
 
 	function renderState(
@@ -878,6 +721,8 @@ const highlights = [
 
 	function renderGroups(body: HTMLElement, groups: Group[]): void {
 		body.replaceChildren();
+		const tmpl = getCardTemplate();
+		if (!tmpl) return;
 		for (const group of groups) {
 			const section = document.createElement('div');
 			section.className = 'iot-hub-hero__search-popup-group';
@@ -886,7 +731,11 @@ const highlights = [
 			label.textContent = group.label;
 			section.appendChild(label);
 			for (const item of group.items) {
-				section.appendChild(renderCard(item));
+				const cardRoot = tmpl.content.firstElementChild;
+				if (!cardRoot) continue;
+				const clone = cardRoot.cloneNode(true) as HTMLElement;
+				bindListingCard(clone, item);
+				section.appendChild(clone);
 			}
 			body.appendChild(section);
 		}

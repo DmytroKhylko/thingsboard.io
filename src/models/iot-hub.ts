@@ -1,7 +1,28 @@
 import { z } from 'astro/zod';
 
-export const IOT_HUB_API_URL =
+// `IOT_HUB_API_URL` resolution differs by context:
+//
+//   * Server-side (Astro frontmatter, content-collection loaders, build-time
+//     scripts) reads the URL straight from `import.meta.env`.
+//   * Client-side bundled scripts can't see the env var unless it's prefixed
+//     `PUBLIC_*` (Vite strips non-public vars from the client bundle). They
+//     read it from `window.__IOT_HUB_API_URL`, which `<IotHubRuntimeConfig />`
+//     populates via an inline `<script>` in <head> using the server's value.
+//
+// This way a single import works in both contexts, the URL stays in one
+// env var (no `PUBLIC_*` duplicate), and runtime fetches always hit the
+// same origin the server-side fetches do.
+declare global {
+	interface Window {
+		__IOT_HUB_API_URL?: string;
+	}
+}
+const BUILD_TIME_IOT_HUB_API_URL =
 	import.meta.env.IOT_HUB_API_URL ?? 'https://iot-hub.tbqa.cloud';
+export const IOT_HUB_API_URL =
+	typeof window !== 'undefined' && window.__IOT_HUB_API_URL
+		? window.__IOT_HUB_API_URL
+		: BUILD_TIME_IOT_HUB_API_URL;
 
 export const IOT_HUB_CATEGORIES = [
 	{
