@@ -44,24 +44,29 @@ export const getStaticPaths = (async () => {
 	const categories = await getCollection('iotHubCategories');
 	const byId = new Map(categories.map((c) => [c.id, c.data]));
 
-	// Per creator, bucket items by category (preserving IOT_HUB_CATEGORIES order,
-	// installCount DESC within each). Pure-numeric slugs excluded to mirror
-	// [slug].astro.
-	const byCreator = new Map<string, Map<string, ListingView[]>>();
+	// Re-shape the per-category collection into a flat per-creator stream —
+	// the loader already fetches the full catalog (loops until hasNext is
+	// false), so no additional API call is needed. Each entry carries the
+	// item plus the category slug it belongs to so we can re-group later.
+	// Pure-numeric slugs excluded to mirror [slug].astro.
+	type CreatorItem = { item: ListingView; categorySlug: string; categoryLabel: string };
+	const byCreator = new Map<string, CreatorItem[]>();
 	for (const cat of IOT_HUB_CATEGORIES) {
 		const items = byId.get(cat.slug)?.items ?? [];
 		for (const item of items) {
 			if (isNumericSlug(item.slug)) continue;
 			if (!item.creatorId) continue;
-			let buckets = byCreator.get(item.creatorId);
-			if (!buckets) {
-				buckets = new Map();
-				byCreator.set(item.creatorId, buckets);
-			}
-			const list = buckets.get(cat.slug) ?? [];
-			list.push(item);
-			buckets.set(cat.slug, list);
+			const arr = byCreator.get(item.creatorId) ?? [];
+			arr.push({ item, categorySlug: cat.slug, categoryLabel: cat.label });
+			byCreator.set(item.creatorId, arr);
 		}
+	}
+	// Sort each creator's flat list by installCount DESC. Items inside each
+	// category arrived already sorted by the loader; re-sorting once we've
+	// merged across categories gives a single global ranking that
+	// pagination can slice.
+	for (const arr of byCreator.values()) {
+		arr.sort((a, b) => (b.item.installCount ?? 0) - (a.item.installCount ?? 0));
 	}
 
 	const ids = [...byCreator.keys()];
@@ -73,29 +78,22 @@ export const getStaticPaths = (async () => {
 		})
 	);
 
-	// Pagination is PER CATEGORY: page N shows items [(N-1)*size, N*size) of each
-	// category, sharing one page index. Total pages = the largest category's page
-	// count, so a category with <= size items only appears on page 1.
+	// Pagination is over the creator's WHOLE catalogue: each page renders
+	// CREATOR_PAGE_SIZE items total, then those items get grouped back by
+	// category for display (in IOT_HUB_CATEGORIES priority order).
 	return ids.flatMap((id) => {
-		const buckets = byCreator.get(id)!;
-		const cats: CreatorGroup[] = IOT_HUB_CATEGORIES.filter(
-			(c) => (buckets.get(c.slug)?.length ?? 0) > 0
-		).map((c) => ({ slug: c.slug, label: c.label, items: buckets.get(c.slug)! }));
-		const total = cats.reduce((n, c) => n + c.items.length, 0);
-		const totalPages = Math.max(
-			1,
-			...cats.map((c) => Math.ceil(c.items.length / CREATOR_PAGE_SIZE))
-		);
+		const allItems = byCreator.get(id)!;
+		const total = allItems.length;
+		const totalPages = Math.max(1, Math.ceil(total / CREATOR_PAGE_SIZE));
 		const profile = profiles.get(id) ?? null;
 		return Array.from({ length: totalPages }, (_, i) => {
 			const currentPage = i + 1;
-			const groups: CreatorGroup[] = cats
-				.map((c) => ({
-					slug: c.slug,
-					label: c.label,
-					items: c.items.slice(i * CREATOR_PAGE_SIZE, currentPage * CREATOR_PAGE_SIZE),
-				}))
-				.filter((g) => g.items.length > 0);
+			const slice = allItems.slice(i * CREATOR_PAGE_SIZE, currentPage * CREATOR_PAGE_SIZE);
+			const groups: CreatorGroup[] = IOT_HUB_CATEGORIES.map((cat) => ({
+				slug: cat.slug,
+				label: cat.label,
+				items: slice.filter((s) => s.categorySlug === cat.slug).map((s) => s.item),
+			})).filter((g) => g.items.length > 0);
 			return {
 				params: { id, page: currentPage === 1 ? undefined : String(currentPage) },
 				props: { profile, groups, currentPage, totalPages, total },
