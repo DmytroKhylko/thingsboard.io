@@ -6,6 +6,7 @@ import {
 	IOT_HUB_CATEGORIES,
 	type IotHubCategorySlug,
 } from '@models/iot-hub';
+import IotHubBreadcrumbs from './IotHubBreadcrumbs.astro';
 import IotHubChevron from './IotHubChevron.astro';
 
 import deviceHero from '@root/assets/iot-hub/items-page-devices-hero.svg';
@@ -45,14 +46,7 @@ const HERO_PLACEHOLDER =
 ---
 
 <section class="iot-hub-cat-hero">
-	<nav class="iot-hub-cat-hero__breadcrumb" aria-label="Breadcrumb">
-		<a class="iot-hub-cat-hero__breadcrumb-link" href="/iot-hub/">IoT Hub</a>
-		<IotHubChevron
-			direction="right"
-			class="iot-hub-cat-hero__breadcrumb-sep"
-		/>
-		<span class="iot-hub-cat-hero__breadcrumb-current" aria-current="page">{title}</span>
-	</nav>
+	<IotHubBreadcrumbs items={[{ label: 'IoT Hub', href: '/iot-hub/' }, { label: title }]} />
 
 	<div class="iot-hub-cat-hero__main">
 		<div class="iot-hub-cat-hero__text">
@@ -99,40 +93,6 @@ const HERO_PLACEHOLDER =
 		@include media-down(sm) {
 			padding: calc(#{$header-height} + 40px) 12px 40px;
 		}
-	}
-
-	.iot-hub-cat-hero__breadcrumb {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		font-size: 16px;
-		line-height: 28px;
-		color: var(--color-text-secondary);
-	}
-
-	.iot-hub-cat-hero__breadcrumb-link {
-		color: var(--color-primary);
-		text-decoration: none;
-		transition: color $transition-fast;
-
-		&:hover,
-		&:focus-visible {
-			text-decoration: underline;
-		}
-
-		:global([data-theme='dark']) & {
-			color: #b3c7ff;
-		}
-	}
-
-	.iot-hub-cat-hero__breadcrumb-sep {
-		color: var(--color-text-muted);
-		flex-shrink: 0;
-	}
-
-	.iot-hub-cat-hero__breadcrumb-current {
-		color: var(--color-text-secondary);
-		font-weight: $font-weight-normal;
 	}
 
 	.iot-hub-cat-hero__main {

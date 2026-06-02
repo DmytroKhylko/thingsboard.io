@@ -1,7 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { getInitials, getWebsiteLabel, IOT_HUB_STRINGS } from '@models/iot-hub';
-import IotHubChevron from './IotHubChevron.astro';
+import IotHubBreadcrumbs from './IotHubBreadcrumbs.astro';
 import '@fontsource/material-icons';
 
 const T = IOT_HUB_STRINGS.creatorPage;
@@ -25,11 +25,7 @@ const initials = getInitials(name) || '?';
 ---
 
 <section class="creator-hero">
-	<nav class="creator-hero__breadcrumb" aria-label="Breadcrumb">
-		<a class="creator-hero__crumb-link" href="/iot-hub/">{T.breadcrumbRoot}</a>
-		<IotHubChevron direction="right" size={20} />
-		<span class="creator-hero__crumb-current">{name}</span>
-	</nav>
+	<IotHubBreadcrumbs items={[{ label: T.breadcrumbRoot, href: '/iot-hub/' }, { label: name }]} />
 	<div class="creator-hero__main">
 		<div class="creator-hero__photo" aria-hidden="true">
 			{avatarUrl ? (
@@ -95,37 +91,6 @@ const initials = getInitials(name) || '?';
 		@include media-down(sm) {
 			padding: calc(#{$header-height} + 40px) 12px 40px;
 		}
-	}
-
-	.creator-hero__breadcrumb {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		font-size: 16px;
-		line-height: 28px;
-		color: var(--color-text-muted);
-
-		svg {
-			display: block;
-			color: var(--color-text-muted);
-		}
-	}
-
-	.creator-hero__crumb-link {
-		color: var(--color-primary);
-		text-decoration: none;
-
-		&:hover {
-			text-decoration: underline;
-		}
-
-		:global([data-theme='dark']) & {
-			color: #b3c7ff;
-		}
-	}
-
-	.creator-hero__crumb-current {
-		color: var(--sl-color-gray-3);
 	}
 
 	.creator-hero__main {

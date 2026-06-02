@@ -173,6 +173,17 @@ export const IOT_HUB_STRINGS = {
 		linkedinLabel: 'LinkedIn',
 		twitterLabel: 'X',
 	},
+	searchPage: {
+		breadcrumbRoot: 'IoT Hub',
+		breadcrumbCurrent: 'Search results',
+		headingEmpty: 'Search results',
+		// `headingPrefix` + the user's query in typographic quotes ("…").
+		headingPrefix: 'Search results for',
+		searchPlaceholder: 'Search in IoT Hub...',
+		sortLabel: 'Most Installed',
+		resultSingular: 'result',
+		resultPlural: 'results',
+	},
 } as const;
 
 // Maps raw subtype keys from the API (`timeseries`, `SIMPLE`, `CORE`, …)
@@ -214,6 +225,10 @@ export interface IotHubNodeInfo {
 export const PAGE_SIZE = 12;
 // Creator profile page paginates each category's items at 16/page.
 export const CREATOR_PAGE_SIZE = 16;
+// Search results page — same default as the creator page; kept separate so
+// the eventual dynamic page-size control on the search bar can vary it
+// without disturbing the creator route.
+export const SEARCH_PAGE_SIZE = 16;
 export const HOME_PER_CATEGORY = 4;
 export const API_FETCH_PAGE_SIZE = 100;
 

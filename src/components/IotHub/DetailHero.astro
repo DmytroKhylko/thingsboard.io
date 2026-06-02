@@ -7,8 +7,8 @@ import {
 	resolveImage,
 	type ListingDetail,
 } from '@models/iot-hub';
-import IotHubChevron from './IotHubChevron.astro';
 import InstallButton from './InstallButton.astro';
+import IotHubBreadcrumbs from './IotHubBreadcrumbs.astro';
 import IotHubIcon from './IotHubIcon.astro';
 import DetailGallery from './DetailGallery.astro';
 import IotHubMarkdown from '@components/IotHub/IotHubMarkdown.astro';
@@ -113,15 +113,14 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 ---
 
 <header class="iot-hub-detail-hero">
-	<nav class="iot-hub-detail-hero__crumbs" aria-label="Breadcrumb">
-		<a class="iot-hub-detail-hero__crumbs-link" href="/iot-hub/">IoT Hub</a>
-		<IotHubChevron direction="right" class="iot-hub-detail-hero__crumbs-sep" />
-		<a class="iot-hub-detail-hero__crumbs-link" href={`/iot-hub/${categorySlug}/`}>
-			{categoryLabel}
-		</a>
-		<IotHubChevron direction="right" class="iot-hub-detail-hero__crumbs-sep" />
-		<span class="iot-hub-detail-hero__crumbs-current" aria-current="page">{detail.name}</span>
-	</nav>
+	<IotHubBreadcrumbs
+		wrap
+		items={[
+			{ label: 'IoT Hub', href: '/iot-hub/' },
+			{ label: categoryLabel, href: `/iot-hub/${categorySlug}/` },
+			{ label: detail.name },
+		]}
+	/>
 
 	{
 		isCompact ? (
@@ -374,43 +373,6 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 		@include media-down(sm) {
 			padding: calc(#{$header-height} + 40px) 12px 24px;
 		}
-	}
-
-	// --- Breadcrumbs ---------------------------------------------------------
-
-	.iot-hub-detail-hero__crumbs {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		font-size: 16px;
-		line-height: 28px;
-		color: var(--color-text-secondary);
-		flex-wrap: wrap;
-	}
-
-	.iot-hub-detail-hero__crumbs-link {
-		color: var(--color-primary);
-		text-decoration: none;
-		transition: color $transition-fast;
-
-		&:hover,
-		&:focus-visible {
-			text-decoration: underline;
-		}
-
-		:global([data-theme='dark']) & {
-			color: #b3c7ff;
-		}
-	}
-
-	.iot-hub-detail-hero__crumbs-sep {
-		color: var(--color-text-muted);
-		flex-shrink: 0;
-	}
-
-	.iot-hub-detail-hero__crumbs-current {
-		color: var(--color-text-secondary);
-		font-weight: $font-weight-normal;
 	}
 
 	// --- Title + sub-title (shared by both variants) -------------------------

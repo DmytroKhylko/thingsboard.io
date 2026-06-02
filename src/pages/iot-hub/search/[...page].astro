@@ -1,0 +1,150 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import {
+	IOT_HUB_CATEGORIES,
+	IOT_HUB_STRINGS,
+	SEARCH_PAGE_SIZE,
+	isNumericSlug,
+	type ListingView,
+} from '@models/iot-hub';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import IotHubBreadcrumbs from '@components/IotHub/IotHubBreadcrumbs.astro';
+import SearchFilterBar from '@components/IotHub/SearchFilterBar.astro';
+import CategorySection from '@components/IotHub/CategorySection.astro';
+
+const T = IOT_HUB_STRINGS.searchPage;
+
+interface SearchGroup {
+	slug: string;
+	label: string;
+	items: ListingView[];
+}
+
+export const getStaticPaths = (async () => {
+	const categories = await getCollection('iotHubCategories');
+	const byId = new Map(categories.map((c) => [c.id, c.data]));
+
+	// Flatten the per-category collection into one stream tagged with the
+	// category each item belongs to. The existing iotHubCategories loader
+	// already paginates the full catalogue, so no extra API call is needed.
+	// Pure-numeric slugs excluded to mirror [slug].astro.
+	type SearchItem = { item: ListingView; categorySlug: string; categoryLabel: string };
+	const allItems: SearchItem[] = [];
+	for (const cat of IOT_HUB_CATEGORIES) {
+		const items = byId.get(cat.slug)?.items ?? [];
+		for (const item of items) {
+			if (isNumericSlug(item.slug)) continue;
+			allItems.push({ item, categorySlug: cat.slug, categoryLabel: cat.label });
+		}
+	}
+	// Single global ranking by installCount DESC.
+	allItems.sort((a, b) => (b.item.installCount ?? 0) - (a.item.installCount ?? 0));
+
+	const total = allItems.length;
+	const totalPages = Math.max(1, Math.ceil(total / SEARCH_PAGE_SIZE));
+
+	return Array.from({ length: totalPages }, (_, i) => {
+		const currentPage = i + 1;
+		const slice = allItems.slice(i * SEARCH_PAGE_SIZE, currentPage * SEARCH_PAGE_SIZE);
+		// Re-group the page slice by category, preserving IOT_HUB_CATEGORIES
+		// priority order — same layout strategy as the creator page.
+		const groups: SearchGroup[] = IOT_HUB_CATEGORIES.map((cat) => ({
+			slug: cat.slug,
+			label: cat.label,
+			items: slice.filter((s) => s.categorySlug === cat.slug).map((s) => s.item),
+		})).filter((g) => g.items.length > 0);
+		return {
+			params: { page: currentPage === 1 ? undefined : String(currentPage) },
+			props: { groups, currentPage, totalPages, total },
+		};
+	});
+}) satisfies GetStaticPaths;
+
+interface Props {
+	groups: SearchGroup[];
+	currentPage: number;
+	totalPages: number;
+	total: number;
+}
+
+const { groups, currentPage, totalPages, total } = Astro.props as Props;
+
+// Static rendering has no `?q=` to read — the SearchFilterBar's inline
+// script reads it from `location.search` on hydrate and updates the input
+// + heading. The page-level title/description stay generic for the same
+// reason.
+const searchText = '';
+const basePath = '/iot-hub/search/';
+
+const title = 'Search | IoT Hub | ThingsBoard';
+const description = 'Search the ThingsBoard IoT Hub catalogue of devices, widgets, rule chains and more.';
+---
+
+<BaseLayout title={title} description={description}>
+	<main class="iot-hub-search">
+		<div class="iot-hub-search__center">
+			<div class="iot-hub-search__container">
+				<div class="iot-hub-search__breadcrumb">
+					<IotHubBreadcrumbs
+						items={[
+							{ label: T.breadcrumbRoot, href: '/iot-hub/' },
+							{ label: T.breadcrumbCurrent },
+						]}
+					/>
+				</div>
+				<div class="iot-hub-search__items">
+					<SearchFilterBar
+						searchText={searchText}
+						totalResults={total}
+						currentPage={currentPage}
+						totalPages={totalPages}
+						basePath={basePath}
+					/>
+					{groups.map((g) => (
+						<CategorySection
+							categorySlug={g.slug}
+							categoryLabel={g.label}
+							items={g.items}
+							showCreator={true}
+						/>
+					))}
+				</div>
+			</div>
+		</div>
+	</main>
+</BaseLayout>
+
+<style lang="scss">
+	@use '~/styles/_variables.scss' as *;
+	@use '~/styles/_iot-hub.scss' as *;
+
+	.iot-hub-search {
+		@include iot-hub-hairline-token;
+	}
+
+	.iot-hub-search__center {
+		@include iot-hub-center;
+	}
+
+	.iot-hub-search__container {
+		@include iot-hub-container;
+	}
+
+	// Breadcrumb wrapper carries the fixed-header clearance and the bottom
+	// gap to the SearchFilterBar (which itself adds 40px on top).
+	.iot-hub-search__breadcrumb {
+		padding: calc(#{$header-height} + 40px) 16px 0;
+
+		@include media-down(sm) {
+			padding: calc(#{$header-height} + 40px) 12px 0;
+		}
+	}
+
+	.iot-hub-search__items {
+		// Plain block (NOT flex) so each CategorySection's `margin: 4rem 0`
+		// collapses with its neighbour to a 64px section gap, matching the
+		// creator page rhythm.
+		padding-bottom: 16px;
+	}
+</style>

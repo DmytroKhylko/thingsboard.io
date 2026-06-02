@@ -1,0 +1,252 @@
+---
+import { IOT_HUB_STRINGS, SEARCH_PAGE_SIZE } from '@models/iot-hub';
+import IotHubChevron from './IotHubChevron.astro';
+import PaginationLink from './PaginationLink.astro';
+
+const T = IOT_HUB_STRINGS.searchPage;
+
+interface Props {
+	/** Initial query text. At build time this is always empty because
+	 *  static rendering can't read `?q=` from the URL; the inline script
+	 *  below populates it from `location.search` on hydrate. */
+	searchText: string;
+	/** Number of items across all pages (the "N results" line). */
+	totalResults: number;
+	currentPage: number;
+	totalPages: number;
+	basePath: string;
+}
+
+const { searchText, totalResults, currentPage, totalPages, basePath } = Astro.props;
+const resultsWord = totalResults === 1 ? T.resultSingular : T.resultPlural;
+const hasQuery = searchText.length > 0;
+---
+
+<div class="search-bar" data-iot-hub-search-bar>
+	<h2 class="search-bar__heading" data-search-heading>
+		{hasQuery ? (
+			<Fragment>
+				{T.headingPrefix} &ldquo;<span data-search-query>{searchText}</span>&rdquo;
+			</Fragment>
+		) : (
+			T.headingEmpty
+		)}
+	</h2>
+	<div class="search-bar__filters">
+		<div class="search-bar__row1">
+			<div class="search-bar__search">
+				<input
+					class="search-bar__search-input"
+					type="search"
+					name="q"
+					value={searchText}
+					placeholder={T.searchPlaceholder}
+					aria-label={T.searchPlaceholder}
+					autocomplete="off"
+					data-search-input
+				/>
+				<span class="search-bar__search-glyph" aria-hidden="true"></span>
+			</div>
+			<button class="search-bar__sort" type="button" disabled>
+				<span>{T.sortLabel}</span>
+				<IotHubChevron direction="down" />
+			</button>
+		</div>
+		<div class="search-bar__row2">
+			<p class="search-bar__count">{totalResults} {resultsWord}</p>
+			{totalPages > 1 && (
+				<PaginationLink
+					currentPage={currentPage}
+					totalPages={totalPages}
+					basePath={basePath}
+					perPage={SEARCH_PAGE_SIZE}
+				/>
+			)}
+		</div>
+	</div>
+</div>
+
+<style lang="scss">
+	@use '~/styles/_variables.scss' as *;
+
+	// Visual style mirrors CreatorFilterBar — same outer rhythm, search
+	// chrome, sort button and pagination row. Kept as its own component
+	// because the search bar's input is enabled and the heading is
+	// query-driven, both of which will evolve independently once the
+	// dynamic refetch pipeline lands.
+	.search-bar {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		padding: 40px 16px 0;
+
+		@include media-down(sm) {
+			padding: 40px 12px 0;
+		}
+	}
+
+	.search-bar__heading {
+		margin: 0;
+		font-size: 24px;
+		font-weight: $font-weight-semibold;
+		line-height: 28px;
+		color: var(--color-text);
+	}
+
+	.search-bar__filters {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		width: 100%;
+	}
+
+	.search-bar__row1 {
+		display: flex;
+		gap: 16px;
+		align-items: center;
+
+		@include media-down(sm) {
+			gap: 8px;
+		}
+	}
+
+	.search-bar__search {
+		flex: 1 1 0;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 16px;
+		min-height: 56px;
+		background: var(--color-bg-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 8px;
+
+		:global([data-theme='dark']) & {
+			border-color: #353841;
+		}
+	}
+
+	.search-bar__search-input {
+		flex: 1 1 0;
+		min-width: 0;
+		border: none;
+		outline: none;
+		background: transparent;
+		font-family: inherit;
+		font-size: 16px;
+		line-height: 28px;
+		color: var(--color-text);
+
+		&::placeholder { color: var(--color-text-muted); }
+	}
+
+	.search-bar__search-glyph {
+		flex-shrink: 0;
+		width: 24px;
+		height: 24px;
+		background-color: var(--color-text-secondary);
+		-webkit-mask: url('/icons/iot-hub-search.svg') center / contain no-repeat;
+		mask: url('/icons/iot-hub-search.svg') center / contain no-repeat;
+	}
+
+	.search-bar__sort {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		padding: 8px;
+		font-family: inherit;
+		font-size: 14px;
+		font-weight: $font-weight-semibold;
+		line-height: 24px;
+		color: var(--color-primary);
+		background: transparent;
+		border: none;
+		border-radius: 8px;
+		cursor: not-allowed;
+		flex-shrink: 0;
+
+		svg { display: block; }
+
+		:global([data-theme='dark']) & { color: #b3c7ff; }
+	}
+
+	.search-bar__row2 {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		min-height: 40px;
+	}
+
+	.search-bar__count {
+		flex-shrink: 0;
+		margin: 0;
+		font-size: 14px;
+		font-weight: $font-weight-semibold;
+		line-height: 24px;
+		color: var(--color-text);
+	}
+
+	.search-bar__row2 :global(.iot-hub-pagination) {
+		flex: 1 1 0;
+	}
+</style>
+
+<script>
+	// Hydrate the search bar: read `?q=` from the URL, push it into the
+	// input and the heading, then keep the heading in sync as the user
+	// types. The richer dynamic pipeline (refetch on input / sort change /
+	// page-size change, URL push-state) lands separately on top of this.
+
+	const HEADING_PREFIX = 'Search results for';
+	const HEADING_EMPTY = 'Search results';
+	const LDQUO = '“';
+	const RDQUO = '”';
+
+	function setupSearchBar(bar: HTMLElement) {
+		if (bar.dataset.searchBarInited) return;
+		bar.dataset.searchBarInited = 'true';
+
+		const input = bar.querySelector<HTMLInputElement>('[data-search-input]');
+		const heading = bar.querySelector<HTMLElement>('[data-search-heading]');
+		if (!input || !heading) return;
+
+		const renderHeading = (text: string) => {
+			heading.replaceChildren();
+			if (text.trim()) {
+				heading.append(`${HEADING_PREFIX} ${LDQUO}`);
+				const span = document.createElement('span');
+				span.setAttribute('data-search-query', '');
+				span.textContent = text;
+				heading.append(span);
+				heading.append(RDQUO);
+			} else {
+				heading.textContent = HEADING_EMPTY;
+			}
+		};
+
+		// Pick up the `?q=` from the URL if the static render didn't already
+		// supply one (it won't — build time has no query string).
+		const params = new URLSearchParams(location.search);
+		const initialQ = params.get('q') ?? '';
+		if (initialQ && !input.value) input.value = initialQ;
+		renderHeading(input.value);
+
+		input.addEventListener('input', () => {
+			renderHeading(input.value);
+		});
+	}
+
+	function initAll() {
+		document
+			.querySelectorAll<HTMLElement>('[data-iot-hub-search-bar]')
+			.forEach(setupSearchBar);
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initAll);
+	} else {
+		initAll();
+	}
+	document.addEventListener('astro:page-load', initAll);
+</script>

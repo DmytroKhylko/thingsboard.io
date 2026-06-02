@@ -56,7 +56,7 @@ const highlights = [
 		<form
 			class="iot-hub-hero__search"
 			role="search"
-			action="/iot-hub/"
+			action="/iot-hub/search/"
 			method="get"
 			data-iot-hub-hero-search
 		>
@@ -336,10 +336,6 @@ const highlights = [
 	// to resume. The active accent is published as `--iot-hub-active-accent`
 	// on the nearest `.iot-hub-home__top` so the background blobs follow the
 	// same color via CSS custom-property inheritance.
-	document
-		.querySelectorAll('[data-iot-hub-hero-search]')
-		.forEach((form) => form.addEventListener('submit', (e) => e.preventDefault()));
-
 	(function () {
 		const hero = document.querySelector('.iot-hub-hero');
 		if (!hero) return;
