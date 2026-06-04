@@ -1,8 +1,10 @@
 ---
 import { getImage } from 'astro:assets';
-
-const heroImg = await getImage({ src: (await import('/src/assets/images/landings/trendz/hero-img.png')).default, width: 500, quality: 85 });
-const sphereImg = await getImage({ src: (await import('/src/assets/images/landings/trendz/sphere.png')).default, quality: 85 });
+import ProjectScreenFrame from '../Services/ProjectScreenFrame.astro';
+const sphereImg = await getImage({
+	src: (await import('/src/assets/images/landings/trendz/sphere.png')).default,
+	quality: 85,
+});
 ---
 
 <section id="trendz-hero">
@@ -13,32 +15,29 @@ const sphereImg = await getImage({ src: (await import('/src/assets/images/landin
 			<p class="pe-subTitle">Turn data into insights and make better decisions</p>
 			<div class="btn-block">
 				<div>
-					<a
-						id="Products_TA_GetADemo1"
-						href="/products/trendz/request-demo/"
-						class="btn-accent">Get a demo</a
-					>
+					<a id="Products_TA_GetADemo1" href="/products/trendz/request-demo/" class="btn-accent">Get a demo</a>
 				</div>
 				<div>
-					<a
-						id="Products_TA_GetStarted"
-						href="/pricing/"
-						class="btn-outline">Get started</a
-					>
+					<a id="Products_TA_GetStarted" href="/pricing/" class="btn-outline">Get started</a>
 				</div>
 			</div>
 		</div>
 
 		<div class="hero-image">
-			<div class="image-wrapper">
-				<img
-					src={heroImg.src}
-					alt="Trendz Analytics dashboard with predictive IoT insights"
-					width="500"
-					height="500"
-					loading="eager"
-				/>
-			</div>
+			<ProjectScreenFrame fillColor="#E5EFFF" class="hero-screen-frame">
+				<video
+					width="857"
+					height="426"
+					autoplay
+					muted
+					loop
+					playsinline
+					preload="auto"
+					aria-label="Trendz Analytics dashboard demo"
+				>
+					<source src="/products/trendz/hero-video.mp4" type="video/mp4" />
+				</video>
+			</ProjectScreenFrame>
 		</div>
 
 		<div class="sphere-icon" id="upper-icon-left"></div>
@@ -54,7 +53,7 @@ const sphereImg = await getImage({ src: (await import('/src/assets/images/landin
 		width: 100%;
 		height: 100vh;
 		padding-top: 100px;
-		background-color: #f8f9fd;
+		background-color: #f4f8fe;
 		overflow: hidden;
 		box-sizing: border-box;
 
@@ -118,34 +117,7 @@ const sphereImg = await getImage({ src: (await import('/src/assets/images/landin
 				width: 100%;
 				height: 100%;
 				position: absolute;
-
-				&::before {
-					background-color: rgba(85, 85, 255, 0.1);
-					filter: blur(50px);
-					display: block;
-					content: '';
-					position: absolute;
-					height: 400px;
-					width: 400px;
-					top: 50%;
-					left: 50%;
-					transform: translate(-50%, -50%);
-				}
-
-				.image-wrapper {
-					width: 100%;
-					height: 100%;
-					visibility: hidden;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-
-					img {
-						width: 100%;
-						height: 100%;
-						object-fit: contain;
-					}
-				}
+				visibility: hidden;
 			}
 
 			.sphere-icon {
@@ -279,10 +251,7 @@ const sphereImg = await getImage({ src: (await import('/src/assets/images/landin
 			.hero-image {
 				flex: 1 1 40%;
 				position: relative;
-
-				.image-wrapper {
-					visibility: visible;
-				}
+				visibility: visible;
 			}
 
 			#upper-icon-left {
