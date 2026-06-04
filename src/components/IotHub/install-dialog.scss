@@ -25,14 +25,36 @@
 	margin: 0;
 	background: transparent;
 	overflow: hidden;
+	place-items: center;
+	opacity: 0;
+	transition:
+		opacity 0.2s ease,
+		display 0.2s ease allow-discrete,
+		overlay 0.2s ease allow-discrete;
 
 	&[open] {
 		display: grid;
-		place-items: center;
+		opacity: 1;
+
+		@starting-style {
+			opacity: 0;
+		}
 	}
 
 	&::backdrop {
+		background: rgba(0, 0, 0, 0);
+		transition:
+			background-color 0.2s ease,
+			display 0.2s ease allow-discrete,
+			overlay 0.2s ease allow-discrete;
+	}
+
+	&[open]::backdrop {
 		background: rgba(0, 0, 0, 0.5);
+
+		@starting-style {
+			background: rgba(0, 0, 0, 0);
+		}
 	}
 }
 

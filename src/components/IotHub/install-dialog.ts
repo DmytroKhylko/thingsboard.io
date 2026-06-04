@@ -26,6 +26,10 @@ let localBase = INSTALL_LOCAL_DEFAULT;
 let current: OpenContext | null = null;
 let copyResetTimer: number | undefined;
 let flashedCopyBtn: HTMLElement | null = null;
+let unlockTimer: number | undefined;
+
+// Keep in sync with the dialog transition duration in install-dialog.scss.
+const CLOSE_FADE_MS = 200;
 
 // --- Icons ---------------------------------------------------------------
 // Lucide-style 24×24 stroke icons (matching the IotHubChevron convention).
@@ -123,8 +127,19 @@ function buildDialog(): HTMLDialogElement {
 		onDialogClick(e);
 	});
 
-	// showModal() traps focus but does not lock page scroll — restore it on close.
-	el.addEventListener('close', unlockScroll);
+	// showModal() traps focus but does not lock page scroll — restore it after
+	// close, once the exit fade ends (timeout fallback for browsers without
+	// transition support).
+	el.addEventListener('close', () => {
+		window.clearTimeout(unlockTimer);
+		unlockTimer = window.setTimeout(unlockScroll, CLOSE_FADE_MS);
+	});
+	el.addEventListener('transitionend', (e) => {
+		if (e.target === el && e.propertyName === 'opacity' && !el.open) {
+			window.clearTimeout(unlockTimer);
+			unlockScroll();
+		}
+	});
 
 	// Native Esc fires the dialog `cancel` event (not a bubbling keydown). While
 	// editing the local URL, intercept it so Esc cancels the inline edit instead
@@ -307,6 +322,7 @@ function saveEdit(): void {
 function open(ctx: OpenContext): void {
 	if (!ctx.slug) return;
 	if (!dialog) dialog = buildDialog();
+	window.clearTimeout(unlockTimer);
 	current = ctx;
 	cancelEdit();
 	refresh();
