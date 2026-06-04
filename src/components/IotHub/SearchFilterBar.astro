@@ -6,30 +6,52 @@ import PaginationLink from './PaginationLink.astro';
 const T = IOT_HUB_STRINGS.searchPage;
 
 interface Props {
-	/** Initial query text. At build time this is always empty because
-	 *  static rendering can't read `?q=` from the URL; the inline script
-	 *  below populates it from `location.search` on hydrate. */
-	searchText: string;
-	/** Number of items across all pages (the "N results" line). */
+	/** Static heading text. */
+	heading: string;
+	/** When set, the heading swaps to `${headingPrefix} "{q}"` on non-empty
+	 *  input (and back to `heading` when emptied). Omit for a static heading. */
+	headingPrefix?: string;
+	/** Initial query text — always empty at build time; the hydrate script
+	 *  picks `?q=` from the URL on the client. */
+	searchText?: string;
+	searchPlaceholder?: string;
+	perPage?: number;
+	paginationVariant?: 'centered' | 'right';
 	totalResults: number;
 	currentPage: number;
 	totalPages: number;
 	basePath: string;
 }
 
-const { searchText, totalResults, currentPage, totalPages, basePath } = Astro.props;
+const {
+	heading,
+	headingPrefix,
+	searchText = '',
+	searchPlaceholder = T.searchPlaceholder,
+	perPage = SEARCH_PAGE_SIZE,
+	paginationVariant = 'right',
+	totalResults,
+	currentPage,
+	totalPages,
+	basePath,
+} = Astro.props;
 const resultsWord = totalResults === 1 ? T.resultSingular : T.resultPlural;
-const hasQuery = searchText.length > 0;
+const dynamicHeading = !!headingPrefix && searchText.length > 0;
 ---
 
-<div class="search-bar" data-iot-hub-search-bar>
+<div
+	class="search-bar"
+	data-iot-hub-search-bar
+	data-heading={heading}
+	data-heading-prefix={headingPrefix ?? ''}
+>
 	<h2 class="search-bar__heading" data-search-heading>
-		{hasQuery ? (
+		{dynamicHeading ? (
 			<Fragment>
-				{T.headingPrefix} &ldquo;<span data-search-query>{searchText}</span>&rdquo;
+				{headingPrefix} &ldquo;<span data-search-query>{searchText}</span>&rdquo;
 			</Fragment>
 		) : (
-			T.headingEmpty
+			heading
 		)}
 	</h2>
 	<div class="search-bar__filters">
@@ -40,8 +62,8 @@ const hasQuery = searchText.length > 0;
 					type="search"
 					name="q"
 					value={searchText}
-					placeholder={T.searchPlaceholder}
-					aria-label={T.searchPlaceholder}
+					placeholder={searchPlaceholder}
+					aria-label={searchPlaceholder}
 					autocomplete="off"
 					data-search-input
 				/>
@@ -64,14 +86,14 @@ const hasQuery = searchText.length > 0;
 			<IotHubSort />
 		</div>
 		<div class="search-bar__row2">
-			<p class="search-bar__count">{totalResults} {resultsWord}</p>
+			<p class="search-bar__count" data-search-count>{totalResults} {resultsWord}</p>
 			{totalPages > 1 && (
 				<PaginationLink
 					currentPage={currentPage}
 					totalPages={totalPages}
 					basePath={basePath}
-					perPage={SEARCH_PAGE_SIZE}
-					variant="right"
+					perPage={perPage}
+					variant={paginationVariant}
 				/>
 			)}
 		</div>
@@ -81,11 +103,6 @@ const hasQuery = searchText.length > 0;
 <style lang="scss">
 	@use '~/styles/_variables.scss' as *;
 
-	// Visual style mirrors CreatorFilterBar — same outer rhythm, search
-	// chrome, sort button and pagination row. Kept as its own component
-	// because the search bar's input is enabled and the heading is
-	// query-driven, both of which will evolve independently once the
-	// dynamic refetch pipeline lands.
 	.search-bar {
 		display: flex;
 		flex-direction: column;
@@ -152,8 +169,7 @@ const hasQuery = searchText.length > 0;
 
 		&::placeholder { color: var(--color-text-muted); }
 
-		// Hide the browser's built-in `×` so the custom clear button below
-		// is the only one shown.
+		// Hide the UA `×` so only the custom clear button below shows.
 		&::-webkit-search-cancel-button,
 		&::-webkit-search-decoration {
 			-webkit-appearance: none;
@@ -192,9 +208,7 @@ const hasQuery = searchText.length > 0;
 		svg { display: block; }
 	}
 
-	// Toggle search-glyph vs clear-button by input state. `:placeholder-shown`
-	// is true only when the input has no value, so when the user types the
-	// glyph hides and the clear button reveals — same trick as IotHubHero.
+	// Toggle glyph vs clear button by input state.
 	.search-bar__search-input:placeholder-shown ~ .search-bar__search-clear {
 		display: none;
 	}
@@ -225,81 +239,6 @@ const hasQuery = searchText.length > 0;
 </style>
 
 <script>
-	// Hydrate the search bar: read `?q=` from the URL, push it into the
-	// input and the heading, then keep the heading in sync as the user
-	// types. The richer dynamic pipeline (refetch on input / sort change /
-	// page-size change, URL push-state) lands separately on top of this.
-
-	const HEADING_PREFIX = 'Search results for';
-	const HEADING_EMPTY = 'Search results';
-	const LDQUO = '“';
-	const RDQUO = '”';
-
-	function setupSearchBar(bar: HTMLElement) {
-		if (bar.dataset.searchBarInited) return;
-		bar.dataset.searchBarInited = 'true';
-
-		const input = bar.querySelector<HTMLInputElement>('[data-search-input]');
-		const heading = bar.querySelector<HTMLElement>('[data-search-heading]');
-		if (!input || !heading) return;
-
-		const renderHeading = (text: string) => {
-			heading.replaceChildren();
-			if (text.trim()) {
-				heading.append(`${HEADING_PREFIX} ${LDQUO}`);
-				const span = document.createElement('span');
-				span.setAttribute('data-search-query', '');
-				span.textContent = text;
-				heading.append(span);
-				heading.append(RDQUO);
-			} else {
-				heading.textContent = HEADING_EMPTY;
-			}
-		};
-
-		// Pick up the `?q=` from the URL if the static render didn't already
-		// supply one (it won't — build time has no query string).
-		const params = new URLSearchParams(location.search);
-		const initialQ = params.get('q') ?? '';
-		if (initialQ && !input.value) input.value = initialQ;
-		renderHeading(input.value);
-
-		input.addEventListener('input', () => {
-			renderHeading(input.value);
-			// Notify the host (dynamic-search page script) so it can debounce
-			// and refetch. Static surfaces that don't care about the event
-			// ignore it harmlessly.
-			bar.dispatchEvent(
-				new CustomEvent('iot-hub-search-text:change', {
-					detail: { searchText: input.value },
-					bubbles: true,
-				})
-			);
-		});
-
-		// Clear button: empties the input, fires an `input` event so the
-		// heading sync (and any future dynamic-fetch listener) reacts, and
-		// returns focus to the input so the user can keep typing.
-		const clearBtn = bar.querySelector<HTMLButtonElement>('[data-search-clear]');
-		if (clearBtn) {
-			clearBtn.addEventListener('click', () => {
-				input.value = '';
-				input.dispatchEvent(new Event('input', { bubbles: true }));
-				input.focus();
-			});
-		}
-	}
-
-	function initAll() {
-		document
-			.querySelectorAll<HTMLElement>('[data-iot-hub-search-bar]')
-			.forEach(setupSearchBar);
-	}
-
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', initAll);
-	} else {
-		initAll();
-	}
-	document.addEventListener('astro:page-load', initAll);
+	import { initSearchBars } from './iot-hub-search-bar-init';
+	initSearchBars();
 </script>

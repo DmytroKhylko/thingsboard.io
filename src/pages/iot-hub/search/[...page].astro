@@ -14,6 +14,7 @@ import CategorySectionTemplate from '@components/IotHub/CategorySectionTemplate.
 import IotHubBreadcrumbs from '@components/IotHub/IotHubBreadcrumbs.astro';
 import IotHubNoResults from '@components/IotHub/IotHubNoResults.astro';
 import IotHubRuntimeConfig from '@components/IotHub/IotHubRuntimeConfig.astro';
+import IotHubSearchLoading from '@components/IotHub/IotHubSearchLoading.astro';
 import ListingCardTemplate from '@components/IotHub/ListingCardTemplate.astro';
 import SearchFilterBar from '@components/IotHub/SearchFilterBar.astro';
 
@@ -81,7 +82,12 @@ const description =
 ---
 
 <BaseLayout title={title} description={description}>
-	<main class="iot-hub-search" data-iot-hub-search-root>
+	<main
+		class="iot-hub-search"
+		data-iot-hub-search-root
+		data-base-path="/iot-hub/search/"
+		data-page-size={SEARCH_PAGE_SIZE}
+	>
 		<div class="iot-hub-search__center">
 			<div class="iot-hub-search__container">
 				<div class="iot-hub-search__breadcrumb">
@@ -92,9 +98,12 @@ const description =
 						]}
 					/>
 				</div>
-				<div class="iot-hub-search__items">
+				<div class="iot-hub-search__items" data-search-items>
 					<SearchFilterBar
+						heading={T.headingEmpty}
+						headingPrefix={T.headingPrefix}
 						searchText={searchText}
+						searchPlaceholder={T.searchPlaceholder}
 						totalResults={total}
 						currentPage={currentPage}
 						totalPages={totalPages}
@@ -112,13 +121,7 @@ const description =
 							))}
 						</div>
 						<IotHubNoResults />
-						<div class="iot-hub-search__loading">
-							<span
-								class="iot-hub-search__spinner"
-								role="progressbar"
-								aria-label="Loading results"
-							></span>
-						</div>
+						<IotHubSearchLoading />
 					</div>
 				</div>
 			</div>
@@ -162,277 +165,9 @@ const description =
 	.iot-hub-search__results-container {
 		position: relative;
 	}
-
-	// Absolute overlay so dimensions stay stable across fetches.
-	.iot-hub-search__loading {
-		display: none;
-		position: absolute;
-		inset: 0;
-		z-index: 5;
-		justify-content: center;
-		padding-top: 64px;
-		background: rgba(255, 255, 255, 0.72);
-
-		:global([data-theme='dark']) & {
-			background: rgba(23, 24, 28, 0.72);
-		}
-	}
-
-	.iot-hub-search__items.is-loading .iot-hub-search__loading {
-		display: flex;
-	}
-
-	.iot-hub-search__spinner {
-		width: 64px;
-		height: 64px;
-		border: 6px solid var(--color-bg-light, rgba(0, 0, 0, 0.08));
-		border-top-color: var(--color-primary);
-		border-radius: 50%;
-		animation: iot-hub-search-spin 0.8s linear infinite;
-
-		:global([data-theme='dark']) & {
-			border-color: rgba(255, 255, 255, 0.12);
-			border-top-color: #b3c7ff;
-		}
-	}
-
-	@keyframes iot-hub-search-spin {
-		to {
-			transform: rotate(360deg);
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.iot-hub-search__spinner {
-			animation-duration: 2.4s;
-		}
-	}
 </style>
 
 <script>
-	// Dynamic search. Triggers (each clears + refetches):
-	//   * SearchFilterBar input (300ms debounce) — resets page to 1
-	//   * IotHubSort selection                   — resets page to 1
-	//   * Pagination items-per-page              — resets page to 1
-	//   * Pagination page change                 — keeps page index
-	// After the first dynamic fetch, pagination switches to event-based mode
-	// and totalElements / totalPages are driven by the PageData response.
-	// On load, `?q=` triggers an immediate fetch so URL state wins over SSR.
-	import {
-		IOT_HUB_API_URL,
-		IOT_HUB_CATEGORIES,
-		SEARCH_PAGE_SIZE,
-		DEFAULT_IOT_HUB_SORT_ID,
-		getCardVariant,
-		getIotHubSortOption,
-		type IotHubItemType,
-		type ListingView,
-	} from '@models/iot-hub';
-	import { bindListingCard } from '@components/IotHub/iot-hub-listing-card-bind';
-	import { getKnownSlugs } from '@components/IotHub/iot-hub-known-slugs';
-	import {
-		updatePaginationDynamic,
-		updateResultsCount,
-	} from '@components/IotHub/iot-hub-pagination-update';
-
-	const DEBOUNCE_MS = 300;
-
-	type PageData<T> = {
-		data: T[];
-		totalPages: number;
-		totalElements: number;
-		hasNext: boolean;
-	};
-
-	const ITEM_TYPE_BY_TYPE = new Map(IOT_HUB_CATEGORIES.map((c) => [c.itemType, c]));
-
-	function init() {
-		const root = document.querySelector<HTMLElement>('[data-iot-hub-search-root]');
-		if (!root) return;
-
-		const input = root.querySelector<HTMLInputElement>('[data-search-input]');
-		const resultsContainer = root.querySelector<HTMLElement>('[data-search-results]');
-		const itemsWrap = root.querySelector<HTMLElement>('.iot-hub-search__items');
-		const paginationNav = root.querySelector<HTMLElement>('[data-iot-hub-pagination]');
-		const countEl = root.querySelector<HTMLElement>('.search-bar__count');
-		const noResults = root.querySelector<HTMLElement>('[data-iot-hub-no-results]');
-		if (!input || !resultsContainer || !itemsWrap || !countEl || !noResults) return;
-
-		const bigTmpl = document.querySelector<HTMLTemplateElement>(
-			'[data-listing-card-tmpl][data-variant="big"]'
-		);
-		const compactTmpl = document.querySelector<HTMLTemplateElement>(
-			'[data-listing-card-tmpl][data-variant="compact"]'
-		);
-		const sectionTmpl = document.querySelector<HTMLTemplateElement>(
-			'[data-category-section-tmpl]'
-		);
-		if (!bigTmpl || !compactTmpl || !sectionTmpl) return;
-
-		let searchText = '';
-		let sortId: string = DEFAULT_IOT_HUB_SORT_ID;
-		let pageSize = SEARCH_PAGE_SIZE;
-		let currentPage = 1;
-		let abort: AbortController | null = null;
-		let debounceTimer: number | undefined;
-
-		function setLoading(loading: boolean): void {
-			itemsWrap!.classList.toggle('is-loading', loading);
-		}
-
-		function showNoResults(show: boolean): void {
-			noResults!.hidden = !show;
-			if (show) resultsContainer!.replaceChildren();
-		}
-
-		function buildCardNode(item: ListingView, categorySlug: string): HTMLElement {
-			const variant = getCardVariant(item.itemType);
-			const tmpl = variant === 'big' ? bigTmpl! : compactTmpl!;
-			const card = tmpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
-			bindListingCard(card, item, categorySlug, true);
-			return card;
-		}
-
-		function buildSectionNode(
-			slug: string,
-			label: string,
-			items: ListingView[]
-		): HTMLElement {
-			const section = sectionTmpl!.content.firstElementChild!.cloneNode(true) as HTMLElement;
-			const header = section.querySelector<HTMLAnchorElement>(
-				'[data-category-section-header]'
-			);
-			const labelEl = section.querySelector<HTMLElement>('[data-category-section-label]');
-			const grid = section.querySelector<HTMLElement>('[data-category-section-grid]');
-			if (header) header.href = `/iot-hub/${slug}/`;
-			if (labelEl) labelEl.textContent = label;
-			if (grid) {
-				const variant = getCardVariant(items[0]?.itemType ?? 'WIDGET');
-				grid.classList.add(`iot-hub-grid--${variant}`);
-				for (const item of items) grid.appendChild(buildCardNode(item, slug));
-			}
-			return section;
-		}
-
-		// Group results by category in IOT_HUB_CATEGORIES priority order
-		// (same logic as the build-time grouping in getStaticPaths).
-		function groupResults(
-			items: ListingView[]
-		): Array<{ slug: string; label: string; items: ListingView[] }> {
-			const byType = new Map<IotHubItemType, ListingView[]>();
-			for (const it of items) {
-				const cat = ITEM_TYPE_BY_TYPE.get(it.itemType as IotHubItemType);
-				if (!cat) continue;
-				const list = byType.get(cat.itemType) ?? [];
-				list.push(it);
-				byType.set(cat.itemType, list);
-			}
-			return IOT_HUB_CATEGORIES
-				.filter((c) => byType.has(c.itemType))
-				.map((c) => ({
-					slug: c.slug,
-					label: c.label,
-					items: byType.get(c.itemType)!,
-				}));
-		}
-
-		function renderResults(items: ListingView[]): void {
-			if (items.length === 0) {
-				showNoResults(true);
-				return;
-			}
-			showNoResults(false);
-			resultsContainer!.replaceChildren();
-			for (const group of groupResults(items)) {
-				resultsContainer!.appendChild(buildSectionNode(group.slug, group.label, group.items));
-			}
-		}
-
-		async function refetch(opts: { resetPage?: boolean } = {}): Promise<void> {
-			if (opts.resetPage) currentPage = 1;
-			if (abort) abort.abort();
-			abort = new AbortController();
-			setLoading(true);
-			const sort = getIotHubSortOption(sortId);
-			const params = new URLSearchParams({
-				pageSize: String(pageSize),
-				page: String(currentPage - 1), // backend is 0-based
-				sortProperty: sort.sortProperty,
-				sortOrder: sort.sortOrder,
-			});
-			const trimmed = searchText.trim();
-			if (trimmed) params.set('textSearch', trimmed);
-
-			try {
-				const [res, knownSlugs] = await Promise.all([
-					fetch(
-						`${IOT_HUB_API_URL}/api/listings/published?${params.toString()}`,
-						{ signal: abort.signal }
-					),
-					getKnownSlugs(),
-				]);
-				if (!res.ok) return; // keep previous results visible
-				const body = (await res.json()) as PageData<ListingView>;
-				// Drop listings published after the last deploy — no static
-				// detail page exists for them yet. Trade-off: a page may show
-				// < pageSize items until the next rebuild.
-				const items = (body.data ?? []).filter((item) => knownSlugs.has(item.slug));
-				const totalPages = Math.max(1, body.totalPages || 1);
-				renderResults(items);
-				if (paginationNav) {
-					updatePaginationDynamic(paginationNav, { currentPage, totalPages });
-				}
-				updateResultsCount(countEl!, body.totalElements ?? 0);
-			} catch (err) {
-				if (err instanceof DOMException && err.name === 'AbortError') return;
-			} finally {
-				setLoading(false);
-			}
-		}
-
-		// On load: if `?q=` is set, kick off an immediate fetch so the URL
-		// state wins over the static unfiltered SSR.
-		const params = new URLSearchParams(location.search);
-		const initialQ = params.get('q') ?? '';
-		if (initialQ) {
-			searchText = initialQ;
-			void refetch({ resetPage: true });
-		}
-
-		root.addEventListener('iot-hub-search-text:change', ((e: CustomEvent) => {
-			searchText = e.detail?.searchText ?? '';
-			if (debounceTimer !== undefined) clearTimeout(debounceTimer);
-			// setLoading kept inside refetch so the spinner only flashes once
-			// the fetch is actually in flight, not on every keystroke.
-			debounceTimer = window.setTimeout(() => {
-				void refetch({ resetPage: true });
-			}, DEBOUNCE_MS);
-		}) as EventListener);
-
-		root.addEventListener('iot-hub-sort:change', ((e: CustomEvent) => {
-			sortId = e.detail?.id ?? DEFAULT_IOT_HUB_SORT_ID;
-			void refetch({ resetPage: true });
-		}) as EventListener);
-
-		root.addEventListener('iot-hub-page-size:change', ((e: CustomEvent) => {
-			const next = Number.parseInt(e.detail?.perPage ?? '0', 10);
-			if (!Number.isFinite(next) || next <= 0) return;
-			pageSize = next;
-			void refetch({ resetPage: true });
-		}) as EventListener);
-
-		root.addEventListener('iot-hub-page:change', ((e: CustomEvent) => {
-			const next = Number.parseInt(e.detail?.page ?? '0', 10);
-			if (!Number.isFinite(next) || next <= 0) return;
-			currentPage = next;
-			void refetch({ resetPage: false });
-		}) as EventListener);
-	}
-
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', init);
-	} else {
-		init();
-	}
-	document.addEventListener('astro:page-load', init);
+	import { initDynamicSearch } from '@components/IotHub/iot-hub-dynamic-search';
+	initDynamicSearch();
 </script>

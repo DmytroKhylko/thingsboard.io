@@ -35,7 +35,6 @@ const placeholderIcon = getPlaceholderIcon(item);
 	class:list={[
 		'iot-hub-card',
 		isCompact ? 'iot-hub-card--compact' : 'iot-hub-card--big',
-		itemType === 'DEVICE' && 'iot-hub-card--device',
 	]}
 	href={href}
 	data-card-root
@@ -176,10 +175,6 @@ const placeholderIcon = getPlaceholderIcon(item);
 		background: var(--color-bg-light);
 		border-bottom: 1px solid var(--color-border);
 		overflow: hidden;
-
-		.iot-hub-card--device & {
-			background: #fff;
-		}
 
 		img {
 			max-width: 100%;

@@ -33,11 +33,12 @@ function chevronSvgHtml(direction: 'left' | 'right'): string {
 	return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${CHEVRON_PATHS[direction]}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>`;
 }
 
-// Anchor-based factories (not <button>) keep dynamic-mode controls
-// visually identical to their static-render counterparts — sidesteps
-// the UA `<button>` defaults (font-family, appearance, :disabled colour)
-// that would otherwise need ad-hoc resets in the SCSS. Clicks
-// preventDefault + dispatch `iot-hub-page:change`.
+// <button> factories. UA button defaults (font-family, appearance,
+// :disabled colour) are reset in `@mixin pagination-btn` so dynamic-mode
+// controls render visually identical to their static <a> counterparts.
+// `.is-disabled` / `.is-current` classes block clicks via pointer-events
+// rather than the `disabled` attribute (which would apply the UA disabled
+// colour and fight `.is-current`'s accent background).
 
 function makeChevron(
 	direction: 'left' | 'right',
@@ -45,33 +46,30 @@ function makeChevron(
 	targetPage: number,
 	label: string
 ): HTMLElement {
-	const a = document.createElement('a');
-	a.className = `iot-hub-pagination__chevron${enabled ? '' : ' is-disabled'}`;
-	a.setAttribute('aria-label', label);
-	a.setAttribute('rel', direction === 'left' ? 'prev' : 'next');
-	a.href = '#';
-	if (!enabled) a.setAttribute('aria-disabled', 'true');
-	a.innerHTML = chevronSvgHtml(direction);
-	a.addEventListener('click', (e) => {
-		e.preventDefault();
+	const btn = document.createElement('button');
+	btn.type = 'button';
+	btn.className = `iot-hub-pagination__chevron${enabled ? '' : ' is-disabled'}`;
+	btn.setAttribute('aria-label', label);
+	if (!enabled) btn.setAttribute('aria-disabled', 'true');
+	btn.innerHTML = chevronSvgHtml(direction);
+	btn.addEventListener('click', () => {
 		if (!enabled) return;
-		dispatchPageChange(a, targetPage);
+		dispatchPageChange(btn, targetPage);
 	});
-	return a;
+	return btn;
 }
 
 function makePageButton(page: number, isCurrent: boolean): HTMLElement {
-	const a = document.createElement('a');
-	a.className = `iot-hub-pagination__page${isCurrent ? ' is-current' : ''}`;
-	a.href = '#';
-	if (isCurrent) a.setAttribute('aria-current', 'page');
-	a.textContent = String(page);
-	a.addEventListener('click', (e) => {
-		e.preventDefault();
+	const btn = document.createElement('button');
+	btn.type = 'button';
+	btn.className = `iot-hub-pagination__page${isCurrent ? ' is-current' : ''}`;
+	if (isCurrent) btn.setAttribute('aria-current', 'page');
+	btn.textContent = String(page);
+	btn.addEventListener('click', () => {
 		if (isCurrent) return;
-		dispatchPageChange(a, page);
+		dispatchPageChange(btn, page);
 	});
-	return a;
+	return btn;
 }
 
 function dispatchPageChange(el: HTMLElement, page: number): void {

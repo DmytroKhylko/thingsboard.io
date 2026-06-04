@@ -219,8 +219,9 @@ const perPageOptions = [perPage, perPage * 2, perPage * 3];
 
 	// Mixin (not %placeholder + @extend) because @extend doesn't reliably
 	// reach across `:global()` selectors after Astro's SCSS pipeline rewrites
-	// them — `.iot-hub-pagination__page` would silently lose the shared
-	// chrome and end up at the UA button size + UA font.
+	// them. Also: `font-family: inherit` / `appearance: none` / `cursor: pointer`
+	// are explicit so dynamic-mode <button> elements render visually identical
+	// to their static-mode <a> counterparts without UA defaults leaking in.
 	@mixin pagination-btn {
 		display: inline-flex;
 		align-items: center;
@@ -230,12 +231,15 @@ const perPageOptions = [perPage, perPage * 2, perPage * 3];
 		padding: 8px;
 		border: none;
 		border-radius: 8px;
+		font-family: inherit;
 		font-size: 14px;
 		font-weight: $font-weight-semibold;
 		line-height: 24px;
 		text-decoration: none;
 		color: var(--color-text-secondary);
 		background: transparent;
+		appearance: none;
+		cursor: pointer;
 		transition: background $transition-fast, color $transition-fast;
 
 		svg {

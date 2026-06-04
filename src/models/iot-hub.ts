@@ -160,7 +160,6 @@ export const IOT_HUB_STRINGS = {
 		filter: 'Filter',
 		searchAriaLabel: 'Search',
 		defaultSearchPlaceholder: 'Search...',
-		defaultSortLabel: 'Most Installed',
 		resultSingular: 'result',
 		resultPlural: 'results',
 	},
@@ -270,6 +269,16 @@ export const getSubtypeLabel = (itemType: IotHubItemType, key: string): string =
 export interface IotHubNodeInfo {
 	name: string;
 	type: string;
+}
+
+// Shape returned by every `/api/listings/...` paged endpoint (mirrors the
+// platform's `PageData<T>` in iot-hub-version.models.ts). Shared by all
+// runtime fetchers (search page, creator page, hero popup, …).
+export interface PageData<T> {
+	data: T[];
+	totalPages: number;
+	totalElements: number;
+	hasNext: boolean;
 }
 
 export const PAGE_SIZE = 12;

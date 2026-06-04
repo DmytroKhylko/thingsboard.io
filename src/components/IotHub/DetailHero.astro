@@ -320,8 +320,6 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 						class:list={[
 							'iot-hub-detail-hero__preview',
 							showGallery && 'iot-hub-detail-hero__preview--gallery',
-							detail.itemType === 'DEVICE' &&
-								'iot-hub-detail-hero__preview--device',
 						]}
 					>
 						{showGallery ? (
@@ -486,13 +484,6 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 			max-height: 257px;
 			object-fit: contain;
 			display: block;
-		}
-
-		// Device variant — neutral white frame with a hairline border so the
-		// product image reads cleanly regardless of theme.
-		&--device {
-			background: #fff;
-			border: 1px solid var(--hairline---sl-color-hairline, #edeef3);
 		}
 
 		// Gallery variant — DetailGallery brings its own framed thumbnails,

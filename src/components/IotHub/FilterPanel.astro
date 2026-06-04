@@ -221,8 +221,29 @@ if (filterInfo.useCases.length > 0) {
 									type="search"
 									placeholder={T.searchPlaceholder}
 									aria-label={`${T.searchAriaPrefix} ${section.label}`}
-									disabled
+									autocomplete="off"
+									data-filter-search-input
 								/>
+								<button
+									class="iot-hub-filter-section__search-clear"
+									type="button"
+									aria-label="Clear search"
+									data-filter-search-clear
+								>
+									<svg
+										width="18"
+										height="18"
+										viewBox="0 0 24 24"
+										fill="none"
+										aria-hidden="true"
+									>
+										<path
+											d="M5 5 19 19M19 5 5 19"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"></path>
+									</svg>
+								</button>
 							</div>
 						)}
 						<div
@@ -244,7 +265,6 @@ if (filterInfo.useCases.length > 0) {
 															type="checkbox"
 															name={section.key}
 															value={opt.key}
-															disabled
 														/>
 														<span
 															class="iot-hub-filter-option__check"
@@ -347,8 +367,9 @@ if (filterInfo.useCases.length > 0) {
 	}
 
 	.iot-hub-filter-panel__inner {
-		position: absolute;
-		inset: 0;
+		position: sticky;
+		inset: 80px 0 0 0;
+		max-height: calc(100vh - 80px);
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
@@ -360,6 +381,12 @@ if (filterInfo.useCases.length > 0) {
 		// visible at all.
 		scrollbar-width: thin;
 		scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+		@include media-down(lg) {
+			position: absolute;
+			inset: 0;
+			max-height: unset;
+		}
 
 		&::-webkit-scrollbar {
 			width: 6px;
@@ -524,12 +551,41 @@ if (filterInfo.useCases.length > 0) {
 			color: var(--color-text-secondary);
 		}
 
-		&:disabled {
-			color: var(--color-text);
-			-webkit-text-fill-color: var(--color-text);
-			opacity: 1;
-			cursor: not-allowed;
+		// Hide the UA `×` so only the custom clear button below shows.
+		&::-webkit-search-cancel-button,
+		&::-webkit-search-decoration {
+			-webkit-appearance: none;
+			appearance: none;
 		}
+	}
+
+	.iot-hub-filter-section__search-clear {
+		flex-shrink: 0;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 20px;
+		height: 20px;
+		padding: 0;
+		border: none;
+		background: transparent;
+		color: var(--color-text-secondary);
+		cursor: pointer;
+		transition: color $transition-fast;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-text);
+		}
+
+		svg { display: block; }
+	}
+
+	// Hide the clear button when input is empty (placeholder showing). The
+	// glyph stays on the left always — clear button appears on the right
+	// only once there's text to clear.
+	.iot-hub-filter-section__search-input:placeholder-shown ~ .iot-hub-filter-section__search-clear {
+		display: none;
 	}
 
 	.iot-hub-filter-section__body {
@@ -594,7 +650,7 @@ if (filterInfo.useCases.length > 0) {
 		font-weight: $font-weight-normal;
 		line-height: 24px;
 		color: var(--color-text);
-		cursor: not-allowed;
+		cursor: pointer;
 		transition: background $transition-fast;
 
 		&:hover {
@@ -658,9 +714,70 @@ if (filterInfo.useCases.length > 0) {
 </style>
 
 <script>
+	// Snapshot of every currently-checked option in the panel, grouped by
+	// section key (the checkbox's `name` attribute — `vendor`, `category`,
+	// `connectivity`, `useCase`, …). Each entry carries both the API
+	// `value` (for the query string) and the human `label` (for chips /
+	// status text) so consumers don't need to walk back into the panel.
+	type FilterEntry = { value: string; label: string };
+	function collectFilters(panel: HTMLElement): Record<string, FilterEntry[]> {
+		const filters: Record<string, FilterEntry[]> = {};
+		const inputs = panel.querySelectorAll<HTMLInputElement>(
+			'.iot-hub-filter-option__input:checked'
+		);
+		for (const input of inputs) {
+			const key = input.name;
+			if (!key) continue;
+			const labelEl = input
+				.closest('.iot-hub-filter-option')
+				?.querySelector<HTMLElement>('.iot-hub-filter-option__text');
+			const label = labelEl?.textContent?.trim() || input.value;
+			(filters[key] ??= []).push({ value: input.value, label });
+		}
+		return filters;
+	}
+
+	// Per-section client-side filter: as the user types in the section's
+	// search input, hide options whose label doesn't contain the query
+	// (case-insensitive). Groups with no surviving options collapse so the
+	// "Most popular" / "All" headers don't dangle above empty lists.
+	function applySectionFilter(section: HTMLElement): void {
+		const input = section.querySelector<HTMLInputElement>('[data-filter-search-input]');
+		if (!input) return;
+		const needle = input.value.trim().toLowerCase();
+		const groups = section.querySelectorAll<HTMLElement>('.iot-hub-filter-section__group');
+		for (const group of groups) {
+			const options = group.querySelectorAll<HTMLElement>('.iot-hub-filter-option');
+			let anyVisible = false;
+			for (const opt of options) {
+				const label =
+					opt.querySelector<HTMLElement>('.iot-hub-filter-option__text')?.textContent ?? '';
+				const visible = !needle || label.toLowerCase().includes(needle);
+				opt.hidden = !visible;
+				if (visible) anyVisible = true;
+			}
+			group.hidden = !anyVisible;
+		}
+	}
+
 	document.querySelectorAll<HTMLElement>('[data-iot-hub-filter-panel]').forEach((panel) => {
 		requestAnimationFrame(() => {
 			panel.dataset.mounted = 'true';
+		});
+
+		// Wire each section search input + clear button.
+		panel.querySelectorAll<HTMLElement>('[data-iot-hub-filter-section]').forEach((section) => {
+			const input = section.querySelector<HTMLInputElement>('[data-filter-search-input]');
+			const clear = section.querySelector<HTMLButtonElement>('[data-filter-search-clear]');
+			if (!input) return;
+			input.addEventListener('input', () => applySectionFilter(section));
+			if (clear) {
+				clear.addEventListener('click', () => {
+					input.value = '';
+					applySectionFilter(section);
+					input.focus();
+				});
+			}
 		});
 
 		panel.addEventListener('click', (e) => {
@@ -681,6 +798,20 @@ if (filterInfo.useCases.length > 0) {
 			if (target.closest('[data-iot-hub-filter-close]')) {
 				panel.dispatchEvent(new CustomEvent('iot-hub-filter-close', { bubbles: true }));
 			}
+		});
+
+		// Checkbox toggles → emit a bubbling snapshot of the current
+		// selection state so the host page (dynamic-search pipeline) can
+		// rebuild its API query.
+		panel.addEventListener('change', (e) => {
+			const target = e.target as Element;
+			if (!target.matches('.iot-hub-filter-option__input')) return;
+			panel.dispatchEvent(
+				new CustomEvent('iot-hub-filter:change', {
+					detail: { filters: collectFilters(panel) },
+					bubbles: true,
+				})
+			);
 		});
 	});
 </script>

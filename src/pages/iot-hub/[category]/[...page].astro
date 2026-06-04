@@ -2,9 +2,14 @@
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import CategoryHero from '@components/IotHub/CategoryHero.astro';
+import CategorySectionTemplate from '@components/IotHub/CategorySectionTemplate.astro';
 import CreatorCTA from '@components/IotHub/CreatorCTA.astro';
 import FilterPanel from '@components/IotHub/FilterPanel.astro';
+import IotHubNoResults from '@components/IotHub/IotHubNoResults.astro';
+import IotHubRuntimeConfig from '@components/IotHub/IotHubRuntimeConfig.astro';
+import IotHubSearchLoading from '@components/IotHub/IotHubSearchLoading.astro';
 import ListingCard from '@components/IotHub/ListingCard.astro';
+import ListingCardTemplate from '@components/IotHub/ListingCardTemplate.astro';
 import ListingGrid from '@components/IotHub/ListingGrid.astro';
 import ListingsFilterBar from '@components/IotHub/ListingsFilterBar.astro';
 import PaginationLink from '@components/IotHub/PaginationLink.astro';
@@ -58,7 +63,13 @@ const searchPlaceholder = heroTitle
 ---
 
 <BaseLayout title={title} description={description}>
-	<main class="iot-hub-cat">
+	<main
+		class="iot-hub-cat"
+		data-iot-hub-search-root
+		data-item-type={itemType}
+		data-base-path={basePath}
+		data-page-size={PAGE_SIZE}
+	>
 		<div class="iot-hub-cat__center">
 			<div class="iot-hub-cat__container">
 				<CategoryHero categorySlug={category!} />
@@ -79,25 +90,31 @@ const searchPlaceholder = heroTitle
 						aria-hidden="true"
 					>
 					</div>
-					<div class="iot-hub-cat__listings">
+					<div class="iot-hub-cat__listings" data-search-items>
 						<ListingsFilterBar
 							totalCount={page.total}
 							searchPlaceholder={searchPlaceholder}
 						/>
-						{
-							page.data.length > 0 ? (
-								<>
+						<div class="iot-hub-cat__results-container">
+							<div class="iot-hub-cat__results" data-search-results>
+								{page.data.length > 0 && (
 									<ListingGrid variant={variant}>
 										{page.data.map((item) => (
 											<ListingCard item={item} categorySlug={category!} />
 										))}
 									</ListingGrid>
-									<PaginationLink
-										currentPage={page.currentPage}
-										totalPages={page.lastPage}
-										basePath={basePath}
-									/>
-								</>
+								)}
+							</div>
+							<IotHubNoResults clearHref={basePath} />
+							<IotHubSearchLoading />
+						</div>
+						{
+							page.data.length > 0 ? (
+								<PaginationLink
+									currentPage={page.currentPage}
+									totalPages={page.lastPage}
+									basePath={basePath}
+								/>
 							) : (
 								<p class="iot-hub-cat__empty">{IOT_HUB_STRINGS.emptyState}</p>
 							)
@@ -112,6 +129,10 @@ const searchPlaceholder = heroTitle
 				<CreatorCTA />
 			</div>
 		</div>
+		<ListingCardTemplate variant="big" />
+		<ListingCardTemplate variant="compact" />
+		<CategorySectionTemplate />
+		<IotHubRuntimeConfig />
 	</main>
 </BaseLayout>
 
@@ -149,6 +170,12 @@ const searchPlaceholder = heroTitle
 		padding-bottom: 40px;
 		flex: 1 1 0;
 		min-width: 0;
+		// Positioned ancestor for the absolute loading overlay below.
+		position: relative;
+	}
+
+	.iot-hub-cat__results-container {
+		position: relative;
 	}
 
 	.iot-hub-cat__backdrop {
@@ -177,7 +204,10 @@ const searchPlaceholder = heroTitle
 </style>
 
 <script>
+	import { initDynamicSearch } from '@components/IotHub/iot-hub-dynamic-search';
 	import { lockScroll, unlockScroll } from '@util/scroll-lock';
+
+	initDynamicSearch();
 
 	document
 		.querySelectorAll<HTMLElement>('[data-iot-hub-listings-wrap]')

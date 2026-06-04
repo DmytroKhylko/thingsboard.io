@@ -355,11 +355,27 @@ export const collections = {
 			};
 			// Filter facet counts can't be derived from the per-page
 			// listing payload — they aggregate across the whole catalog.
+			// Empty facets (totalItems === 0) are dropped so the FilterPanel
+			// never renders checkboxes that would yield zero results.
 			const fetchFilterInfo = async (itemType: string): Promise<ItemTypeFilterInfo> => {
 				const url = `${IOT_HUB_API_URL}/api/item-listing/listingFilterInfo/${itemType}`;
 				const res = await fetchWithRetry(url);
 				const body = await res.json();
-				return itemTypeFilterInfoSchema.parse(body);
+				const parsed = itemTypeFilterInfoSchema.parse(body);
+				const nonEmpty = (list: typeof parsed.types) =>
+					list.filter((entry) => entry.totalItems > 0);
+				return {
+					types: nonEmpty(parsed.types),
+					categories: nonEmpty(parsed.categories),
+					useCases: nonEmpty(parsed.useCases),
+					vendors: nonEmpty(parsed.vendors),
+					hardwareTypes: nonEmpty(parsed.hardwareTypes),
+					connectivities: Object.fromEntries(
+						Object.entries(parsed.connectivities)
+							.map(([bucket, entries]) => [bucket, nonEmpty(entries)] as const)
+							.filter(([, entries]) => entries.length > 0)
+					),
+				};
 			};
 			try {
 				// One entry per category, keyed by slug. See `iotHubCategorySchema`.
