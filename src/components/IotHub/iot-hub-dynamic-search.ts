@@ -132,6 +132,10 @@ export function setupDynamicSearch(): void {
 	const paginationNav = root.querySelector<HTMLElement>('[data-iot-hub-pagination]');
 	const countEl = root.querySelector<HTMLElement>('[data-search-count]');
 	const noResults = root.querySelector<HTMLElement>('[data-iot-hub-no-results]');
+	const fetchError = root.querySelector<HTMLElement>('[data-iot-hub-fetch-error]');
+	const retryBtn = root.querySelector<HTMLButtonElement>(
+		'[data-iot-hub-fetch-error-retry]'
+	);
 	if (!input || !resultsContainer || !itemsWrap || !countEl || !noResults) return;
 
 	const bigTmpl = document.querySelector<HTMLTemplateElement>(
@@ -151,9 +155,14 @@ export function setupDynamicSearch(): void {
 	let currentPage = 1;
 	let abort: AbortController | null = null;
 	let debounceTimer: number | undefined;
+	let retryTimer: number | undefined;
 	// FilterPanel selections keyed by section key (vendor, useCase, …).
 	// Values are the raw checkbox values; labels live with the chips.
 	let filters: Record<string, string[]> = {};
+	// Last refetch options, replayed when the user clicks "Try again"
+	// after a fetch error. resetPage=false keeps the page index the user
+	// was on when the failure happened.
+	let lastRefetchOpts: { resetPage?: boolean } = { resetPage: false };
 
 	function setLoading(loading: boolean): void {
 		itemsWrap!.classList.toggle('is-loading', loading);
@@ -162,6 +171,18 @@ export function setupDynamicSearch(): void {
 	function showNoResults(show: boolean): void {
 		noResults!.hidden = !show;
 		if (show) resultsContainer!.replaceChildren();
+	}
+
+	function showFetchError(show: boolean): void {
+		if (!fetchError) return;
+		fetchError.hidden = !show;
+		if (show) {
+			resultsContainer!.replaceChildren();
+			noResults!.hidden = true;
+			if (paginationNav) paginationNav.hidden = true;
+		} else if (paginationNav) {
+			paginationNav.hidden = false;
+		}
 	}
 
 	// --- URL state sync ---------------------------------------------------
@@ -293,10 +314,15 @@ export function setupDynamicSearch(): void {
 	// --- Fetch -------------------------------------------------------------
 
 	async function refetch(opts: { resetPage?: boolean } = {}): Promise<void> {
+		lastRefetchOpts = opts;
 		if (opts.resetPage) currentPage = 1;
 		syncUrl();
 		if (abort) abort.abort();
 		abort = new AbortController();
+		// The error panel is left in place across every refetch — only a
+		// successful response (below) is allowed to take it down. The
+		// loading overlay still runs on top so the user sees that the
+		// request is in flight.
 		setLoading(true);
 		const sort = getIotHubSortOption(sortId);
 		const params = new URLSearchParams({
@@ -322,20 +348,31 @@ export function setupDynamicSearch(): void {
 				),
 				getKnownSlugs(),
 			]);
-			if (!res.ok) return; // keep previous results visible
+			if (!res.ok) {
+				// 4xx/5xx — treat the same as a network error so the user
+				// gets a recoverable "Try again" path instead of stale data.
+				showFetchError(true);
+				return;
+			}
 			const body = (await res.json()) as PageData<ListingView>;
 			// Drop listings published after the last deploy — no static
 			// detail page exists for them yet. Trade-off: a page may show
 			// < pageSize items until the next rebuild.
 			const items = (body.data ?? []).filter((item) => knownSlugs.has(item.slug));
 			const totalPages = Math.max(1, body.totalPages || 1);
+			// Only a successful response is allowed to take the error
+			// panel down — every other refetch trigger leaves it alone.
+			showFetchError(false);
 			renderResults(items);
 			if (paginationNav) {
 				updatePaginationDynamic(paginationNav, { currentPage, totalPages });
 			}
 			updateResultsCount(countEl!, body.totalElements ?? 0);
 		} catch (err) {
+			// Aborts happen on every superseding fetch — don't treat them
+			// as failures or the error panel would flash on every keystroke.
 			if (err instanceof DOMException && err.name === 'AbortError') return;
+			showFetchError(true);
 		} finally {
 			setLoading(false);
 		}
@@ -443,6 +480,21 @@ export function setupDynamicSearch(): void {
 		currentPage = next;
 		void refetch({ resetPage: false });
 	}) as EventListener);
+
+	const RETRY_DEBOUNCE_MS = 350;
+	retryBtn?.addEventListener('click', () => {
+		// Flip the loading overlay on right away so rapid clicks feel
+		// responsive, then debounce the actual fetch by 350ms so a burst
+		// of clicks collapses into a single API call. `resetPage` carries
+		// the flag from the call that failed, so "Try again" keeps the
+		// user's page index intact deep into results.
+		setLoading(true);
+		if (retryTimer !== undefined) clearTimeout(retryTimer);
+		retryTimer = window.setTimeout(() => {
+			retryTimer = undefined;
+			void refetch(lastRefetchOpts);
+		}, RETRY_DEBOUNCE_MS);
+	});
 
 	// FilterPanel emits this on any checkbox change (real or synthetic).
 	// Guard against the synthetic emit fired during URL restore by

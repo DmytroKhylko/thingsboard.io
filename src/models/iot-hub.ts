@@ -164,6 +164,11 @@ export const IOT_HUB_STRINGS = {
 		resultPlural: 'results',
 	},
 	emptyState: 'No items available yet.',
+	fetchError: {
+		heading: 'Network or server unavailable',
+		subtitle: 'We couldn’t reach the catalog. Please try again in a moment.',
+		ctaLabel: 'Try again',
+	},
 	installDialog: {
 		title: 'Install item',
 		titleConnect: 'Connect item',

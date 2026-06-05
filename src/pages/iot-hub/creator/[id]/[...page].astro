@@ -16,6 +16,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import CategorySection from '@components/IotHub/CategorySection.astro';
 import CategorySectionTemplate from '@components/IotHub/CategorySectionTemplate.astro';
 import CreatorHero from '@components/IotHub/CreatorHero.astro';
+import IotHubFetchError from '@components/IotHub/IotHubFetchError.astro';
 import IotHubNoResults from '@components/IotHub/IotHubNoResults.astro';
 import IotHubRuntimeConfig from '@components/IotHub/IotHubRuntimeConfig.astro';
 import IotHubSearchLoading from '@components/IotHub/IotHubSearchLoading.astro';
@@ -181,6 +182,7 @@ const description =
 							))}
 						</div>
 						<IotHubNoResults clearHref={basePath} />
+						<IotHubFetchError />
 						<IotHubSearchLoading />
 					</div>
 				</div>

@@ -5,6 +5,7 @@ import CategoryHero from '@components/IotHub/CategoryHero.astro';
 import CategorySectionTemplate from '@components/IotHub/CategorySectionTemplate.astro';
 import CreatorCTA from '@components/IotHub/CreatorCTA.astro';
 import FilterPanel from '@components/IotHub/FilterPanel.astro';
+import IotHubFetchError from '@components/IotHub/IotHubFetchError.astro';
 import IotHubNoResults from '@components/IotHub/IotHubNoResults.astro';
 import IotHubRuntimeConfig from '@components/IotHub/IotHubRuntimeConfig.astro';
 import IotHubSearchLoading from '@components/IotHub/IotHubSearchLoading.astro';
@@ -106,6 +107,7 @@ const searchPlaceholder = heroTitle
 								)}
 							</div>
 							<IotHubNoResults clearHref={basePath} />
+							<IotHubFetchError />
 							<IotHubSearchLoading />
 						</div>
 						{
