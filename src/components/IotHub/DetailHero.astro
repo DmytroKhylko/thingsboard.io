@@ -1,6 +1,7 @@
 ---
 import {
 	IOT_HUB_CATEGORIES,
+	formatInstalls,
 	getCardVariant,
 	getPlaceholderIcon,
 	getTbVersionLabel,
@@ -157,7 +158,7 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 									size={20}
 									class="iot-hub-detail-hero__meta-icon"
 								/>
-								<span>{detail.installCount.toLocaleString('en-US')} installs</span>
+								<span>{formatInstalls(detail.installCount)}</span>
 							</li>
 							{versionLabel && (
 								<>
@@ -253,7 +254,7 @@ const tbVersionLabel = getTbVersionLabel(detail.minTbVersion, detail.maxTbVersio
 								size={20}
 								class="iot-hub-detail-hero__meta-icon"
 							/>
-							<span>{detail.installCount.toLocaleString('en-US')} installs</span>
+							<span>{formatInstalls(detail.installCount)}</span>
 						</li>
 						{versionLabel && (
 							<>

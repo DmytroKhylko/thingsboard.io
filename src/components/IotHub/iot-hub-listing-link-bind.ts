@@ -36,7 +36,7 @@ export function getListingHref(item: ListingView): string {
 // bindIotHubIcon — for MDI icons that triggers an async fetch. Callers
 // don't need to await this function; the icon wrapper stays in its blank
 // reset state until the SVG arrives.
-export function bindListingCard(root: HTMLElement, item: ListingView): void {
+export function bindListingLink(root: HTMLElement, item: ListingView): void {
 	const isCompact = getCardVariant(item.itemType) === 'small';
 	const imageUrl = resolveImage(item.image);
 	const fallbackTypeIcon = TYPE_FALLBACK_ICON[item.itemType] ?? 'category';

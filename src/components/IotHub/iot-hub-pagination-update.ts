@@ -5,6 +5,8 @@
 // `iot-hub-page:change` { page } bubbling events on the nav root — the
 // host listens and refetches.
 
+import { IOT_HUB_STRINGS, formatPageSummary } from '@models/iot-hub';
+
 interface PaginationState {
 	currentPage: number;
 	totalPages: number;
@@ -95,7 +97,12 @@ export function updatePaginationDynamic(
 		numbersList.replaceChildren();
 		const prevLi = document.createElement('li');
 		prevLi.appendChild(
-			makeChevron('left', currentPage > 1, currentPage - 1, 'Previous page')
+			makeChevron(
+				'left',
+				currentPage > 1,
+				currentPage - 1,
+				IOT_HUB_STRINGS.pagination.prevPageAriaLabel
+			)
 		);
 		numbersList.appendChild(prevLi);
 		for (const item of buildPages(currentPage, totalPages)) {
@@ -111,7 +118,12 @@ export function updatePaginationDynamic(
 		}
 		const nextLi = document.createElement('li');
 		nextLi.appendChild(
-			makeChevron('right', currentPage < totalPages, currentPage + 1, 'Next page')
+			makeChevron(
+				'right',
+				currentPage < totalPages,
+				currentPage + 1,
+				IOT_HUB_STRINGS.pagination.nextPageAriaLabel
+			)
 		);
 		numbersList.appendChild(nextLi);
 	}
@@ -123,21 +135,34 @@ export function updatePaginationDynamic(
 	if (compact) {
 		compact.replaceChildren();
 		compact.appendChild(
-			makeChevron('left', currentPage > 1, currentPage - 1, 'Previous page')
+			makeChevron(
+				'left',
+				currentPage > 1,
+				currentPage - 1,
+				IOT_HUB_STRINGS.pagination.prevPageAriaLabel
+			)
 		);
 		const summary = document.createElement('span');
 		summary.className = 'iot-hub-pagination__summary';
-		summary.textContent = `Page ${currentPage} of ${totalPages}`;
+		summary.textContent = formatPageSummary(currentPage, totalPages);
 		compact.appendChild(summary);
 		compact.appendChild(
-			makeChevron('right', currentPage < totalPages, currentPage + 1, 'Next page')
+			makeChevron(
+				'right',
+				currentPage < totalPages,
+				currentPage + 1,
+				IOT_HUB_STRINGS.pagination.nextPageAriaLabel
+			)
 		);
 	}
 }
 
-// Set the host-visible "totalResults" line and rebuild pagination together.
-// The search page hosts both, so this helper keeps them in lockstep.
+// Set the host-visible "totalResults" line (the host calls
+// `updatePaginationDynamic` separately to rebuild the page list).
 export function updateResultsCount(countEl: HTMLElement, totalResults: number): void {
-	const word = totalResults === 1 ? 'result' : 'results';
+	const word =
+		totalResults === 1
+			? IOT_HUB_STRINGS.searchPage.resultSingular
+			: IOT_HUB_STRINGS.searchPage.resultPlural;
 	countEl.textContent = `${totalResults} ${word}`;
 }

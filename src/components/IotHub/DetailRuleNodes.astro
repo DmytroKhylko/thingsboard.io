@@ -119,8 +119,8 @@ const classFor = (type: string) => {
 		}
 
 		&--unknown {
-			background: rgba(0, 0, 0, 0.04);
-			border-color: rgba(0, 0, 0, 0.12);
+			background: color-mix(in srgb, var(--color-border) 30%, transparent);
+			border-color: var(--color-border);
 		}
 	}
 </style>

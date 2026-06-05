@@ -1,5 +1,5 @@
 ---
-import { PAGE_SIZE } from '@models/iot-hub';
+import { PAGE_SIZE, IOT_HUB_STRINGS, formatPageSummary } from '@models/iot-hub';
 import IotHubChevron from './IotHubChevron.astro';
 import IotHubIcon from './IotHubIcon.astro';
 import PaginationChevron from './PaginationChevron.astro';
@@ -62,7 +62,11 @@ const perPageOptions = [perPage, perPage * 2, perPage * 3];
 	<div class="iot-hub-pagination__pages-wrap">
 		<ul class="iot-hub-pagination__pages iot-hub-pagination__pages--numbers">
 			<li>
-				<PaginationChevron direction="left" href={prevHref} label="Previous page" />
+				<PaginationChevron
+					direction="left"
+					href={prevHref}
+					label={IOT_HUB_STRINGS.pagination.prevPageAriaLabel}
+				/>
 			</li>
 			{
 				items.map((item) =>
@@ -84,15 +88,27 @@ const perPageOptions = [perPage, perPage * 2, perPage * 3];
 				)
 			}
 			<li>
-				<PaginationChevron direction="right" href={nextHref} label="Next page" />
+				<PaginationChevron
+					direction="right"
+					href={nextHref}
+					label={IOT_HUB_STRINGS.pagination.nextPageAriaLabel}
+				/>
 			</li>
 		</ul>
 		<div class="iot-hub-pagination__pages iot-hub-pagination__pages--compact">
-			<PaginationChevron direction="left" href={prevHref} label="Previous page" />
+			<PaginationChevron
+				direction="left"
+				href={prevHref}
+				label={IOT_HUB_STRINGS.pagination.prevPageAriaLabel}
+			/>
 			<span class="iot-hub-pagination__summary">
-				Page {currentPage} of {totalPages}
+				{formatPageSummary(currentPage, totalPages)}
 			</span>
-			<PaginationChevron direction="right" href={nextHref} label="Next page" />
+			<PaginationChevron
+				direction="right"
+				href={nextHref}
+				label={IOT_HUB_STRINGS.pagination.nextPageAriaLabel}
+			/>
 		</div>
 	</div>
 	<div
@@ -107,7 +123,6 @@ const perPageOptions = [perPage, perPage * 2, perPage * 3];
 			type="button"
 			class="iot-hub-pagination__per-page-value"
 			data-per-page-button
-			aria-haspopup="listbox"
 			aria-expanded="false"
 			aria-labelledby="iot-hub-per-page-label"
 		>
@@ -118,20 +133,19 @@ const perPageOptions = [perPage, perPage * 2, perPage * 3];
 			class="iot-hub-pagination__per-page-popup"
 			hidden
 			data-per-page-popup
-			role="listbox"
+			role="group"
 			aria-label="Items per page"
 		>
 			{perPageOptions.map((n) => (
 				<button
 					type="button"
-					role="option"
 					class:list={[
 						'iot-hub-pagination__per-page-option',
 						n === perPage && 'iot-hub-pagination__per-page-option--selected',
 					]}
 					data-per-page-option
 					data-per-page-value={n}
-					aria-selected={n === perPage}
+					aria-pressed={n === perPage}
 				>
 					<span class="iot-hub-pagination__per-page-option-text">{n}</span>
 					<IotHubIcon
@@ -513,7 +527,7 @@ const perPageOptions = [perPage, perPage * 2, perPage * 3];
 						'iot-hub-pagination__per-page-option--selected',
 						isSelected
 					);
-					o.setAttribute('aria-selected', String(isSelected));
+					o.setAttribute('aria-pressed', String(isSelected));
 				}
 				label!.textContent = String(value);
 				root.dataset.perPage = String(value);

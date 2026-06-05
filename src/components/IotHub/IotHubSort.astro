@@ -41,7 +41,6 @@ const initial = getIotHubSortOption(initialSortId);
 		class="iot-hub-sort__button"
 		type="button"
 		data-sort-button
-		aria-haspopup="listbox"
 		aria-expanded="false"
 	>
 		<span class="iot-hub-sort__label" data-sort-label>{initial.label}</span>
@@ -51,7 +50,7 @@ const initial = getIotHubSortOption(initialSortId);
 		class="iot-hub-sort__popup"
 		hidden
 		data-sort-popup
-		role="listbox"
+		role="group"
 		aria-label="Sort order"
 	>
 		{IOT_HUB_SORT_OPTIONS.map((opt) => (
@@ -61,10 +60,9 @@ const initial = getIotHubSortOption(initialSortId);
 					opt.id === initial.id && 'iot-hub-sort__option--selected',
 				]}
 				type="button"
-				role="option"
 				data-sort-option
 				data-sort-option-id={opt.id}
-				aria-selected={opt.id === initial.id}
+				aria-pressed={opt.id === initial.id}
 			>
 				<span class="iot-hub-sort__option-text">{opt.label}</span>
 				<IotHubIcon
@@ -275,7 +273,7 @@ const initial = getIotHubSortOption(initialSortId);
 				for (const o of options) {
 					const isSelected = o === opt;
 					o.classList.toggle('iot-hub-sort__option--selected', isSelected);
-					o.setAttribute('aria-selected', String(isSelected));
+					o.setAttribute('aria-pressed', String(isSelected));
 				}
 				const optLabel = opt.querySelector<HTMLElement>(
 					'.iot-hub-sort__option-text'

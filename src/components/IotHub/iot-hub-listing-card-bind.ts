@@ -1,4 +1,6 @@
 import {
+	formatInstallCount,
+	formatInstalls,
 	getCardVariant,
 	getCreatorHref,
 	getInstallVerb,
@@ -37,9 +39,9 @@ export function bindListingCard(
 
 	// Install count.
 	const installs = root.querySelector<HTMLElement>('[data-card-installs]');
-	if (installs) installs.textContent = String(item.installCount);
+	if (installs) installs.textContent = formatInstallCount(item.installCount);
 	const installsWrap = root.querySelector<HTMLElement>('[data-card-installs-wrap]');
-	if (installsWrap) installsWrap.title = `${item.installCount} installs`;
+	if (installsWrap) installsWrap.title = formatInstalls(item.installCount);
 
 	// Variant-specific thumb.
 	if (variant === 'big') {

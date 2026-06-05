@@ -1,5 +1,5 @@
 ---
-import { type IotHubItemType } from '@models/iot-hub';
+import { type IotHubItemType, type ListingView } from '@models/iot-hub';
 import ListingCard from './ListingCard.astro';
 
 // Pattern C clone source for runtime listing-card rendering.
@@ -64,7 +64,7 @@ const placeholderItem = {
 	creatorVerified: false,
 	creatorAffiliateId: null,
 	screenshots: [],
-};
+} satisfies ListingView;
 ---
 
 <template data-listing-card-tmpl data-variant={variant}>

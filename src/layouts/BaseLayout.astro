@@ -98,10 +98,16 @@ const ogImage = ogImageProp ?? getOgImageUrl(Astro.url.pathname);
 
 		<script is:inline>
 			(function () {
+				// `starlight-theme` is shared with the docs pages, whose theme
+				// select can also store 'auto' — resolve it via the OS preference.
 				const stored = typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
-				const theme = stored
-					|| (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-				document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+				const theme =
+					stored === 'light' || stored === 'dark'
+						? stored
+						: window.matchMedia('(prefers-color-scheme: light)').matches
+							? 'light'
+							: 'dark';
+				document.documentElement.dataset.theme = theme;
 				if (document.documentElement.dataset.forceLight === 'true') {
 					document.documentElement.dataset.theme = 'light';
 				}

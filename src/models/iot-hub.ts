@@ -209,7 +209,34 @@ export const IOT_HUB_STRINGS = {
 		resultSingular: 'result',
 		resultPlural: 'results',
 	},
+	pagination: {
+		prevPageAriaLabel: 'Previous page',
+		nextPageAriaLabel: 'Next page',
+	},
+	installs: {
+		singular: 'install',
+		plural: 'installs',
+	},
 } as const;
+
+// Shared formatting helpers, used by both the static (SSR) markup and the
+// runtime binders.
+
+/** Thousands-formatted install count, e.g. `1,234`. */
+export function formatInstallCount(count: number): string {
+	return count.toLocaleString('en-US');
+}
+
+/** Install count with pluralized unit, e.g. `1 install` / `1,234 installs`. */
+export function formatInstalls(count: number): string {
+	const word = count === 1 ? IOT_HUB_STRINGS.installs.singular : IOT_HUB_STRINGS.installs.plural;
+	return `${formatInstallCount(count)} ${word}`;
+}
+
+/** Compact pagination summary for the mobile layout, e.g. `Page 2 of 7`. */
+export function formatPageSummary(current: number, total: number): string {
+	return `Page ${current} of ${total}`;
+}
 
 // Maps raw subtype keys from the API (`timeseries`, `SIMPLE`, `CORE`, …)
 // to user-facing labels for the filter panel "Type" section.

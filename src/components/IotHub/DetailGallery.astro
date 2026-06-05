@@ -62,13 +62,12 @@ const resourceUrl = (id: string) => `${IOT_HUB_API_URL}/api/resources/${id}`;
 							/>
 						</svg>
 					</button>
-					<div class="iot-hub-gallery__dots" role="tablist" aria-label="Select slide">
+					<div class="iot-hub-gallery__dots" role="group" aria-label="Select slide">
 						{screenshots.map((_, i) => (
 							<button
 								type="button"
 								class="iot-hub-gallery__dot"
-								role="tab"
-								aria-selected={i === 0 ? 'true' : 'false'}
+								aria-current={i === 0 ? 'true' : undefined}
 								aria-label={`Slide ${i + 1}`}
 								data-dot
 								data-index={i}
@@ -234,7 +233,7 @@ const resourceUrl = (id: string) => `${IOT_HUB_API_URL}/api/resources/${id}`;
 		cursor: pointer;
 		transition: background 0.2s ease, transform 0.2s ease;
 
-		&[aria-selected='true'] {
+		&[aria-current='true'] {
 			background: rgba(0, 0, 0, 0.76);
 			transform: scale(1.25);
 		}
@@ -247,7 +246,7 @@ const resourceUrl = (id: string) => `${IOT_HUB_API_URL}/api/resources/${id}`;
 		:global([data-theme='dark']) & {
 			background: rgba(255, 255, 255, 0.38);
 
-			&[aria-selected='true'] {
+			&[aria-current='true'] {
 				background: rgba(255, 255, 255, 0.85);
 			}
 		}
@@ -267,7 +266,7 @@ const resourceUrl = (id: string) => `${IOT_HUB_API_URL}/api/resources/${id}`;
 <script is:inline>
 	// Wires up every `[data-iot-hub-gallery]` instance on the page. Drives the
 	// active slide index by toggling a `--idx` custom property on the track
-	// (CSS handles the translateX) and an `aria-selected` attribute on the
+	// (CSS handles the translateX) and an `aria-current` attribute on the
 	// dots. Auto-advance runs every 5s, pauses on hover / keyboard focus
 	// (so users reading a long screenshot aren't yanked away mid-glance) and
 	// is suppressed entirely when prefers-reduced-motion is on.
@@ -293,7 +292,8 @@ const resourceUrl = (id: string) => `${IOT_HUB_API_URL}/api/resources/${id}`;
 			function render() {
 				track.style.setProperty('--idx', String(idx));
 				for (let i = 0; i < dots.length; i++) {
-					dots[i].setAttribute('aria-selected', i === idx ? 'true' : 'false');
+					if (i === idx) dots[i].setAttribute('aria-current', 'true');
+					else dots[i].removeAttribute('aria-current');
 				}
 			}
 

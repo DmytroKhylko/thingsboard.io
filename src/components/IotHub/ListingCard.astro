@@ -1,5 +1,7 @@
 ---
 import {
+	formatInstallCount,
+	formatInstalls,
 	getCardVariant,
 	getCreatorHref,
 	getPlaceholderIcon,
@@ -104,11 +106,11 @@ const placeholderIcon = getPlaceholderIcon(item);
 			</span>
 			<div
 				class="iot-hub-card__installs"
-				title={`${installCount} installs`}
+				title={formatInstalls(installCount)}
 				data-card-installs-wrap
 			>
 				<span class="material-icons iot-hub-card__install-icon" aria-hidden="true">download</span>
-				<span data-card-installs>{installCount}</span>
+				<span data-card-installs>{formatInstallCount(installCount)}</span>
 			</div>
 			{!isCompact && (
 				<InstallButton

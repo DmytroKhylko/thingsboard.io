@@ -116,6 +116,8 @@ function filtersEqual(
 export function setupDynamicSearch(): void {
 	const root = document.querySelector<HTMLElement>('[data-iot-hub-search-root]');
 	if (!root) return;
+	if (root.dataset.dynamicSearchInited) return;
+	root.dataset.dynamicSearchInited = 'true';
 
 	const creatorId = root.dataset.creatorId ?? '';
 	const itemType = root.dataset.itemType ?? '';
@@ -215,7 +217,7 @@ export function setupDynamicSearch(): void {
 		sortRoot.querySelectorAll<HTMLButtonElement>('[data-sort-option]').forEach((opt) => {
 			const isSelected = opt === target;
 			opt.classList.toggle('iot-hub-sort__option--selected', isSelected);
-			opt.setAttribute('aria-selected', String(isSelected));
+			opt.setAttribute('aria-pressed', String(isSelected));
 		});
 		const labelEl = sortRoot.querySelector<HTMLElement>('[data-sort-label]');
 		const optText = target.querySelector<HTMLElement>('.iot-hub-sort__option-text')?.textContent;
@@ -233,7 +235,7 @@ export function setupDynamicSearch(): void {
 		perPageRoot.querySelectorAll<HTMLButtonElement>('[data-per-page-option]').forEach((opt) => {
 			const isSelected = opt === target;
 			opt.classList.toggle('iot-hub-pagination__per-page-option--selected', isSelected);
-			opt.setAttribute('aria-selected', String(isSelected));
+			opt.setAttribute('aria-pressed', String(isSelected));
 		});
 		const labelEl = perPageRoot.querySelector<HTMLElement>('[data-per-page-label]');
 		if (labelEl) labelEl.textContent = String(size);

@@ -100,7 +100,7 @@ const highlights = [
 				class="iot-hub-hero__search-popup"
 				hidden
 				data-iot-hub-hero-popup
-				role="listbox"
+				role="group"
 				aria-label="Search results"
 			>
 				<div class="iot-hub-hero__search-popup-body" data-popup-body></div>
@@ -563,11 +563,6 @@ const highlights = [
 </style>
 
 <script is:inline>
-	// Drives the active highlight in the IoT Hub hero: auto-cycle every 3s;
-	// hover or focus a highlight to become active and pause the cycle, leave
-	// to resume. The active accent is published as `--iot-hub-active-accent`
-	// on the nearest `.iot-hub-home__top` so the background blobs follow the
-	// same color via CSS custom-property inheritance.
 	// Clear-button click handler: wipe the search input, return focus to it
 	// so the user can keep typing, and dispatch `input` so any listeners
 	// (and the :placeholder-shown re-eval) pick up the change.
@@ -585,6 +580,11 @@ const highlights = [
 		});
 	});
 
+	// Drives the active highlight in the IoT Hub hero: auto-cycle every 3s;
+	// hover or focus a highlight to become active and pause the cycle, leave
+	// to resume. The active accent is published as `--iot-hub-active-accent`
+	// on the nearest `.iot-hub-home__top` so the background blobs follow the
+	// same color via CSS custom-property inheritance.
 	(function () {
 		const hero = document.querySelector('.iot-hub-hero');
 		if (!hero) return;
@@ -670,7 +670,7 @@ const highlights = [
 	// the submit button would.
 	//
 	// Result cards are cloned from <IotHubListingLinkTemplate variant="row" />
-	// and bound via bindListingCard(), so the popup shares its visual
+	// and bound via bindListingLink(), so the popup shares its visual
 	// definition with the build-time listing-card path — no duplicated card
 	// markup in this script.
 	// IOT_HUB_API_URL resolves to window.__IOT_HUB_API_URL at runtime, which
@@ -683,7 +683,7 @@ const highlights = [
 		type IotHubItemType,
 		type ListingView,
 	} from '@models/iot-hub';
-	import { bindListingCard } from './iot-hub-listing-link-bind';
+	import { bindListingLink } from './iot-hub-listing-link-bind';
 	import { getKnownSlugs } from './iot-hub-known-slugs';
 
 	const DEBOUNCE_MS = 300;
@@ -796,7 +796,7 @@ const highlights = [
 				const cardRoot = tmpl.content.firstElementChild;
 				if (!cardRoot) continue;
 				const clone = cardRoot.cloneNode(true) as HTMLElement;
-				bindListingCard(clone, item);
+				bindListingLink(clone, item);
 				section.appendChild(clone);
 			}
 			body.appendChild(section);

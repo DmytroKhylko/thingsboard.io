@@ -1,11 +1,16 @@
 
 class NonRetryableError extends Error {}
 
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
 export async function fetchWithRetry(url: string): Promise<Response> {
 	const attempts = 3;
 	const timeoutMs = 30_000;
+	// Linear backoff between attempts (0s, 1s, 2s).
+	const backoffMs = 1_000;
 	let lastError: unknown;
 	for (let i = 0; i < attempts; i++) {
+		if (i > 0) await sleep(backoffMs * i);
 		const controller = new AbortController();
 		const timer = setTimeout(() => controller.abort(), timeoutMs);
 		try {
