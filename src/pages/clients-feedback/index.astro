@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import NButton from '../../components/Landing/NButton.astro';
 import FeedbackCard from '../../components/Feedback/FeedbackCard.astro';
 import { feedbackCategories, feedbackEntries } from '@data/clients-feedback';
@@ -126,7 +126,7 @@ const allCards = feedbackCategories.flatMap((cat) =>
 
 	.cf-index {
 		@include container;
-		padding-top: calc(#{$header-height} + #{$spacing-8});
+		padding-top: $spacing-8;
 		padding-bottom: $spacing-20;
 	}
 

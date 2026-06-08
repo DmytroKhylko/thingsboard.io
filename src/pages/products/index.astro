@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 
 const cards = [
 	{
@@ -121,9 +121,7 @@ const cards = [
 	@use '../../styles/variables' as *;
 
 	.products-page {
-		// 60px wasn't enough top padding to clear the 80px fixed header —
-		// the "Products" h1 was getting clipped behind it on load.
-		padding: calc(#{$header-height} + 40px) 20px 108px;
+		padding: 40px 20px 108px;
 		max-width: 1200px;
 		margin: 0 auto;
 	}

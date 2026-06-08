@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import DeviceLibrary from '../../components/DeviceLibrary/DeviceLibrary.astro';
 import { getCollection } from 'astro:content';
 import { resolveDeviceImage } from '../../util/device-images';
@@ -30,7 +30,6 @@ const allDevices = await Promise.all(
 	description="Browse the ThingsBoard Device Library — a catalog of supported IoT hardware with connection guides and code snippets for popular development boards and sensors."
 	pageId="device-library"
 >
-	<div class="header-spacer"></div>
 	<section class="device-library-hero">
 		<div class="container hero-layout">
 			<div class="hero-text">
@@ -54,10 +53,6 @@ const allDevices = await Promise.all(
 
 <style lang="scss">
 	@use '../../styles/_variables.scss' as *;
-
-	.header-spacer {
-		padding-top: 80px;
-	}
 
 	.container {
 		max-width: 1152px;

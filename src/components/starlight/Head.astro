@@ -28,7 +28,7 @@ if (typeof dlPageTitle !== 'string' && Astro.url.pathname.startsWith('/device-li
 	}
 }
 
-// BaseStarlightLayout pages pass their marketing-formatted <title> via
+// BaseLayout pages pass their marketing-formatted <title> via
 // `Astro.locals.bslTitle`, and may opt out of the auto-emitted canonical
 // link via `Astro.locals.bslNoCanonical = true`.
 const bslTitle = locals.bslTitle;

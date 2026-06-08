@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import { jobs } from '@data/careers/jobs';
 
 export function getStaticPaths() {
@@ -19,7 +19,6 @@ const { job } = Astro.props;
 	pageId="careers"
 	noIndex
 >
-	<div class="header-spacer"></div>
 	<div class="careers-overflow-guard">
 		<div class="careers-page">
 			<a class="back" href="/careers/">
@@ -77,10 +76,6 @@ const { job } = Astro.props;
 </BaseLayout>
 
 <style>
-	.header-spacer {
-		padding-top: 80px;
-	}
-
 	.careers-overflow-guard {
 		overflow-x: hidden;
 	}

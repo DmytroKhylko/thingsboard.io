@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
@@ -7,7 +7,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 	description="Submission guidelines for adding your device integration guide to the ThingsBoard Device Library."
 	pageId="device-library-guidelines"
 >
-	<div class="header-spacer"></div>
 	<section class="guidelines-hero" aria-labelledby="guidelines-title">
 		<div class="container">
 			<nav class="breadcrumb" aria-label="Breadcrumb">
@@ -72,10 +71,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 <style lang="scss">
 	@use '../../styles/_variables.scss' as *;
-
-	.header-spacer {
-		padding-top: 80px;
-	}
 
 	.container {
 		max-width: 800px;

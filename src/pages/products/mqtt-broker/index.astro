@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import Hero from '../../../components/Landing/Hero.astro';
 import TopFeaturesSection from '../../../components/MqttBroker/TopFeaturesSection.astro';
 import ScenariosSection from '../../../components/MqttBroker/ScenariosSection.astro';
@@ -227,20 +227,21 @@ const tbmqGroups = [
 	</main>
 </BaseLayout>
 
-<style lang="scss">
+<style lang="scss" is:global>
+	@use '../../../styles/landing';
 	@use '../../../styles/variables' as *;
 
-	:global(#mqtt-broker) {
+	#mqtt-broker {
 		--tb-main-color: #{$color-pe};
 		--tb-main-color-hover: #{$color-pe-dark};
 	}
 
-	:global(#mqtt-broker #hero .button:hover) {
+	#mqtt-broker #hero .button:hover {
 		background-color: $color-pe-dark;
 		filter: none;
 	}
 
-	:global(#mqtt-broker #content a:not(.btn):not(.news-tag):not(.news-title)) {
+	#mqtt-broker #content a:not(.btn):not(.news-tag):not(.news-title) {
 		color: #1f8b4d;
 	}
 </style>

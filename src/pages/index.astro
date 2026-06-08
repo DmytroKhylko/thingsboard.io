@@ -1,5 +1,5 @@
 ---
-import BaseStarlightLayout from '@layouts/BaseStarlightLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import CustomersLogo from '../components/Landing/CustomersLogo.astro';
 import Hero from '../components/Landing/Hero.astro';
 import Carousel from '../components/Landing/Carousel.astro';
@@ -18,7 +18,7 @@ import { homeEcosystem } from '~/data/homeEcosystem';
 import { homeCarouselItems } from '~/data/homeCarousel';
 ---
 
-<BaseStarlightLayout	
+<BaseLayout	
 	forceLightTheme
 	title="ThingsBoard - Open-source IoT Platform"
 	description="ThingsBoard is an open-source IoT platform for device management, data collection, processing, and visualization for your IoT projects."
@@ -181,7 +181,7 @@ import { homeCarouselItems } from '~/data/homeCarousel';
 			</div>
 		</section>
 	</section>
-</BaseStarlightLayout>
+</BaseLayout>
 
 <style is:global lang="scss">
 	@use '../styles/landing';

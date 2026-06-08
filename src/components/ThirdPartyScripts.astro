@@ -9,7 +9,7 @@ import YourGptWidget from '@components/YourGptWidget.astro';
 	chatbot). Order matters: DeferredLoadTrigger MUST come first so the global
 	window.__deferOnInteraction exists when the consumer scripts parse.
 	Mounted in <head> by the Starlight Head override so every route (docs,
-	marketing via BaseStarlightLayout, etc.) gets the same loaders.
+	marketing via BaseLayout, etc.) gets the same loaders.
 -->
 <DeferredLoadTrigger />
 <GtmHead />

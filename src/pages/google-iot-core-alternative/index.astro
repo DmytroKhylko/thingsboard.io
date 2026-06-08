@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import ComparisonMatrix from '../../components/Landing/ComparisonMatrix.astro';
 
 const matrixColumns = [
@@ -155,10 +155,10 @@ const concepts = [
 			<div class="page-container">
 				<h3>Key concepts</h3>
 				<p>See mapping of the key IoT Core concepts to ThingsBoard features documentation below:</p>
-				<div class="cards row">
+				<div class="cards">
 					{
 						concepts.map((c) => (
-							<div class="col-lg-6">
+							<div>
 								<div class="block">
 									<div>
 										<a class="concept-title" href={c.href}>
@@ -180,6 +180,10 @@ const concepts = [
 		</section>
 	</div>
 </BaseLayout>
+
+<style lang="scss" is:global>
+	@use '../../styles/landing';
+</style>	
 
 <style lang="scss">
 	@use '../../styles/variables' as *;
@@ -221,14 +225,12 @@ const concepts = [
 		}
 	}
 
-	// ── Intro ──────────────────────────────────────────────────────
 	.intro {
-		// header-height (80px) + original top padding
-		padding-top: calc(#{$header-height} + 28px);
+		padding-top: 28px;
 		padding-bottom: 140px;
 
 		@media (min-width: 1025px) {
-			padding-top: calc(#{$header-height} + 140px);
+			padding-top: 140px;
 		}
 
 		h1 {
@@ -406,17 +408,23 @@ const concepts = [
 		.cards {
 			padding-top: 50px;
 			justify-content: center;
+			display: flex;
+			flex-wrap: wrap;
+			margin-left: -15px;
+			margin-right: -15px;
 
 			& > div {
 				margin-bottom: 36px;
+				@include media-up(lg) {
+					flex: 0 0 calc(6 / 12 * 100%);
+					max-width: calc(6 / 12 * 100%);
+				}
 
-				&.col-lg-6 {
-					padding: 0 18px;
-					max-width: 100%;
+				padding: 0 18px;
+				max-width: 100%;
 
-					@media (min-width: 992px) {
-						max-width: 50%;
-					}
+				@media (min-width: 992px) {
+					max-width: 50%;
 				}
 			}
 		}

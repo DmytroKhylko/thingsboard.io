@@ -56,7 +56,7 @@ const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueO
 	@use '../../../styles/_variables.scss' as *;
 
 	.author-page .author-container { @include container; max-width: 1200px; }
-	.author-page { padding: calc(#{$header-height} + #{$spacing-10}) 0 #{$spacing-16}; }
+	.author-page { padding: #{$spacing-10} 0 #{$spacing-16}; }
 
 	.breadcrumb {
 		display: flex; align-items: center; gap: var(--spacing-2);

@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import NButton from '../../components/Landing/NButton.astro';
 import SmartImage from '../../components/SmartImage.astro';
 import UseCaseCard from '../../components/UseCase/UseCaseCard.astro';
@@ -89,7 +89,7 @@ import { useCaseItems } from '@data/use-cases';
 
 	.uc-index {
 		@include container;
-		padding-top: calc(#{$header-height} + #{$spacing-10});
+		padding-top: $spacing-10;
 		padding-bottom: $spacing-20;
 	}
 

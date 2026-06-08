@@ -1,6 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 
 // ── Hero stats ──────────────────────────────────────────────────────────
 const heroStats = [
@@ -106,13 +106,6 @@ const recommendations = [
 	pageId="services"
 >
 	<main class="services-page">
-		{/* Page-level decorative blobs from the design — pink/lavender
-		    ellipses bleeding from the bottom-left and top-right corners. */}
-		<div class="sp-bg" aria-hidden="true">
-			<span class="sp-bg__blob sp-bg__blob--left"></span>
-			<span class="sp-bg__blob sp-bg__blob--right"></span>
-		</div>
-
 		{/* ── Hero ────────────────────────────────────────────────────── */}
 		<section class="sp-hero">
 			<div class="sp-container sp-hero__inner">
@@ -928,77 +921,7 @@ const recommendations = [
 			}
 		}
 	}
-
-
-	// ── Page-level decorative background ─────────────────────────────────
-	// Two pale pink/lavender ellipses bleeding from the bottom-left and
-	// top-right of the page. From the design "Support and Services":
-	//   Ellipse 6: 1144 × 1766 at x=-669, y=287  (bottom-left bloom)
-	//   Ellipse 3: 664 × 1001  at x=1445, y=-246 (top-right bloom)
-	// Coordinates are inside a 1920-wide centered design canvas.
-	.sp-bg {
-		position: absolute;
-		top: 0;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 1920px;
-		height: 2100px;
-		max-width: none;
-		pointer-events: none;
-		z-index: 0;
-		overflow: visible;
-	}
-
-	.sp-bg__blob {
-		position: absolute;
-		border-radius: 50%;
-		filter: blur(80px);
-	}
-
-	.sp-bg__blob--left {
-		width: 1144px;
-		height: 1766px;
-		left: -469px; // pulled inward so the bright center sits inside viewport
-		top: 287px;
-		background: radial-gradient(
-			ellipse at center,
-			rgba(187, 61, 245, 0.55) 0%,
-			rgba(187, 61, 245, 0.24) 35%,
-			rgba(187, 61, 245, 0) 70%
-		);
-	}
-
-	.sp-bg__blob--right {
-		width: 864px;
-		height: 1201px;
-		left: 1245px; // pulled inward so the bright center sits inside viewport
-		top: -246px;
-		background: radial-gradient(
-			ellipse at center,
-			rgba(245, 61, 125, 0.45) 0%,
-			rgba(245, 61, 125, 0.2) 35%,
-			rgba(245, 61, 125, 0) 70%
-		);
-	}
-
-	[data-theme='dark'] .sp-bg__blob--left {
-		background: radial-gradient(
-			ellipse at center,
-			rgba(187, 61, 245, 0.22) 0%,
-			rgba(187, 61, 245, 0.1) 30%,
-			rgba(187, 61, 245, 0) 65%
-		);
-	}
-
-	[data-theme='dark'] .sp-bg__blob--right {
-		background: radial-gradient(
-			ellipse at center,
-			rgba(245, 61, 125, 0.22) 0%,
-			rgba(245, 61, 125, 0.1) 30%,
-			rgba(245, 61, 125, 0) 65%
-		);
-	}
-
+	
 	// ── Hero ─────────────────────────────────────────────────────────────
 	// Hero has a generous top gap from the header, and a balanced bottom
 	// gap to the stats band (~100px). On mobile the fixed header is ~80px
@@ -1006,13 +929,13 @@ const recommendations = [
 	// disappearing behind it. The matching top gap on .sp-section keeps the
 	// rhythm symmetrical above and below the stats.
 	.sp-hero {
-		padding: 120px 0 $spacing-16;
+		padding: 40px 0 $spacing-16;
 		position: relative;
 		isolation: isolate;
 		z-index: 1;
 
 		@include media-up(md) {
-			padding: 200px 0 100px;
+			padding: 120px 0 100px;
 		}
 
 		&__inner {

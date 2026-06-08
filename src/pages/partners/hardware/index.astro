@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import PartnerLibrary from '@components/Partners/PartnerLibrary.astro';
 import { getSortedPartners } from '~/data/partners/hardware-partners';
 
@@ -11,7 +11,6 @@ const partners = getSortedPartners();
 	description="Browse ThingsBoard official hardware partners. Find sensors, gateways, and IoT devices compatible with the ThingsBoard platform."
 	pageId="hardware-partners"
 >
-	<div class="header-spacer"></div>
 	<section class="hardware-partners-hero">
 		<div class="container hero-layout">
 			<div class="hero-text">
@@ -35,10 +34,6 @@ const partners = getSortedPartners();
 
 <style lang="scss">
 	@use '../../../styles/_variables.scss' as *;
-
-	.header-spacer {
-		padding-top: 80px;
-	}
 
 	.container {
 		max-width: 1152px;

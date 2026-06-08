@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import { DISTRIBUTORS, REGIONS } from '~/data/partners/distributors';
 
 const regionCountries: Record<string, string[]> = {};
@@ -245,7 +245,7 @@ const distributors = DISTRIBUTORS.map((d) => {
 	}
 
 	.distributors-page {
-		padding: calc(#{$header-height} + #{$spacing-10}) 0 #{$spacing-16};
+		padding: #{$spacing-10} 0 #{$spacing-16};
 	}
 
 	h1 {

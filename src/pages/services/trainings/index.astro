@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import HeroSection from '../../../components/Trainings/HeroSection.astro';
 import InfoCardsSection from '../../../components/Trainings/InfoCardsSection.astro';
 import CoursesSection from '../../../components/Trainings/CoursesSection.astro';
@@ -14,17 +14,9 @@ import { courses } from '@data/trainings';
 	pageId="trainings"
 >
 	<main>
-		<!-- spacer for fixed header -->
-		<div class="header-spacer"></div>
 		<HeroSection />
 		<InfoCardsSection />
 		<CoursesSection courses={courses} />
 		<StatisticsSection />
 	</main>
 </BaseLayout>
-
-<style>
-	.header-spacer {
-		padding-top: 80px;
-	}
-</style>

@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import LogoCarousel from '../../../components/Services/LogoCarousel.astro';
 import ServicesBanner from '../../../components/Services/ServicesBanner.astro';
 import FeedbackCard from '../../../components/Feedback/FeedbackCard.astro';
@@ -1583,11 +1583,6 @@ const customerLogos = [
 	:global(.animated-num) {
 		opacity: 0;
 		transition: opacity 0.3s ease-in-out;
-	}
-
-	// ── Header spacer ─────────────────────────────────────────────────────────
-	.hero {
-		padding-top: 80px;
 	}
 
 	// ── Hero (#first-screen) ──────────────────────────────────────────────────

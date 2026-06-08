@@ -12,7 +12,7 @@ function getGitHubPlatform(path: string): Products {
 	return Products.CE;
 }
 
-// `BaseStarlightLayout` passes the page's product via Astro.locals so
+// `BaseLayout` passes the page's product via Astro.locals so
 // the GitHub button targets the right repo; everywhere else the
 // platform is inferred from the URL (docs routes carry the product as
 // a path prefix).

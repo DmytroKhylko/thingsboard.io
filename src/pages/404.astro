@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
@@ -53,11 +53,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: calc($header-height + $spacing-8) $spacing-5 $spacing-8;
+		padding: $spacing-8 $spacing-5 $spacing-8;
 		background-color: var(--sl-color-bg, $color-bg-light);
 
 		@include media-down(md) {
-			padding: calc($header-height + $spacing-5) $spacing-4 $spacing-5;
+			padding: $spacing-5 $spacing-4 $spacing-5;
 		}
 
 		&__container {

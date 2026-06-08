@@ -2,7 +2,7 @@
 import DocHero from '~/components/starlight/DocHero.astro';
 
 // Proxy in front of the docs hero chrome. Pages rendered through
-// `BaseStarlightLayout` set `Astro.locals.bsl = true` and pass an
+// `BaseLayout` set `Astro.locals.bsl = true` and pass an
 // empty `hero` object in frontmatter — that switches Starlight's
 // `Page.astro` to its hero branch (so `<PageTitle />` is never
 // rendered) while this proxy short-circuits to nothing, leaving just

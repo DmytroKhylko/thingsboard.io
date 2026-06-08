@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import { Icon } from 'astro-icon/components';
 ---
 
@@ -36,8 +36,8 @@ import { Icon } from 'astro-icon/components';
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: calc(100vh - 200px);
-		padding: calc(#{$header-height} + #{$spacing-10}) 0 #{$spacing-16};
+		min-height: calc(100vh - var(--sl-nav-height));
+		padding: #{$spacing-10} 0 #{$spacing-16};
 	}
 
 	.thanks-card {

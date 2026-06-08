@@ -1,5 +1,5 @@
 ---
-import BaseLayout from './BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import { getOgImageUrl } from '~/util/getOgImageUrl';
 
 interface Props {
@@ -62,7 +62,7 @@ const ogImage = ogImageProp ?? getOgImageUrl(Astro.url.pathname);
 
 	.case-study-page {
 		@include container;
-		padding-top: calc(#{$header-height} + #{$spacing-6});
+		padding-top: $spacing-6;
 		padding-bottom: $spacing-20;
 		border-left: 1px solid var(--color-border);
 		border-right: 1px solid var(--color-border);

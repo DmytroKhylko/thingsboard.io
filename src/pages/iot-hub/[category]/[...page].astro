@@ -1,6 +1,6 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import BaseStarlightLayout from '@layouts/BaseStarlightLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import CategoryHero from '@components/IotHub/CategoryHero.astro';
 import CategorySectionTemplate from '@components/IotHub/CategorySectionTemplate.astro';
 import CreatorCTA from '@components/IotHub/CreatorCTA.astro';
@@ -63,7 +63,7 @@ const searchPlaceholder = heroTitle
 	: 'Search...';
 ---
 
-<BaseStarlightLayout title={title} description={description}>
+<BaseLayout title={title} description={description}>
 	<main
 		class="iot-hub-cat"
 		data-iot-hub-search-root
@@ -138,7 +138,7 @@ const searchPlaceholder = heroTitle
 		<CategorySectionTemplate />
 		<IotHubRuntimeConfig />
 	</main>
-</BaseStarlightLayout>
+</BaseLayout>
 
 <style lang="scss">
 	@use '../../../styles/_variables.scss' as *;

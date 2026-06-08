@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import MobileFeatureBlock from '../../../components/Landing/MobileFeatureBlock.astro';
 ---
 
@@ -130,6 +130,7 @@ import MobileFeatureBlock from '../../../components/Landing/MobileFeatureBlock.a
 </BaseLayout>
 
 <style lang="scss" is:global>
+	@use '../../../styles/landing';
 	#mobile-app .read-more-link--default,
 	#mobile-app .read-more-link--default .arrow {
 		color: #1a6fd4;
@@ -150,7 +151,7 @@ import MobileFeatureBlock from '../../../components/Landing/MobileFeatureBlock.a
 	// ── Intro section ─────────────────────────────────────────────
 	#intro {
 		margin-bottom: 178px;
-		padding-top: 200px;
+		padding-top: 120px;
 		color: #212529;
 		text-align: left;
 		background: transparent;

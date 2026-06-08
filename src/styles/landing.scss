@@ -51,6 +51,11 @@
 		display: block;
 	}
 
+	:where(section) {
+		position: relative;
+		background-color: var(--color-bg);
+	}
+
 	:where(section, header, footer) {
 		div.main-div {
 			position: relative;

@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import { Icon } from 'astro-icon/components';
 import { PROGRAM_TIERS, PROGRAM_FOOTNOTES } from '~/data/partners/program-tiers';
 import { PROGRAM_FAQ } from '~/data/partners/program-faq';
@@ -152,7 +152,7 @@ const featureKeys = Object.keys(PROGRAM_TIERS[0].features);
 	}
 
 	.program-intro {
-		padding-top: calc(#{$header-height} + #{$spacing-10});
+		padding-top: $spacing-10;
 		padding-bottom: var(--spacing-8);
 		text-align: center;
 

@@ -6,16 +6,12 @@ import { formatMarketingTitle, SITE_NAME } from '@root/consts.ts';
 import { getOgImageUrl } from '@util/getOgImageUrl';
 import { getSectionFromPath } from '@util/path-utils';
 
-// BaseStarlightLayout — drop-in counterpart of BaseLayout backed by
-// `<StarlightPage>`. The body content is copied verbatim into the
-// page's default slot (Starlight wraps it in its <main>); everything
-// that BaseLayout puts in <head> is configured here via
-// `frontmatter.head` + a small Astro.locals bridge for the bits the
-// Starlight head pipeline doesn't expose directly (the marketing
+// BaseLayout — site-wide marketing layout backed by `<StarlightPage>`.
+// The body content is copied verbatim into the page's default slot
+// (Starlight wraps it in its <main>); SEO + head tags are configured
+// via `frontmatter.head` plus a small Astro.locals bridge for the bits
+// the Starlight head pipeline doesn't expose directly (the marketing
 // title format and the optional `noCanonical` strip).
-//
-// Same Props shape as BaseLayout so a page can switch between the two
-// without touching its call site.
 
 interface Props {
 	title: string;
@@ -205,6 +201,9 @@ if (jsonLd) {
 		}
 		.main-frame.header-transparent {
 			padding-top: 0;
+		}
+		[data-has-hero] .main-pane {
+			background: none;
 		}
 	</style>
 	<style is:inline>

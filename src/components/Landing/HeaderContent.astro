@@ -15,7 +15,7 @@ interface Props {
 
 const { platformQuery = '', gitHubPlatform } = Astro.props;
 
-// `BaseStarlightLayout` pages with `forceLightTheme={true}` lock the
+// `BaseLayout` pages with `forceLightTheme={true}` lock the
 // page to light mode (see `starlight/ThemeProvider.astro`). The toggle
 // would let the user override that, so skip rendering it on those
 // routes — the bytes for `<ThemeToggle />` also stay out of the bundle.
@@ -793,9 +793,16 @@ const hideThemeToggle = locals.bsl === true && locals.bslForceLight === true;
 	// (Services follows the same dark-mode pattern.)
 	#use-cases,
 	#case-studies,
+	#hardware-partners,
 	#hardware-partner-detail,
+	#hardware-partner-program,
+	#hardware-partner-apply,
+	#hardware-partner-apply-thanks,
+	#distributors,
+	#marketplace,
 	#blog,
-	#services {
+	#services,
+	#industries {
 		header.header {
 			background-color: var(--color-bg-surface);
 			border-bottom: 1px solid var(--color-border);

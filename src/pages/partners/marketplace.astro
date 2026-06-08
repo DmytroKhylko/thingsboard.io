@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import { Icon } from 'astro-icon/components';
 ---
 
@@ -70,7 +70,7 @@ import { Icon } from 'astro-icon/components';
 	}
 
 	.marketplace-hero {
-		padding: calc(#{$header-height} + #{$spacing-10}) 0 var(--spacing-8);
+		padding: #{$spacing-10} 0 var(--spacing-8);
 		text-align: center;
 
 		h1 {

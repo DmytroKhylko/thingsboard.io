@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import NButton from '../../components/Landing/NButton.astro';
 import { Icon } from 'astro-icon/components';
 import { caseStudyCards, caseStudyCategories, featuredCard } from '@data/case-studies';
@@ -335,7 +335,7 @@ const filterValues = caseStudyCategories.map((cat) => ({
 	.cs-index {
 		max-width: 1080px;
 		margin: 0 auto;
-		padding: calc(#{$header-height} + #{$spacing-8}) $spacing-5 $spacing-20;
+		padding: $spacing-8 $spacing-5 $spacing-20;
 	}
 
 	// ─── Toolbar (search + filter pills) ───
