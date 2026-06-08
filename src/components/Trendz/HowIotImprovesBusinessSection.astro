@@ -564,14 +564,17 @@ const items = [
 	accordionItems.forEach((item, i) => {
 		item.querySelector('.accordion-header')?.addEventListener('click', () => {
 			if (!item.classList.contains('active')) {
-				const header = item.querySelector<HTMLElement>('.accordion-header')!;
-				const beforeTop = header.getBoundingClientRect().top;
+				if (window.innerWidth >= 1280) {
+					activate(i);
+					return;
+				}
 
 				activate(i);
 
 				requestAnimationFrame(() => {
-					const afterTop = header.getBoundingClientRect().top;
-					window.scrollBy({ top: afterTop - beforeTop, behavior: 'instant' });
+					const headerHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 80;
+					const top = item.getBoundingClientRect().top + window.scrollY - headerHeight - 8;
+					window.scrollTo({ top, behavior: 'smooth' });
 				});
 			}
 		});
