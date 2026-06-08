@@ -143,8 +143,8 @@ $z-modal: 1100;
 $z-tooltip: 1200;
 
 // --------------------------------------------
-// CSS Custom Properties are defined in _theme.scss
-// and emitted once via global.scss.
+// CSS Custom Properties are defined in _theme.scss and emitted once via
+// _starlight-overrides.scss (loaded by Starlight's customCss config).
 // Do NOT add :root or [data-theme] blocks here —
 // they would be duplicated in every component that @use's this file.
 // --------------------------------------------

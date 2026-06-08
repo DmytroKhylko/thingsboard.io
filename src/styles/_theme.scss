@@ -1,5 +1,6 @@
 // ============================================
-// CSS Custom Properties — emitted ONCE via global.scss
+// CSS Custom Properties — emitted ONCE via _starlight-overrides.scss
+// (loaded by Starlight's customCss config so it reaches every route).
 // DO NOT @use this file from component <style> blocks.
 // ============================================
 @use 'variables' as *;
