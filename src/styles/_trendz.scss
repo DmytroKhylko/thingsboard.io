@@ -71,6 +71,13 @@ $trendz-bp-xl: 1920px;
 	letter-spacing: 0.249px;
 }
 
+@mixin trendz-h3-regular {
+	font-size: 28px;
+	font-weight: 400;
+	line-height: 44px;
+	letter-spacing: 0.249px;
+}
+
 @mixin trendz-h4 {
 	font-size: 24px;
 	font-weight: 500;

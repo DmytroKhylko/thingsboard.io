@@ -142,22 +142,24 @@ const items = [
 			{
 				items.map((item, i) => (
 					<div class:list={['accordion-item', { active: i === 0 }]} data-index={i}>
-						<button
-							class="accordion-header"
-							aria-expanded={i === 0 ? 'true' : 'false'}
-							aria-controls={`acc-body-${item.id}`}
-						>
-							<span class="accordion-title">{item.title}</span>
-							<svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-								<path
-									d="M3.5 5.5L8 10L12.5 5.5"
-									stroke="currentColor"
-									stroke-width="1.5"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								/>
-							</svg>
-						</button>
+						<h3 class="accordion-title">
+							<button
+								class="accordion-header"
+								aria-expanded={i === 0 ? 'true' : 'false'}
+								aria-controls={`acc-body-${item.id}`}
+							>
+								{item.title}
+								<svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+									<path
+										d="M3.5 5.5L8 10L12.5 5.5"
+										stroke="currentColor"
+										stroke-width="1.5"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+								</svg>
+							</button>
+						</h3>
 						<div class="accordion-body" id={`acc-body-${item.id}`} hidden={i !== 0}>
 							<p class="item-desc">{item.description}</p>
 							<p class="examples-label">Examples</p>
@@ -297,7 +299,10 @@ const items = [
 	}
 
 	// Box 1: header + body share one rounded background
-	.accordion-item.active .accordion-header {
+	// Active title: medium weight + primary color
+	.accordion-item.active .accordion-title {
+		@include trendz-h3;
+		color: var(--text-text-primary, rgba(0, 0, 0, 0.87));
 		background: #f4f8fe;
 		border-radius: 24px 24px 0 0;
 	}
@@ -319,6 +324,7 @@ const items = [
 		cursor: pointer;
 		text-align: left;
 		color: inherit;
+		font: inherit;
 
 		@include trendz-up(md) {
 			padding: 18px 24px;
@@ -326,8 +332,9 @@ const items = [
 	}
 
 	.accordion-title {
-		@include trendz-h3;
-		color: var(--text-text-primary, rgba(0, 0, 0, 0.87));
+		@include trendz-h3-regular;
+		color: var(--text-text-secondary, rgba(0, 0, 0, 0.76));
+		margin: 0;
 
 		@include trendz-down(xs) {
 			@include trendz-h5-medium;
