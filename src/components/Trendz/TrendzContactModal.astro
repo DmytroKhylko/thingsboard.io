@@ -33,11 +33,13 @@
 				<input type="hidden" name="utm_campaign" id="tcm-utm_campaign" />
 				<input type="hidden" name="utm_term" id="tcm-utm_term" />
 				<input type="hidden" name="utm_content" id="tcm-utm_content" />
+				<input type="hidden" name="client_id" id="tcm-client_id" />
+				<input type="hidden" name="fpr" id="tcm-fpr" />
 				<input type="hidden" name="tags" value="custom dev" />
 				<input type="hidden" name="form_id" value="trendz_modal" />
 				<input type="hidden" name="path" id="tcm-path" />
 				<input type="hidden" class="tcm-rendered-at" value="" />
-				<div style="position:absolute;left:-9999px">
+				<div class="tcm-hp-container" style="position:absolute;left:-9999px">
 					<label for="tcm-hp">Leave this field empty</label>
 					<input type="text" id="tcm-hp" name="tcm-hp" autocomplete="off" />
 				</div>
@@ -58,6 +60,15 @@
 		overlay.removeAttribute('hidden');
 		overlay.setAttribute('aria-hidden', 'false');
 		document.body.style.overflow = 'hidden';
+
+		const hpInput = overlay.querySelector<HTMLInputElement>('.tcm-hp-container input');
+		const hpLabel = overlay.querySelector<HTMLLabelElement>('.tcm-hp-container label');
+		if (hpInput && hpLabel) {
+			const newName = 'hp_' + Math.random().toString(36).substring(2, 10);
+			hpInput.name = newName;
+			hpInput.id = newName;
+			hpLabel.htmlFor = newName;
+		}
 	}
 
 	function closeModal() {
