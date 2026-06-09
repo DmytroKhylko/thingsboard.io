@@ -4,47 +4,21 @@
 @use 'theme';
 
 :root {
-	// Drives the header wrapper, sidebar, TOC and mobile-TOC. Uses the live offset
-	// (--promo-cur → 0 on hide) so all those panels lift in lockstep with the header.
+	// Carries the LIVE banner offset (--promo-cur → 0 on hide) so the header,
+	// sidebar and TOC all lift in lockstep as the banner collapses on scroll.
+	// (The header element's own height is pinned to $header-height by the global
+	// `header.header` rule in HeaderContent, so this only adds the banner band.)
 	--sl-nav-height: calc(#{$header-height} + var(--promo-cur, var(--promo-h, 0px)));
 	--sl-sidebar-width: 300px;
 }
 
-// Header wrapper tracks the live offset (slides to top:0 on scroll).
-.page > .header {
-	inset-block-start: var(--promo-cur, var(--promo-h, 0px));
-	height: #{$header-height};
-}
-
-// Content uses the CONSTANT banner height (not --promo-cur) so the page never jumps
-// on hide — by then content has scrolled behind the header, leaving no gap.
-// (Unlayered → beats Starlight's @layer rule.)
+// Content offset uses the CONSTANT banner height (not --promo-cur) so the page
+// never jumps when the banner hides — by then content has scrolled behind the
+// header, leaving no gap. Unlayered → beats Starlight's @layer core rule.
+// (The scroll-collapse animation that drives --promo-cur lives in
+// PromoBanner.astro, co-located with the banner.)
 .main-frame {
-	padding-top: calc(#{$header-height} + var(--promo-h, 0px) + var(--sl-mobile-toc-height));
-}
-
-// Docs hide-on-scroll, pure CSS: scroll collapses --promo-cur over the banner's
-// height, so header/sidebar/TOC lift proportionally. Unsupported browsers keep
-// --promo-cur = --promo-h → banner stays pinned (graceful).
-@keyframes promo-collapse {
-	from { --promo-cur: var(--promo-h, 0px); }
-	to { --promo-cur: 0px; }
-}
-@keyframes promo-vanish {
-	0%, 99% { visibility: visible; }
-	to { visibility: hidden; } // drop off-screen banner from tab order
-}
-@supports (animation-timeline: scroll()) {
-	:root {
-		animation: promo-collapse linear both;
-		animation-timeline: scroll(root);
-		animation-range: 0 var(--promo-h, 0px);
-	}
-	#promo-banner {
-		animation: promo-vanish linear both;
-		animation-timeline: scroll(root);
-		animation-range: 0 var(--promo-h, 0px);
-	}
+	padding-top: calc(#{$header-height} + var(--promo-h, 0px) + var(--sl-mobile-toc-height, 0px));
 }
 
 // Bump Starlight's content padding from 1.5rem → 2rem at the same breakpoint

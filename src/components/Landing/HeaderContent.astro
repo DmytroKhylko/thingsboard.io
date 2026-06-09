@@ -199,13 +199,18 @@ const needsScrollState = variant === 'transparent' || variant === 'transparent-h
 
 	header.header {
 		position: fixed;
-		top: var(--promo-cur, var(--promo-h, 0px)); // tracks the banner via the var; don't transition `top` (would desync)
+		// Sits below the promo banner; tracks the live offset so it slides to
+		// top:0 as the banner collapses on scroll (--promo-cur → 0).
+		top: var(--promo-cur, var(--promo-h, 0px));
 		left: 0;
-		// No `filter` here: the header itself never gets one (only .logo/.burger do),
-		// and a filter on the header would make it the containing block for the fixed
-		// promo banner inside it, breaking the banner's viewport anchoring on docs.
-		transition: background-color 0.12s ease, box-shadow 0.12s ease, color 0.12s ease,
-			border-color 0.12s ease;
+		// No `filter` here: the header itself never gets one (only .logo/.burger
+		// do), and a filter would make it the containing block for the fixed promo
+		// banner inside it, breaking the banner's viewport anchoring on docs.
+		// Transition is scoped to the flip properties only — a blanket `all` would
+		// also ease `top`, making the header lag behind the scroll-tied offset.
+		transition:
+			background-color 0.3s ease,
+			box-shadow 0.3s ease;
 		width: 100%;
 		height: $header-height;
 		z-index: 8888;
@@ -377,36 +382,6 @@ const needsScrollState = variant === 'transparent' || variant === 'transparent-h
 		}
 	}
 
-	// Marketing: banner + header are one sticky unit (wrapper in BaseLayout). It
-	// scrolls until the banner is off-screen, then the header pins; the negative
-	// margin-bottom keeps existing per-page $header-height offsets valid.
-	// (Docs has no .tb-topbar — there the banner hides via scroll-driven --promo-cur.)
-	.tb-topbar {
-		position: sticky;
-		top: calc(-1 * var(--promo-h, 0px));
-		z-index: 8889;
-		margin-bottom: calc(-1 * #{$header-height});
-	}
-
-	// Open mobile menu: lift the sticky unit above the cookie banner (9999).
-	.tb-topbar:has(header.header.opened-burger) {
-		z-index: 10000;
-	}
-
-	.tb-topbar header.header {
-		position: static; // sticky unit handles positioning
-	}
-
-	// Open mobile menu breaks out of the sticky unit to a full-viewport overlay,
-	// instantly (no transition/slide from its in-flow spot).
-	.tb-topbar header.header.opened-burger {
-		position: fixed !important;
-		inset: 0 !important;
-		z-index: 10000;
-		transition: none !important;
-		animation: none !important;
-	}
-
 	// Responsive styles
 	@media screen and (max-width: 1280px) {
 		header.header {
@@ -539,11 +514,13 @@ const needsScrollState = variant === 'transparent' || variant === 'transparent-h
 		}
 	}
 
-	// Transparent header overlays the hero → drop the content frame's top padding
-	// (`.header` and `.main-frame` are siblings under `.page`). Was a JS class.
+	// Transparent header overlays the hero → no header clearance, BUT still
+	// reserve the promo-banner band so the hero starts below the banner (the
+	// transparent nav then floats over the hero as before). Without this the
+	// fixed banner would overlay the top of the hero / crowd the hero title.
 	.page:has(header.header [data-header-variant='transparent']) .main-frame,
 	.page:has(header.header [data-header-variant='transparent-hover']) .main-frame {
-		padding-top: 0;
+		padding-top: var(--promo-h, 0px);
 	}
 
 	// Transparent, opaque on hover + scroll (transparent-hover — pricing, affiliate).
@@ -592,6 +569,10 @@ const needsScrollState = variant === 'transparent' || variant === 'transparent-h
 	// brightest surface per theme, so it sits above the page bg in dark too.
 	header.header.opened-burger {
 		transition: all $transition-base;
+		// The banner is hidden while the drawer is open, so collapse the header
+		// to the very top — otherwise it stays at `top: --promo-cur` and leaves
+		// an empty banner-height band above the drawer.
+		top: 0;
 		background-color: var(--color-bg-light);
 		box-shadow: var(--shadow-header);
 

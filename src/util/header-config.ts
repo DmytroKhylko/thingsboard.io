@@ -22,6 +22,7 @@ export interface HeaderConfig {
 	tryStyle: HeaderTryStyle;
 	showSearch: boolean;
 	showThemeToggle: boolean;
+	promoAccent: PromoAccent;
 }
 
 export interface HeaderConfigInput {
@@ -51,11 +52,23 @@ export function resolveHeaderConfig(input: HeaderConfigInput = {}): HeaderConfig
 	const defaults = VARIANT_DEFAULTS[variant];
 	const forceLight = input.forceLight ?? false;
 	const showThemeToggle = forceLight ? false : (input.showThemeToggle ?? defaults.showThemeToggle);
+	const cta = input.cta ?? defaults.cta;
+	const tryStyle = input.tryStyle ?? 'brand';
+	// Promo banner matches the "Try it now" button: azure when the Try is the
+	// brand-blue pill (transparent-hero or marketing-CTA pages), indigo otherwise
+	// (the docs accent on base pages, or the explicit `accent` try style).
+	const azureTry = tryStyle !== 'accent' && (cta === 'marketing' || variant === 'transparent');
 	return {
 		variant,
-		cta: input.cta ?? defaults.cta,
-		tryStyle: input.tryStyle ?? 'brand',
+		cta,
+		tryStyle,
 		showSearch: input.showSearch ?? defaults.showSearch,
 		showThemeToggle,
+		promoAccent: azureTry ? 'azure' : 'indigo',
 	};
 }
+
+// Promo-banner accent, derived in `resolveHeaderConfig` to match the "Try it
+// now" CTA: azure on transparent-hero / marketing-CTA pages, indigo everywhere
+// else. Bridged through `bslHeaderConfig` and read by PromoBanner.
+export type PromoAccent = 'indigo' | 'azure';
