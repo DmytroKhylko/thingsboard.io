@@ -17,7 +17,6 @@ import { resolveHeaderConfig, type HeaderVariant, type HeaderCta, type HeaderTry
 interface Props {
 	title: string;
 	description?: string;
-	pageId?: string;
 	customTitle?: boolean;
 	noCanonical?: boolean;
 	/**
@@ -56,7 +55,6 @@ interface Props {
 const {
 	title,
 	description,
-	pageId = 'common',
 	customTitle = false,
 	noCanonical = false,
 	gitHubPlatform,
@@ -109,8 +107,7 @@ locals.bslForceLight = forceLightTheme;
 if (gitHubPlatform !== undefined) locals.bslGitHubPlatform = gitHubPlatform;
 
 // Resolve the header appearance and bridge it to the Starlight Header override.
-// Unconfigured pages default to the `common` variant (the legacy `pageId='common'`
-// look: docs chrome with search hidden).
+// Unconfigured pages default to the `common` variant (docs chrome, search hidden).
 const headerConfig = resolveHeaderConfig({
 	variant: headerVariant ?? 'common',
 	cta: headerCta,
@@ -146,12 +143,6 @@ const head: HeadEntry[] = [
 	{ tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
 	{ tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
 	{ tag: 'meta', attrs: { name: 'twitter:site', content: '@thingsboard' } },
-	// Stamp the `pageId` onto <html> before paint — Starlight owns the <html>
-	// element, so we set it here rather than as an attribute.
-	{
-		tag: 'script',
-		content: `(function(){var h=document.documentElement;h.id=${JSON.stringify(pageId)};` + `})();`,
-	},
 ];
 if (preloadLcpImage) {
 	head.push({

@@ -102,11 +102,9 @@ const recommendations = [
 <BaseLayout
 	headerVariant="solid-border"
 	showSearch={false}
-	showThemeToggle={false}
 	title="Support and Services | ThingsBoard"
 	customTitle
 	description="Professional support, managed platform operations, and on-demand experts — everything you need to run ThingsBoard with confidence."
-	pageId="services"
 >
 	<main class="services-page">
 		{/* ── Hero ────────────────────────────────────────────────────── */}
@@ -698,16 +696,6 @@ const recommendations = [
 
 <style lang="scss" is:global>
 	@use '../../styles/variables' as *;
-
-	// ── Header — theme toggle visibility on the services page ────────────
-	// The global HeaderContent now treats #services like use-cases/case-studies/blog,
-	// so the header background, border, dark-mode flip, and Pricing/Try-it-now
-	// buttons all come from there. We only need to make sure the theme toggle
-	// stays visible on this page.
-	html#services .head-buttons theme-toggle,
-	html#services .icon-buttons theme-toggle {
-		display: flex;
-	}
 
 	// ── Page-scoped tokens (theme-aware via CSS custom properties) ──────
 	// Card accent palette mirrors the design "complimentary" color tokens.

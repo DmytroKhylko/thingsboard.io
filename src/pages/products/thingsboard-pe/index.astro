@@ -15,7 +15,6 @@ import { Products } from '@models/site.models';
 	forceLightTheme
 	title="ThingsBoard Professional Edition"
 	description="Advanced ThingsBoard IoT Platform distribution with white-labeling, advanced RBAC, platform integrations, entity groups, scheduler, reporting, and more."
-	pageId="thingsboard-pe"
 >
 	<main>
 		<Hero
@@ -229,7 +228,7 @@ import { Products } from '@models/site.models';
 	}
 
 	// Shadow for feature block images
-	:global(.feature-block-section .block img) {
+	.feature-block-section .block img {
 		border-radius: $radius-md;
 		box-shadow:
 			0 50px 50px -20px rgba(0, 0, 0, 0.15),
@@ -261,7 +260,7 @@ import { Products } from '@models/site.models';
 			align-items: flex-start;
 			gap: 0;
 
-			:global(.feature-item) {
+			.feature-item {
 				flex: 0 0 calc(50% - 1px - 3rem);
 				min-width: 0;
 			}
@@ -327,53 +326,34 @@ import { Products } from '@models/site.models';
 		}
 	}
 
-	// Section background reset (pageId="thingsboard-pe" sets id on <html>)
-	:global(#thingsboard-pe section) {
+	:root section {
 		background: none;
 	}
 
 	// Overflow container
-	:global(#overflow) {
+	#overflow {
 		overflow: hidden;
 	}
 
-	// Decorative skewed background divs — only rendered on this page
-	// Note: inner div selectors must use :global() because the divs are rendered
-	// by FeatureBlockSection.astro (different Astro scope hash than this page).
-	:global(#background-white-labeling),
-	:global(#background-platform-integrations),
-	:global(#background-scheduler),
-	:global(#background-data-export) {
+	[id^='background-'] {
 		z-index: -1;
 		position: absolute;
 		top: 524px;
 		left: 50%;
 
-		// All `top` / `left` / size values for the decorative skewY bands
-		// inside these containers are tuned to the desktop layout (>=1025px).
-		// On narrow viewports the sections stack vertically, become much
-		// taller, and the `.bottom` dark strip ends up slashing across the
-		// section's body text. Hide the whole decoration below the design's
-		// breakpoint — it's purely cosmetic.
 		@media screen and (max-width: 1024px) {
 			display: none;
 		}
 	}
 
-	:global(#background-white-labeling div),
-	:global(#background-platform-integrations div),
-	:global(#background-scheduler div),
-	:global(#background-data-export div) {
+	[id^='background-'] div {
 		position: absolute;
 		transform: skewY(-6deg);
 		width: 436px;
 		height: 90px;
 	}
 
-	:global(#background-white-labeling .main1),
-	:global(#background-platform-integrations .main1),
-	:global(#background-scheduler .main1),
-	:global(#background-data-export .main1) {
+	[id^='background-'] .main1 {
 		top: -558px;
 		width: 2560px;
 		height: 525px;
@@ -381,37 +361,25 @@ import { Products } from '@models/site.models';
 		background-color: #f4f4f4;
 	}
 
-	:global(#background-white-labeling .small1),
-	:global(#background-platform-integrations .small1),
-	:global(#background-scheduler .small1),
-	:global(#background-data-export .small1) {
+	[id^='background-'] .small1 {
 		top: -542px;
 		right: 524px;
 		background-color: #27ae60;
 	}
 
-	:global(#background-white-labeling .small2),
-	:global(#background-platform-integrations .small2),
-	:global(#background-scheduler .small2),
-	:global(#background-data-export .small2) {
+	[id^='background-'] .small2 {
 		top: -532px;
 		right: 270px;
 		border: 2px solid #234732;
 	}
 
-	:global(#background-white-labeling .small3),
-	:global(#background-platform-integrations .small3),
-	:global(#background-scheduler .small3),
-	:global(#background-data-export .small3) {
+	[id^='background-'] .small3 {
 		top: -686px;
 		left: 524px;
 		background-color: #1f8b4d;
 	}
 
-	:global(#background-white-labeling .main2),
-	:global(#background-platform-integrations .main2),
-	:global(#background-scheduler .main2),
-	:global(#background-data-export .main2) {
+	[id^='background-'] .main2 {
 		top: -500px;
 		width: 2560px;
 		height: 525px;
@@ -419,28 +387,19 @@ import { Products } from '@models/site.models';
 		background-color: #262c28;
 	}
 
-	:global(#background-white-labeling .small4),
-	:global(#background-platform-integrations .small4),
-	:global(#background-scheduler .small4),
-	:global(#background-data-export .small4) {
+	[id^='background-'] .small4 {
 		top: -660px;
 		left: 836px;
 		background-color: #27ae60;
 	}
 
-	:global(#background-white-labeling .small5),
-	:global(#background-platform-integrations .small5),
-	:global(#background-scheduler .small5),
-	:global(#background-data-export .small5) {
+	[id^='background-'] .small5 {
 		top: 66px;
 		right: 528px;
 		border: 4px solid #27ae60;
 	}
 
-	:global(#background-white-labeling .main3),
-	:global(#background-platform-integrations .main3),
-	:global(#background-scheduler .main3),
-	:global(#background-data-export .main3) {
+	[id^='background-'] .main3 {
 		top: -503px;
 		width: 2560px;
 		height: 525px;
@@ -448,37 +407,25 @@ import { Products } from '@models/site.models';
 		background-color: #f4f4f4;
 	}
 
-	:global(#background-white-labeling .small6),
-	:global(#background-platform-integrations .small6),
-	:global(#background-scheduler .small6),
-	:global(#background-data-export .small6) {
+	[id^='background-'] .small6 {
 		top: -467px;
 		right: 804px;
 		background-color: #1f8b4d;
 	}
 
-	:global(#background-white-labeling .small7),
-	:global(#background-platform-integrations .small7),
-	:global(#background-scheduler .small7),
-	:global(#background-data-export .small7) {
+	[id^='background-'] .small7 {
 		top: -644px;
 		left: 566px;
 		background-color: #27ae60;
 	}
 
-	:global(#background-white-labeling .small8),
-	:global(#background-platform-integrations .small8),
-	:global(#background-scheduler .small8),
-	:global(#background-data-export .small8) {
+	[id^='background-'] .small8 {
 		top: -114px;
 		left: 804px;
 		border: 2px solid #234732;
 	}
 
-	:global(#background-white-labeling .bottom),
-	:global(#background-platform-integrations .bottom),
-	:global(#background-scheduler .bottom),
-	:global(#background-data-export .bottom) {
+	[id^='background-'] .bottom {
 		top: -70px;
 		width: 2560px;
 		height: 130px;
@@ -486,10 +433,7 @@ import { Products } from '@models/site.models';
 		background-color: #262c28;
 	}
 
-	:global(#background-white-labeling .small9),
-	:global(#background-platform-integrations .small9),
-	:global(#background-scheduler .small9),
-	:global(#background-data-export .small9) {
+	[id^='background-'] .small9 {
 		top: -10px;
 		left: 565px;
 		background-color: #1f8b4d;
@@ -498,23 +442,17 @@ import { Products } from '@models/site.models';
 	// The #export section has a dark (#262c28) bottom strip behind the read-more link.
 	// $color-pe-link (#166c37) is designed for light backgrounds (5.89:1 on white)
 	// but fails on #262c28 (~2:1). Override with $color-pe (#17bb52, 5.59:1 on #262c28).
-	:global(#export .read-more-link--pe),
-	:global(#export .read-more-link--pe .arrow) {
+	#export .read-more-link--pe,
+	#export .read-more-link--pe .arrow {
 		color: $color-pe;
 	}
 
 	@media screen and (min-width: 1025px) {
-		:global(#background-white-labeling .main2),
-		:global(#background-platform-integrations .main2),
-		:global(#background-scheduler .main2),
-		:global(#background-data-export .main2) {
+		[id^='background-'] .main2 {
 			height: 525px;
 		}
 
-		:global(#background-white-labeling .bottom),
-		:global(#background-platform-integrations .bottom),
-		:global(#background-scheduler .bottom),
-		:global(#background-data-export .bottom) {
+		[id^='background-'] .bottom {
 			top: -17px;
 		}
 	}

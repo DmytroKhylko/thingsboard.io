@@ -23,7 +23,6 @@ import { homeCarouselItems } from '~/data/homeCarousel';
 	forceLightTheme
 	title="ThingsBoard - Open-source IoT Platform"
 	description="ThingsBoard is an open-source IoT platform for device management, data collection, processing, and visualization for your IoT projects."
-	pageId="home"
 	customTitle={true}
 	preloadLcpImage="/images/hero/tb-cover.webp"
 >
@@ -198,7 +197,7 @@ import { homeCarouselItems } from '~/data/homeCarousel';
 	@use '../styles/variables' as *;
 
 	// Remove white section backgrounds on home page
-	#home section {
+	:root section {
 		background: none;
 	}
 

@@ -179,7 +179,6 @@ const tbmqSubTabs = enrichTabs([
 	showSearch={false}
 	title="Pricing"
 	description="ThingsBoard IoT Platform pricing — compare Free, Cloud, Private Cloud, and Self-Managed plans with transparent subscription and perpetual licensing."
-	pageId="pricing"
 >
 	<PricingBackground />
 	<main class="pricing-page">
@@ -1356,17 +1355,17 @@ const tbmqSubTabs = enrichTabs([
 	}
 
 	// Dark mode: tell Safari to use dark native controls (select dropdowns, etc.)
-	#pricing[data-theme='dark'] {
+	:root[data-theme='dark'] {
 		color-scheme: dark;
 	}
 
 	// Make sections transparent so wave background shows through
-	#pricing section {
+	:root section {
 		background-color: transparent;
 	}
 
 	// Light mode: body transparent too (white canvas is fine behind waves)
-	#pricing:not([data-theme='dark']) body {
+	:root:not([data-theme='dark']) body {
 		background-color: transparent;
 	}
 

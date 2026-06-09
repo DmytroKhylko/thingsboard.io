@@ -10,7 +10,6 @@ import { products, productTabs } from '~/data/installations';
 	forceLightTheme
 	title="ThingsBoard Installations"
 	description="Choose the best ThingsBoard installation method for your IoT project."
-	pageId="installations"
 >
 	<div class="install-header">
 		<InnerNavigation tabs={productTabs} paramName="product" />
@@ -27,11 +26,6 @@ import { products, productTabs } from '~/data/installations';
 
 <style lang="scss">
 	@use '../../styles/variables' as *;
-
-	:global(#installations) {
-		color: #212529;
-		background-color: #fff;
-	}
 
 	.install-header {
 		margin-bottom: 0;

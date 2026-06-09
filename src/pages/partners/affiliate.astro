@@ -7,7 +7,6 @@ import { Icon } from 'astro-icon/components';
 	headerVariant="transparent-hover"
 	title="Affiliate Program - Earn Commission"
 	description="Join the ThingsBoard Affiliate Program — earn 30% recurring commission on every sale plus a $100 community-growth bonus, ideal for IoT consultants and creators."
-	pageId="affiliate"
 >
 	{
 		/* Background pattern as a real DOM element (was previously an ::before
@@ -533,17 +532,8 @@ import { Icon } from 'astro-icon/components';
 
 <style lang="scss">
 	// Page surface color — applied to the page id (still on <html>).
-	:global(#affiliate),
-	:global(#affiliate body) {
+	:global(:root body) {
 		background-color: var(--color-bg-surface);
-	}
-
-	// Make body the positioning context for the absolutely-positioned
-	// background pattern below. Body is in normal flow, so this affects
-	// nothing visually — but it gives the .affiliate-bg-pattern a stable
-	// containing block that exists in the DOM (unlike a pseudo-element on
-	// <html>, which had ambiguous painting behavior on the staging deploy).
-	:global(#affiliate body) {
 		position: relative;
 	}
 
