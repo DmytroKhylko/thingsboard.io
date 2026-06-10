@@ -171,38 +171,43 @@ const sphereImg = await getImage({
 	}
 
 	.btn-accent {
-		display: block;
-		background: var(--color-trendz-accent);
-		border-radius: 4px;
-		line-height: 1.5;
-		padding: 13px 0;
-		font-size: 16px;
-		font-weight: 500;
-		color: #ffffff;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 4px;
+		height: 48px;
+		min-width: 88px;
 		width: 100%;
-		text-align: center;
+		padding: 8px 48px;
+		background: var(--color-trendz-accent);
+		border-radius: 6px;
+		@include trendz-body-m-medium;
+		color: #ffffff;
 		border: 1px solid var(--color-trendz-accent);
 		text-decoration: none;
 		transition: 0.3s;
+		box-sizing: border-box;
 
 		&:hover {
-			background-color: var(--color-trendz-accent);
-			border-color: var(--color-trendz-accent);
+			background-color: var(--color-trendz-accent-hover);
+			border-color: var(--color-trendz-accent-hover);
 			color: #ffffff;
 		}
 	}
 
 	.btn-outline {
-		display: block;
-		font-size: 16px;
-		font-weight: 500;
-		line-height: 1.5;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 4px;
+		height: 48px;
+		min-width: 88px;
 		width: 100%;
-		padding: 13px 0;
-		text-align: center;
+		padding: 8px 48px;
+		box-sizing: border-box;
 		cursor: pointer;
 		border: 1px solid var(--color-trendz-accent);
-		border-radius: 4px;
+		border-radius: 6px;
 		background-color: transparent;
 		transition: 0.6s;
 		color: var(--color-trendz-accent);
@@ -273,15 +278,11 @@ const sphereImg = await getImage({
 		}
 
 		.btn-accent {
-			font-size: 20px;
 			width: auto;
-			padding: 13px 50px;
 		}
 
 		.btn-outline {
-			font-size: 20px;
 			width: auto;
-			padding: 13px 50px;
 		}
 	}
 
@@ -333,13 +334,6 @@ const sphereImg = await getImage({
 			}
 		}
 
-		.btn-accent {
-			padding: 13px 46px;
-		}
-
-		.btn-outline {
-			padding: 13px 41px;
-		}
 	}
 
 	// 1280px+ — side-by-side layout, max container width
@@ -374,13 +368,6 @@ const sphereImg = await getImage({
 			}
 		}
 
-		.btn-accent {
-			font-size: 24px;
-		}
-
-		.btn-outline {
-			font-size: 24px;
-		}
 	}
 
 	@keyframes fadeInLeft {
