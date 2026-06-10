@@ -228,10 +228,12 @@ function updateHead(context: APIContext, isTutorial: boolean) {
 	);
 	const { head, entry } = starlightRoute;
 
-	// Single pass collecting all head entries we will mutate later (avoids separate find() walks).
+	// Single pass collecting all head entries we will mutate or test later
+	// (avoids separate find()/some() walks).
 	let title: (typeof head)[number] | undefined;
 	let ogTitle: (typeof head)[number] | undefined;
 	let ogUrl: (typeof head)[number] | undefined;
+	let ogImage: (typeof head)[number] | undefined;
 	let canonical: (typeof head)[number] | undefined;
 	for (const item of head) {
 		if (item.tag === 'title') {
@@ -240,6 +242,7 @@ function updateHead(context: APIContext, isTutorial: boolean) {
 			const property = item.attrs?.property;
 			if (property === 'og:title') ogTitle = item;
 			else if (property === 'og:url') ogUrl = item;
+			else if (property === 'og:image') ogImage = item;
 		} else if (item.tag === 'link' && item.attrs?.rel === 'canonical') {
 			canonical = item;
 		}
@@ -255,11 +258,16 @@ function updateHead(context: APIContext, isTutorial: boolean) {
 	}
 
 	const pathname = context.url.pathname;
-	const product = getVersionFromURL(pathname);
-	const lang = getLanguageFromURL(pathname);
-	const pageSlug = getPageSlugFromURL(pathname);
+	// Title formatting and canonical consolidation only apply to real `/docs/`
+	// pages. Marketing pages render through `StarlightPage` too, so gate the
+	// docs-only work here to skip their per-page version/slug/canonical lookups.
+	const isDocs = docsPathRegex.test(pathname);
 
-	if (title && title.content && docsPathRegex.test(pathname)) {
+	if (isDocs && title && title.content) {
+		const product = getVersionFromURL(pathname);
+		const lang = getLanguageFromURL(pathname);
+		const pageSlug = getPageSlugFromURL(pathname);
+
 		// Per-page `customDocsTitle` frontmatter overrides the auto-formatted
 		// docs title entirely. Used by product index pages that want a
 		// non-default <title> (e.g. "Docs | ThingsBoard Professional Edition").
@@ -286,18 +294,22 @@ function updateHead(context: APIContext, isTutorial: boolean) {
 		if (ogTitle) ogTitle.attrs!['content'] = title.content;
 	}
 
-	const ogImageUrl = getOgImageUrl(pathname);
-	let imageSrc = ogImageUrl ?? '/thingsboard-og.png';
-	// Astro dev with `trailingSlash: 'always'` requires dynamic-route URLs to end with '/'
-	// even when they have a file extension. Production (Cloudflare Pages serving static files)
-	// needs the clean .png URL with no trailing slash.
-	if (import.meta.env.DEV && /\.png$/.test(imageSrc) && imageSrc !== '/thingsboard-og.png') {
-		imageSrc = imageSrc + '/';
-	}
-	// Use request origin so dev shows localhost; in static build it equals context.site origin.
-	const canonicalImageSrc = new URL(imageSrc, context.url.origin).href;
+	// Marketing pages author their own `og:image` in frontmatter; only emit ours
+	// when none is present, else BaseLayout pages get a duplicate `og:image`.
+	if (!ogImage) {
+		const ogImageUrl = getOgImageUrl(pathname);
+		let imageSrc = ogImageUrl ?? '/thingsboard-og.png';
+		// Astro dev with `trailingSlash: 'always'` requires dynamic-route URLs to end with '/'
+		// even when they have a file extension. Production (Cloudflare Pages serving static files)
+		// needs the clean .png URL with no trailing slash.
+		if (import.meta.env.DEV && /\.png$/.test(imageSrc) && imageSrc !== '/thingsboard-og.png') {
+			imageSrc = imageSrc + '/';
+		}
+		// Use request origin so dev shows localhost; in static build it equals context.site origin.
+		const canonicalImageSrc = new URL(imageSrc, context.url.origin).href;
 
-	head.push({ tag: 'meta', attrs: { property: 'og:image', content: canonicalImageSrc } });
+		head.push({ tag: 'meta', attrs: { property: 'og:image', content: canonicalImageSrc } });
+	}
 
 	// Search pages render a search widget with no indexable content. Keep them
 	// out of search results (consistent with the sitemap exclusion).
@@ -307,16 +319,19 @@ function updateHead(context: APIContext, isTutorial: boolean) {
 
 	// Canonical: free product versions → professional equivalents, plus explicit
 	// frontmatter overrides. See `getCanonicalPathname` — also drives sitemap
-	// exclusion so the two stay in lockstep.
-	const canonicalPathname = getCanonicalPathname(
-		entry.id,
-		entry.data as { selfCanonical?: boolean; canonicalUrl?: string }
-	);
-	const selfPathname = pathname.endsWith('/') ? pathname : pathname + '/';
-	if (canonicalPathname !== selfPathname) {
-		const targetCanonical = new URL(canonicalPathname, context.site).href;
-		if (canonical) canonical.attrs!['href'] = targetCanonical;
-		if (ogUrl) ogUrl.attrs!['content'] = targetCanonical;
+	// exclusion so the two stay in lockstep. Docs-only: a marketing page's
+	// synthetic `entry.id` would default to CE and rewrite e.g. `/` → `/docs/pe/`.
+	if (isDocs) {
+		const canonicalPathname = getCanonicalPathname(
+			entry.id,
+			entry.data as { selfCanonical?: boolean; canonicalUrl?: string }
+		);
+		const selfPathname = pathname.endsWith('/') ? pathname : pathname + '/';
+		if (canonicalPathname !== selfPathname) {
+			const targetCanonical = new URL(canonicalPathname, context.site).href;
+			if (canonical) canonical.attrs!['href'] = targetCanonical;
+			if (ogUrl) ogUrl.attrs!['content'] = targetCanonical;
+		}
 	}
 }
 

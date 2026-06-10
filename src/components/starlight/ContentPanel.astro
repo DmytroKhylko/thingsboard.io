@@ -2,17 +2,19 @@
 import Default from '@astrojs/starlight/components/ContentPanel.astro';
 
 // Proxy in front of Starlight's content panel. Pages rendered through
-// `BaseLayout` set `Astro.locals.bsl = true` to drop the
-// `.content-panel` / `.sl-container` wrappers entirely — marketing
-// pages own their full-bleed layout, so the panel's padding,
-// hairline-divider, and `max-width: var(--sl-content-width)` would
-// fight it. Everything else gets the stock Starlight panel.
+// `BaseLayout` set `Astro.locals.bsl = true` to drop the `.content-panel` /
+// `.sl-container` wrappers — marketing pages own their full-bleed layout.
+// The empty `#_top` anchor restores the skip-link target Starlight normally
+// puts on `<PageTitle>`, which the BSL empty-`hero` branch skips.
 const isBaseStarlight = (Astro.locals as unknown as Record<string, unknown>).bsl === true;
 ---
 
 {
 	isBaseStarlight ? (
-		<slot />
+		<Fragment>
+			<div id="_top" tabindex="-1" />
+			<slot />
+		</Fragment>
 	) : (
 		<Default>
 			<slot />
