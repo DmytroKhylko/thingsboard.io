@@ -55,16 +55,6 @@ const { variant = 'big', home = false } = Astro.props;
 	.iot-hub-grid--big {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 
-		[data-iot-hub-listings-wrap][data-filter-open='true'] & {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-			@include media-down(md) {
-				grid-template-columns: repeat(2, minmax(0, 1fr));
-			}
-			@include media-down(sm) {
-				grid-template-columns: 1fr;
-			}
-		}
-
 		@include media-down(lg) {
 			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
