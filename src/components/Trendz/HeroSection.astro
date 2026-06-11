@@ -32,7 +32,7 @@ const sphereImg = await getImage({
 		</div>
 
 		<div class="hero-image">
-			<ProjectScreenFrame fillColor="#E5EFFF" class="hero-screen-frame">
+			<ProjectScreenFrame fillColor="#E5EFFF" borderRadius="8px" class="hero-screen-frame">
 				<video
 					width="857"
 					height="426"
@@ -124,6 +124,11 @@ const sphereImg = await getImage({
 				visibility: visible;
 				padding: 5% 0 10% 0;
 				box-sizing: border-box;
+
+				:global(video) {
+					border: 1px solid #e6e6e6;
+					box-shadow: 0 0 12px 0 rgba(83, 92, 115, 0.02), 0 24px 36px 0 rgba(83, 92, 115, 0.07);
+				}
 			}
 
 			.sphere-icon {
