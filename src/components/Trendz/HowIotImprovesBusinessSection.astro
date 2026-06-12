@@ -1,37 +1,11 @@
 ---
-import { getImage } from 'astro:assets';
 import ProjectScreenFrame from '../Services/ProjectScreenFrame.astro';
-
-const imgKpi = await getImage({
-	src: (await import('/src/assets/images/landings/trendz/turning-telemetry-into-clear-kpis.png')).default,
-	width: 620,
-	quality: 85,
-});
-const imgForecasting = await getImage({
-	src: (await import('/src/assets/images/landings/trendz/forecasting-whats-likely-to-happen-next.png')).default,
-	width: 620,
-	quality: 85,
-});
-const imgPredictive = await getImage({
-	src: (await import('/src/assets/images/landings/trendz/predictive-maintenance-and-health-scoring.png')).default,
-	width: 620,
-	quality: 85,
-});
-const imgAnomaly = await getImage({
-	src: (await import('/src/assets/images/landings/trendz/anomaly-detection-for-quick-reaction.png')).default,
-	width: 620,
-	quality: 85,
-});
-const imgOutliers = await getImage({
-	src: (await import('/src/assets/images/landings/trendz/find-outliers-across-a-fleet.png')).default,
-	width: 620,
-	quality: 85,
-});
-const imgUtilization = await getImage({
-	src: (await import('/src/assets/images/landings/trendz/utilization-and-state-analysis.png')).default,
-	width: 620,
-	quality: 85,
-});
+const kpiImgUrl = '/products/trendz/turning-telemetry-into-clear-kpis.webp';
+const forecastImgUrl = '/products/trendz/forecasting-whats-likely-to-happen-next.webp';
+const anomalyImgUrl = '/products/trendz/anomaly-detection-for-quick-reaction.webp';
+const utilizationImgUrl = '/products/trendz/utilization-and-state-analysis.webp';
+const predictiveImgUrl = '/products/trendz/predictive-maintenance-and-health-scoring.webp';
+const outliersImgUrl = '/products/trendz/find-outliers-across-a-fleet.webp';
 
 const items = [
 	{
@@ -40,7 +14,7 @@ const items = [
 		description:
 			'Turn raw sensor data into clear numbers everyone can use — cost, efficiency, output, quality — the same way across every site and customer.',
 		examples: ['Energy per unit', 'Cost per hour', 'Downtime minutes', 'Quality %', 'CO₂ estimate'],
-		imageSrc: imgKpi.src,
+		imageSrc: kpiImgUrl,
 		imageAlt: 'KPI dashboard showing fleet energy and cost data across sites',
 		featureText:
 			'Trendz helps you define a few "business metrics" on top of your ThingsBoard data. Once a KPI is defined, you can reuse it everywhere: dashboards, portfolio views, alerts, and reports.',
@@ -56,7 +30,7 @@ const items = [
 		description:
 			'Forecast the next days/weeks so you can plan work before problems, high-run-outs, threshold breaches, and KPI drift.',
 		examples: ['Tank empty in ~10 days', 'Temperature likely to go out of range tonight', 'Spend trending over plan'],
-		imageSrc: imgForecasting.src,
+		imageSrc: forecastImgUrl,
 		imageAlt: 'Forecast charts showing future sensor data with risk ranges',
 		featureText:
 			'Trendz forecasts your charts into the future and verifies the accuracy of predictions. That makes it practical for operations: you don\'t just see "it will happen", you see when it might happen and how risky it is.',
@@ -72,7 +46,7 @@ const items = [
 		description:
 			'See which assets are getting worse over time, so you can service them at the right moment — before failures and before waste becomes expensive.',
 		examples: ['Longer cool-down', 'Rising vibration', 'Higher energy for the same output'],
-		imageSrc: imgPredictive.src,
+		imageSrc: predictiveImgUrl,
 		imageAlt: 'Predictive maintenance health score list and asset degradation chart',
 		featureText:
 			'Trendz tracks how an asset performs over time and compares it to what "good" looks like for that asset or similar assets. When health declines, you can find when it started, review evidence charts, and trigger a maintenance incident.',
@@ -93,7 +67,7 @@ const items = [
 			'Temperature becomes unstable',
 			'Output drops for the same input',
 		],
-		imageSrc: imgAnomaly.src,
+		imageSrc: anomalyImgUrl,
 		imageAlt: 'Anomaly detection fleet heatmap and time series comparison chart',
 		featureText:
 			'Some issues don\'t have a clean rule like "over 80 = bad". Trendz can flag when behavior changes from normal and mark the moment it changed, so investigation starts from a real timestamp, not guesses.',
@@ -113,7 +87,7 @@ const items = [
 			'One building spends more for the same size',
 			'One pump is inefficient vs the rest',
 		],
-		imageSrc: imgOutliers.src,
+		imageSrc: outliersImgUrl,
 		imageAlt: 'Fleet outlier ranking list and peer comparison charts',
 		featureText:
 			"Trendz compares similar assets and surfaces the ones that stand out — worst efficiency, highest cost, most downtime, slowest recovery. Start from a ranked list, then drill down to see why it's different using clear visuals.",
@@ -125,7 +99,7 @@ const items = [
 		description:
 			'Measure how long assets spend underused, optimal, overloaded, or out-of-control — then use that for capacity planning, SLA reporting, and operational improvements.',
 		examples: ['Too much idle time', 'Frequent overload periods', 'Temperature out of range during peaks'],
-		imageSrc: imgUtilization.src,
+		imageSrc: utilizationImgUrl,
 		imageAlt: 'Utilization dashboard with SLA compliance metrics and weekly heatmap',
 		featureText:
 			'Trendz turns operating states into simple percentages and timelines, so you can spot bottlenecks and recurring waste. Calendar-style views make patterns obvious (after hours, weekends, shift changes) and help teams connect issues to real operations.',
