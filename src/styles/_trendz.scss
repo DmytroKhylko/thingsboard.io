@@ -33,17 +33,43 @@ $trendz-bp-lg: 1280px;
 $trendz-bp-xl: 1920px;
 
 @mixin trendz-up($bp) {
-	@if $bp == sm { @media (min-width: #{$trendz-bp-sm}) { @content; } }
-	@else if $bp == md { @media (min-width: #{$trendz-bp-md}) { @content; } }
-	@else if $bp == lg { @media (min-width: #{$trendz-bp-lg}) { @content; } }
-	@else if $bp == xl { @media (min-width: #{$trendz-bp-xl}) { @content; } }
+	@if $bp == sm {
+		@media (min-width: #{$trendz-bp-sm}) {
+			@content;
+		}
+	} @else if $bp == md {
+		@media (min-width: #{$trendz-bp-md}) {
+			@content;
+		}
+	} @else if $bp == lg {
+		@media (min-width: #{$trendz-bp-lg}) {
+			@content;
+		}
+	} @else if $bp == xl {
+		@media (min-width: #{$trendz-bp-xl}) {
+			@content;
+		}
+	}
 }
 
 @mixin trendz-down($bp) {
-	@if $bp == xs { @media (max-width: #{$trendz-bp-sm - 1px}) { @content; } }
-	@else if $bp == sm { @media (max-width: #{$trendz-bp-md - 1px}) { @content; } }
-	@else if $bp == md { @media (max-width: #{$trendz-bp-lg - 1px}) { @content; } }
-	@else if $bp == lg { @media (max-width: #{$trendz-bp-xl - 1px}) { @content; } }
+	@if $bp == xs {
+		@media (max-width: #{$trendz-bp-sm - 1px}) {
+			@content;
+		}
+	} @else if $bp == sm {
+		@media (max-width: #{$trendz-bp-md - 1px}) {
+			@content;
+		}
+	} @else if $bp == md {
+		@media (max-width: #{$trendz-bp-lg - 1px}) {
+			@content;
+		}
+	} @else if $bp == lg {
+		@media (max-width: #{$trendz-bp-xl - 1px}) {
+			@content;
+		}
+	}
 }
 
 // --------------------------------------------
@@ -147,20 +173,28 @@ $trendz-bp-xl: 1920px;
 
 @mixin trendz-h1-responsive {
 	@include trendz-h1;
-	@include trendz-down(xs) { @include trendz-h4; }
+	@include trendz-down(xs) {
+		@include trendz-h4;
+	}
 }
 
 @mixin trendz-h2-responsive {
 	@include trendz-h2;
-	@include trendz-down(xs) { @include trendz-h4; }
+	@include trendz-down(xs) {
+		@include trendz-h4;
+	}
 }
 
 @mixin trendz-h5-responsive {
 	@include trendz-h5;
-	@include trendz-down(xs) { @include trendz-body-m; }
+	@include trendz-down(xs) {
+		@include trendz-body-m;
+	}
 }
 
 @mixin trendz-h5-semibold-responsive {
 	@include trendz-h5-semibold;
-	@include trendz-down(xs) { @include trendz-body-m-medium; }
+	@include trendz-down(xs) {
+		@include trendz-body-m-medium;
+	}
 }

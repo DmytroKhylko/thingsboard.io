@@ -6,19 +6,11 @@ interface Props {
 	tag?: 'h1' | 'h2' | 'h3' | 'p' | 'span';
 }
 
-const { label, color = 'var(--color-trendz-accent)', bg = 'transparent', tag: Tag = 'span' } =
-	Astro.props;
+const { label, color = 'var(--color-trendz-accent)', bg = 'transparent', tag: Tag = 'span' } = Astro.props;
 ---
 
 <Tag class="trendz-chip" style={`--chip-color: ${color}; --chip-bg: ${bg}`}>
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="10"
-		height="10"
-		viewBox="0 0 10 10"
-		fill="none"
-		aria-hidden="true"
-	>
+	<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
 		<circle cx="5" cy="5" r="5" fill="var(--chip-color)"></circle>
 	</svg>
 	{label}

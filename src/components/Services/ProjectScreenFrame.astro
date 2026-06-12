@@ -53,11 +53,13 @@ const hasSlot = Astro.slots.has('default');
 	style={`--psf-accent: ${accentColor}; --psf-muted: ${mutedColor}; --psf-fill: ${fillColor}; --psf-img-radius: ${borderRadius}; --psf-transition: ${transitionDuration}; --psf-front-inset: ${frontInset}; --psf-middle-inset: ${middleInset}; --psf-back-inset: ${backInset};`}
 >
 	<div class="psf-inner">
-		{hasSlot ? (
-			<slot />
-		) : (
-			<img {...id ? { id } : {}} src={src} alt={alt!} width={width!} height={height!} loading={loading} />
-		)}
+		{
+			hasSlot ? (
+				<slot />
+			) : (
+				<img {...(id ? { id } : {})} src={src} alt={alt!} width={width!} height={height!} loading={loading} />
+			)
+		}
 	</div>
 </div>
 

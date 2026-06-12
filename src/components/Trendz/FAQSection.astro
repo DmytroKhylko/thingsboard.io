@@ -102,14 +102,7 @@ const categories = [
 							data-cat={cat.id}
 						>
 							{cat.label}
-							<svg
-								class="faq-cat-chevron"
-								width="16"
-								height="16"
-								viewBox="0 0 16 16"
-								fill="none"
-								aria-hidden="true"
-							>
+							<svg class="faq-cat-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
 								<path
 									d="M3.5 5.5L8 10L12.5 5.5"
 									stroke="currentColor"
@@ -124,11 +117,7 @@ const categories = [
 							{cat.items.map((item) => (
 								<div class="faq-item">
 									<h3 class="faq-question">
-										<button
-											class="faq-question-btn"
-											aria-expanded="false"
-											aria-controls={item.id}
-										>
+										<button class="faq-question-btn" aria-expanded="false" aria-controls={item.id}>
 											{item.question}
 											<svg
 												class="faq-chevron"
@@ -287,7 +276,9 @@ const categories = [
 		cursor: pointer;
 		font-family: inherit;
 		color: #757575;
-		transition: color 0.2s, background 0.2s;
+		transition:
+			color 0.2s,
+			background 0.2s;
 
 		@include trendz-h4;
 

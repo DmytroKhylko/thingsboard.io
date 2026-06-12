@@ -553,7 +553,8 @@ const items = [
 				activate(i);
 
 				requestAnimationFrame(() => {
-					const headerHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 80;
+					const headerHeight =
+						parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 80;
 					const top = item.getBoundingClientRect().top + window.scrollY - headerHeight - 8;
 					window.scrollTo({ top, behavior: 'smooth' });
 				});
