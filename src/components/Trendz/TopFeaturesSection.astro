@@ -149,7 +149,7 @@ const cards = [
 							</ul>
 							{card.href ? (
 								<a class="tf-card-link" href={card.href} target="_blank" rel="noopener noreferrer">
-									Read more about {card.title}
+									Read more<span class="tf-sr-context"> about {card.title}</span>
 								</a>
 							) : (
 								<span class="tf-card-soon">Coming Soon</span>
@@ -393,5 +393,17 @@ const cards = [
 		color: var(--text-text-secondary, rgba(0, 0, 0, 0.76));
 		text-align: center;
 		margin-top: auto;
+	}
+
+	.tf-sr-context {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
 	}
 </style>
