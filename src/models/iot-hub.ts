@@ -17,8 +17,7 @@ declare global {
 		__IOT_HUB_API_URL?: string;
 	}
 }
-const BUILD_TIME_IOT_HUB_API_URL =
-	import.meta.env.IOT_HUB_API_URL ?? 'https://iot-hub.tbqa.cloud';
+const BUILD_TIME_IOT_HUB_API_URL = import.meta.env.IOT_HUB_API_URL ?? 'https://iot-hub.thingsboard.io';
 export const IOT_HUB_API_URL =
 	typeof window !== 'undefined' && window.__IOT_HUB_API_URL
 		? window.__IOT_HUB_API_URL
