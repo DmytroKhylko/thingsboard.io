@@ -154,6 +154,7 @@ const categories = [
 	const section = document.getElementById('trendz-faq');
 	if (section) {
 		const groups = Array.from(section.querySelectorAll<HTMLElement>('.faq-group'));
+		const layout = section.querySelector<HTMLElement>('.faq-layout')!;
 
 		// Category switching
 		groups.forEach((group) => {
@@ -178,6 +179,29 @@ const categories = [
 				panel.removeAttribute('hidden');
 			});
 		});
+
+		// On desktop, panels are position:absolute so they don't affect grid row sizing.
+		// Sync layout min-height to the tallest panel so content below stays clear.
+		const LG_BP = 1280;
+
+		function syncMinHeight() {
+			if (window.innerWidth < LG_BP) {
+				layout.style.minHeight = '';
+				return;
+			}
+			const panels = Array.from(section.querySelectorAll<HTMLElement>('.faq-panel'));
+			let max = 0;
+			panels.forEach((p) => {
+				const wasHidden = p.hasAttribute('hidden');
+				if (wasHidden) p.removeAttribute('hidden');
+				max = Math.max(max, p.scrollHeight);
+				if (wasHidden) p.setAttribute('hidden', '');
+			});
+			layout.style.minHeight = max + 'px';
+		}
+
+		syncMinHeight();
+		window.addEventListener('resize', syncMinHeight);
 
 		// Q&A accordion toggle
 		section.querySelectorAll<HTMLButtonElement>('.faq-question-btn').forEach((btn) => {
@@ -231,10 +255,11 @@ const categories = [
 
 	// ── Layout ────────────────────────────────────────────────────────────────
 	//
-	// Mobile: each .faq-group stacks vertically (button → panel).
+	// Mobile: each .faq-group stacks vertically (button → panel accordion).
 	// Desktop (≥lg): CSS Grid with display:contents on .faq-group unwraps the
-	// pairs so all buttons land in col 1 (auto-placed) and all panels stack in
-	// col 2 row 1 — only the active panel is visible at any time.
+	// pairs so buttons land in col 1 and panels in col 2. Panels are
+	// position:absolute so they never inflate the button column row heights.
+	// JS sets min-height on .faq-layout to match the tallest panel.
 
 	.faq-layout {
 		display: flex;
@@ -248,6 +273,7 @@ const categories = [
 			column-gap: 40px;
 			row-gap: 0;
 			align-items: start;
+			position: relative;
 		}
 	}
 
@@ -326,11 +352,14 @@ const categories = [
 			display: none;
 		}
 
-		// On desktop all panels sit in the same grid cell (col 2, row 1).
-		// display:none/block controlled by JS keeps only one visible.
+		// On desktop: absolutely positioned in the col 2 grid area so the panel
+		// height doesn't inflate the button column rows.
 		@include trendz-up(lg) {
+			position: absolute;
 			grid-column: 2;
 			grid-row: 1 / -1;
+			width: 100%;
+			top: 0;
 		}
 	}
 
