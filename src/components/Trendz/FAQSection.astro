@@ -195,7 +195,11 @@ const categories = [
 		}
 
 		syncMinHeight();
-		window.addEventListener('resize', syncMinHeight);
+		let rafId = 0;
+		window.addEventListener('resize', () => {
+			cancelAnimationFrame(rafId);
+			rafId = requestAnimationFrame(syncMinHeight);
+		});
 
 		// Q&A accordion toggle
 		section.querySelectorAll<HTMLButtonElement>('.faq-question-btn').forEach((btn) => {

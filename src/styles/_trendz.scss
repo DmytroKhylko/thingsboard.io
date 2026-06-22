@@ -56,6 +56,14 @@ $trendz-bp-xl: 1920px;
 	}
 }
 
+// Narrow horizontal padding for full-width buttons on xs screens
+@mixin trendz-btn-narrow-padding {
+	@include trendz-down(xs) {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+}
+
 // --------------------------------------------
 // Typography — base styles (no color, no font-family)
 // --------------------------------------------

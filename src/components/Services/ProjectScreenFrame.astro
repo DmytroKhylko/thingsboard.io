@@ -16,9 +16,6 @@ export interface Props {
 }
 
 type Tokens = {
-	accent: string;
-	muted: string;
-	fill: string;
 	radius: string;
 	frontInset: string;
 	middleInset: string;
@@ -28,38 +25,23 @@ type Tokens = {
 	backInsetSm: string;
 };
 
+const base: Tokens = {
+	radius: '5px',
+	frontInset: '8% -8% -8% 8%',
+	middleInset: '-6% 6% 6% -6%',
+	backInset: '-12% -5% 12% 5%',
+	frontInsetSm: '2% -1.5% -2% 1.5%',
+	middleInsetSm: '-3% 2% 3% -2%',
+	backInsetSm: '-3.5% -1.5% 3.5% 1.5%',
+};
+
 const VARIANTS: Record<Variant, Tokens> = {
-	default: {
-		accent: '#3e9af8',
-		muted: '#d1e9ff',
-		fill: '#f4f8fe',
-		radius: '5px',
-		frontInset: '8% -8% -8% 8%',
-		middleInset: '-6% 6% 6% -6%',
-		backInset: '-12% -5% 12% 5%',
-		frontInsetSm: '2% -1.5% -2% 1.5%',
-		middleInsetSm: '-3% 2% 3% -2%',
-		backInsetSm: '-3.5% -1.5% 3.5% 1.5%',
-	},
+	default: base,
 	// Lighter fill, larger radius — used in hero video/image frames
-	hero: {
-		accent: '#3e9af8',
-		muted: '#d1e9ff',
-		fill: '#e5efff',
-		radius: '8px',
-		frontInset: '8% -8% -8% 8%',
-		middleInset: '-6% 6% 6% -6%',
-		backInset: '-12% -5% 12% 5%',
-		frontInsetSm: '2% -1.5% -2% 1.5%',
-		middleInsetSm: '-3% 2% 3% -2%',
-		backInsetSm: '-3.5% -1.5% 3.5% 1.5%',
-	},
+	hero: { ...base, radius: '8px' },
 	// Tighter insets — used in constrained panel contexts
 	compact: {
-		accent: '#3e9af8',
-		muted: '#d1e9ff',
-		fill: '#f4f8fe',
-		radius: '5px',
+		...base,
 		frontInset: '2% -2% -2% 2%',
 		middleInset: '-2% 2% 2% -2%',
 		backInset: '-4% -2% 4% 2%',
@@ -81,7 +63,17 @@ const {
 } = Astro.props;
 
 const t = VARIANTS[variant];
-const style = `--psf-accent:${t.accent};--psf-muted:${t.muted};--psf-fill:${t.fill};--psf-img-radius:${t.radius};--psf-front-inset:${t.frontInset};--psf-middle-inset:${t.middleInset};--psf-back-inset:${t.backInset};--psf-front-inset-sm:${t.frontInsetSm};--psf-middle-inset-sm:${t.middleInsetSm};--psf-back-inset-sm:${t.backInsetSm}`;
+const variantFill: Partial<Record<Variant, string>> = { hero: '#e5efff' };
+const style = [
+	variantFill[variant] ? `--psf-fill:${variantFill[variant]}` : '',
+	`--psf-img-radius:${t.radius}`,
+	`--psf-front-inset:${t.frontInset}`,
+	`--psf-middle-inset:${t.middleInset}`,
+	`--psf-back-inset:${t.backInset}`,
+	`--psf-front-inset-sm:${t.frontInsetSm}`,
+	`--psf-middle-inset-sm:${t.middleInsetSm}`,
+	`--psf-back-inset-sm:${t.backInsetSm}`,
+].filter(Boolean).join(';');
 
 const hasSlot = Astro.slots.has('default');
 ---
@@ -100,6 +92,9 @@ const hasSlot = Astro.slots.has('default');
 
 <style lang="scss">
 	.project-screen-frame {
+		--psf-accent: #3e9af8;
+		--psf-muted: #d1e9ff;
+		--psf-fill: #f4f8fe;
 		position: relative;
 		width: 100%;
 		display: flex;
