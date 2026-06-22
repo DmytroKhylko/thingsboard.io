@@ -177,11 +177,12 @@ const categories = [
 				catBtn.setAttribute('aria-expanded', 'true');
 				panel.classList.add('active');
 				panel.removeAttribute('hidden');
+				syncMinHeight();
 			});
 		});
 
 		// On desktop, panels are position:absolute so they don't affect grid row sizing.
-		// Sync layout min-height to the tallest panel so content below stays clear.
+		// Always measure the live active panel so expanded Q&A items are accounted for.
 		const LG_BP = 1280;
 
 		function syncMinHeight() {
@@ -189,15 +190,8 @@ const categories = [
 				layout.style.minHeight = '';
 				return;
 			}
-			const panels = Array.from(section.querySelectorAll<HTMLElement>('.faq-panel'));
-			let max = 0;
-			panels.forEach((p) => {
-				const wasHidden = p.hasAttribute('hidden');
-				if (wasHidden) p.removeAttribute('hidden');
-				max = Math.max(max, p.scrollHeight);
-				if (wasHidden) p.setAttribute('hidden', '');
-			});
-			layout.style.minHeight = max + 'px';
+			const activePanel = section.querySelector<HTMLElement>('.faq-panel:not([hidden])');
+			layout.style.minHeight = activePanel ? activePanel.scrollHeight + 'px' : '';
 		}
 
 		syncMinHeight();
@@ -214,6 +208,7 @@ const categories = [
 				} else {
 					answer.removeAttribute('hidden');
 				}
+				syncMinHeight();
 			});
 		});
 	}
@@ -273,6 +268,7 @@ const categories = [
 			column-gap: 40px;
 			row-gap: 0;
 			align-items: start;
+			align-content: start;
 			position: relative;
 		}
 	}
