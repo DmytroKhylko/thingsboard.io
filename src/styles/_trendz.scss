@@ -1,25 +1,6 @@
 // ============================================
-// TRENDZ LANDING — Design Tokens & Mixins
+// TRENDZ LANDING — Mixins & Tokens
 // ============================================
-// Imported once via global.scss — emits html#trendz CSS vars globally.
-// Components @use this file for mixins only (the html#trendz block gets
-// Astro-scoped in component output and is silently ignored there).
-// ============================================
-@use 'variables' as *;
-
-// --------------------------------------------
-// CSS Custom Properties — scoped to Trendz page
-// --------------------------------------------
-
-html#trendz {
-	--color-trendz-accent: #{$color-primary};
-	--color-trendz-accent-hover: #{$color-primary-hover};
-	--color-trendz-accent-light: #3e9af8;
-	--color-trendz-surface: #f4f8fe;
-	--color-trendz-surface-accent: #d9e9fc;
-	--color-trendz-text-primary: #212121;
-	--color-trendz-text-secondary: #3d3d3d;
-}
 
 // --------------------------------------------
 // Breakpoints
