@@ -285,12 +285,12 @@ const items = [
 	.accordion-item.active .accordion-title {
 		@include trendz-h3;
 		color: var(--text-text-primary, rgba(0, 0, 0, 0.87));
-		background: #f4f8fe;
+		background: var(--color-trendz-surface);
 		border-radius: 24px 24px 0 0;
 	}
 
 	.accordion-item.active .accordion-body {
-		background: #f4f8fe;
+		background: var(--color-trendz-surface);
 		border-radius: 0 0 24px 24px;
 	}
 
@@ -376,7 +376,7 @@ const items = [
 
 	// Inline panel — box 2, visible below lg only
 	.inline-panel {
-		background: #f4f8fe;
+		background: var(--color-trendz-surface);
 		border-radius: 24px;
 		padding: 20px;
 		margin-top: 16px;
@@ -424,10 +424,10 @@ const items = [
 
 	.panel-chip {
 		@include trendz-body-s;
-		border: 1px solid #2a7dec;
+		border: 1px solid var(--color-trendz-accent);
 		border-radius: 8px;
 		padding: 10px 16px;
-		background: #d9e9fc;
+		background: var(--color-trendz-surface-accent);
 		color: var(--text-text-secondary, rgba(0, 0, 0, 0.76));
 		text-align: center;
 
@@ -477,7 +477,7 @@ const items = [
 			min-width: 0;
 			padding: 32px;
 			border-radius: 24px;
-			background: #f4f8fe;
+			background: var(--color-trendz-surface);
 			position: sticky;
 			top: 80px;
 		}

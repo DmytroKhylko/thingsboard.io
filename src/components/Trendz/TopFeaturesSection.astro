@@ -195,7 +195,7 @@ const cards = [
 	@use '../../styles/trendz' as *;
 
 	#trendz-top-features {
-		background: var(--web-BG, #f4f8fe);
+		background: var(--color-trendz-surface);
 		padding: 0 20px 32px;
 		box-sizing: border-box;
 
@@ -306,7 +306,7 @@ const cards = [
 		align-items: center;
 		gap: 8px;
 		padding: 12px;
-		border: 1px solid #2a7dec;
+		border: 1px solid var(--color-trendz-accent);
 		border-radius: 10px;
 	}
 
@@ -364,7 +364,7 @@ const cards = [
 			list-style-type: disc;
 
 			&::marker {
-				color: #2a7dec;
+				color: var(--color-trendz-accent);
 			}
 		}
 	}
@@ -372,9 +372,9 @@ const cards = [
 	.tf-card-link {
 		display: block;
 		padding: 10px 24px;
-		border: 1.5px solid #2a7dec;
+		border: 1.5px solid var(--color-trendz-accent);
 		border-radius: 4px;
-		color: #2a7dec;
+		color: var(--color-trendz-accent);
 		@include trendz-body-m-medium;
 		text-decoration: none;
 		text-align: center;
