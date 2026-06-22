@@ -25,7 +25,7 @@
 			</button>
 		</div>
 
-		<form id="TrendzContactUs" class="tcm-form" method="post" novalidate>
+		<form id="TrendzContactUs" class="tcm-form" action="https://formspree.io/f/xrbnqnna" method="post" novalidate>
 			<div class="tcm-body">
 				<div class="tcm-field tcm-field--full">
 					<label class="tcm-label" for="tcm-name">Name</label>
@@ -267,8 +267,6 @@
 	document.addEventListener('DOMContentLoaded', () => {
 		const form = document.getElementById('TrendzContactUs') as HTMLFormElement | null;
 		if (!form) return;
-
-		form.action = 'https://formspree.io/f/xrbnqnna';
 
 		const renderedAt = form.querySelector<HTMLInputElement>('.tcm-rendered-at');
 		if (renderedAt) renderedAt.value = String(Math.floor(Date.now() / 1000));
