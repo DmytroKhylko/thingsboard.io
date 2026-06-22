@@ -13,7 +13,7 @@ import ListingCard from '@components/IotHub/ListingCard.astro';
 import ListingCardTemplate from '@components/IotHub/ListingCardTemplate.astro';
 import ListingGrid from '@components/IotHub/ListingGrid.astro';
 import ListingsFilterBar from '@components/IotHub/ListingsFilterBar.astro';
-import PaginationLink from '@components/IotHub/PaginationLink.astro';
+import PaginationBar from '@components/Pagination/PaginationBar.astro';
 import { getCollection } from 'astro:content';
 import {
 	IOT_HUB_CATEGORIES,
@@ -117,10 +117,12 @@ const searchPlaceholder = tileLabel
 								<p class="iot-hub-cat__empty">{IOT_HUB_STRINGS.emptyState}</p>
 							) : (
 								page.lastPage > 1 && (
-									<PaginationLink
+									<PaginationBar
 										currentPage={page.currentPage}
 										totalPages={page.lastPage}
 										basePath={basePath}
+										perPage={PAGE_SIZE}
+										idBase={basePath}
 									/>
 								)
 							)
