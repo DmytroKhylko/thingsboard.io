@@ -6,6 +6,10 @@ const sphereImg = await getImage({
 	src: (await import('/src/assets/images/landings/trendz/sphere.png')).default,
 	quality: 85,
 });
+const posterImg = await getImage({
+	src: (await import('/src/assets/images/landings/trendz/trendz-hero-video-preview.webp')).default,
+	quality: 85,
+});
 ---
 
 <section id="trendz-hero">
@@ -48,7 +52,8 @@ const sphereImg = await getImage({
 					muted
 					loop
 					playsinline
-					preload="auto"
+					preload="metadata"
+					poster={posterImg.src}
 					aria-label="Trendz Analytics dashboard demo"
 				>
 					<source src="https://video.thingsboard.io/trendz-hero-video.webm" type="video/webm" />
@@ -58,6 +63,23 @@ const sphereImg = await getImage({
 		</div>
 	</div>
 </section>
+
+<script>
+	const section = document.getElementById('trendz-hero');
+	const video = section?.querySelector('video');
+	if (section && video instanceof HTMLVideoElement) {
+		new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting) {
+					video.play().catch(() => {});
+				} else {
+					video.pause();
+				}
+			},
+			{ threshold: 0 },
+		).observe(section);
+	}
+</script>
 
 <style lang="scss">
 	@use '../../styles/trendz' as *;

@@ -174,7 +174,7 @@ const items = [
 			<div class="panel-images">
 				{
 					items.map((item, i) => (
-						<div class:list={['panel-image-wrap', { active: i === 0 }]}>
+						<div class:list={['panel-image-wrap', { active: i === 0 }]} aria-hidden={i !== 0 ? 'true' : 'false'}>
 							<ProjectScreenFrame
 								src={item.imageSrc}
 								alt={item.imageAlt}
@@ -191,7 +191,7 @@ const items = [
 			<div class="panel-texts">
 				{
 					items.map((item, i) => (
-						<div class:list={['panel-text-wrap', { active: i === 0 }]}>
+						<div class:list={['panel-text-wrap', { active: i === 0 }]} aria-hidden={i !== 0 ? 'true' : 'false'}>
 							<p class="panel-text">{item.featureText}</p>
 							<div class="panel-chips">
 								{item.featureChips.map((chip) => (
@@ -550,8 +550,14 @@ const items = [
 			}
 		});
 
-		panelImageWraps.forEach((wrap, i) => wrap.classList.toggle('active', i === index));
-		panelTextWraps.forEach((wrap, i) => wrap.classList.toggle('active', i === index));
+		panelImageWraps.forEach((wrap, i) => {
+			wrap.classList.toggle('active', i === index);
+			wrap.setAttribute('aria-hidden', String(i !== index));
+		});
+		panelTextWraps.forEach((wrap, i) => {
+			wrap.classList.toggle('active', i === index);
+			wrap.setAttribute('aria-hidden', String(i !== index));
+		});
 	}
 
 	accordionItems.forEach((item, i) => {
