@@ -190,7 +190,7 @@ const categories = [
 				layout.style.minHeight = '';
 				return;
 			}
-			const activePanel = section.querySelector<HTMLElement>('.faq-panel:not([hidden])');
+			const activePanel = section!.querySelector<HTMLElement>('.faq-panel:not([hidden])');
 			layout.style.minHeight = activePanel ? activePanel.scrollHeight + 'px' : '';
 		}
 
