@@ -23,6 +23,7 @@ type Tokens = {
 	frontInsetSm: string;
 	middleInsetSm: string;
 	backInsetSm: string;
+	fill?: string;
 };
 
 const base: Tokens = {
@@ -38,7 +39,7 @@ const base: Tokens = {
 const VARIANTS: Record<Variant, Tokens> = {
 	default: base,
 	// Lighter fill, larger radius — used in hero video/image frames
-	hero: { ...base, radius: '8px' },
+	hero: { ...base, radius: '8px', fill: '#e5efff' },
 	// Tighter insets — used in constrained panel contexts
 	compact: {
 		...base,
@@ -63,9 +64,8 @@ const {
 } = Astro.props;
 
 const t = VARIANTS[variant];
-const variantFill: Partial<Record<Variant, string>> = { hero: '#e5efff' };
 const style = [
-	variantFill[variant] ? `--psf-fill:${variantFill[variant]}` : '',
+	t.fill ? `--psf-fill:${t.fill}` : '',
 	`--psf-img-radius:${t.radius}`,
 	`--psf-front-inset:${t.frontInset}`,
 	`--psf-middle-inset:${t.middleInset}`,
