@@ -2,6 +2,7 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import LogoCarousel from '../../../components/Services/LogoCarousel.astro';
 import ServicesBanner from '../../../components/Services/ServicesBanner.astro';
+import ProjectScreenFrame from '../../../components/Services/ProjectScreenFrame.astro';
 import FeedbackCard from '../../../components/Feedback/FeedbackCard.astro';
 import { devServicesFeedback } from '@data/clients-feedback';
 
@@ -208,21 +209,14 @@ const customerLogos = [
 							</div>
 							<div class="solutions-images" id="solutions-images">
 								<div class="client-feedback-cards">
-									<div class="project-screen-container">
-										<div class="project-screen">
-											<div class="bg-1"></div>
-											<div class="bg-2"></div>
-											<div class="bg-3"></div>
-											<img
-												id="solutions-image"
-												src="/images/development-services/site-fleet-tracking-1.webp"
-												alt="IoT solution preview"
-												loading="lazy"
-												width="1302"
-												height="689"
-											/>
-										</div>
-									</div>
+									<ProjectScreenFrame
+										id="solutions-image"
+										src="/images/development-services/site-fleet-tracking-1.webp"
+										alt="IoT solution preview"
+										width={1302}
+										height={689}
+										class="project-screen-container"
+									/>
 									<div class="buttons-block">
 										<button onclick="onContactUsClick()" class="button contact-us gtm_button">Contact us</button>
 										<a
@@ -255,8 +249,7 @@ const customerLogos = [
 														href="/clients-feedback/?category=smart-city"
 														target="_blank"
 														rel="noopener noreferrer"
-														>read more<span class="sr-only"> about smart city solutions</span></a
-													>
+														>read more<span class="sr-only"> about smart city solutions</span></a>
 												</p>
 											</div>
 											<div>Eric Bourbeau, Founder and CEO at X-TELIA</div>
@@ -352,8 +345,7 @@ const customerLogos = [
 										<div class="stats">
 											<p>
 												<span class="num">500K+</span><br /><span class="short">Devices</span><span class="long"
-													>Connected<br />devices</span
-												>
+													>Connected<br />devices</span>
 											</p>
 											<p><span class="num">13K+</span><br />Stores</p>
 											<p><span class="num">32</span><br />Countries</p>
@@ -385,18 +377,15 @@ const customerLogos = [
 										<div class="stats">
 											<p>
 												<span class="num">100%</span><br /><span class="short">Visibility</span><span class="long"
-													>Visibility of beer<br />stock in<br />real-time</span
-												>
+													>Visibility of beer<br />stock in<br />real-time</span>
 											</p>
 											<p>
 												<span class="num">90%</span><br /><span class="short">Automation</span><span class="long"
-													>Reduction in<br />manual<br />operations</span
-												>
+													>Reduction in<br />manual<br />operations</span>
 											</p>
 											<p>
 												<span class="num">3+</span><br /><span class="short">Solutions</span><span class="long"
-													>Integrated<br />solutions</span
-												>
+													>Integrated<br />solutions</span>
 											</p>
 										</div>
 									</div>
@@ -426,18 +415,15 @@ const customerLogos = [
 										<div class="stats">
 											<p>
 												<span class="num">20</span><br /><span class="short">Gateways</span><span class="long"
-													>LoRaWAN<br />gateways in our<br />public network</span
-												>
+													>LoRaWAN<br />gateways in our<br />public network</span>
 											</p>
 											<p>
 												<span class="num">5+</span><br /><span class="short">IoT experience</span><span class="long"
-													>Experience in the<br />field of IoT with<br />LoRaWAN</span
-												>
+													>Experience in the<br />field of IoT with<br />LoRaWAN</span>
 											</p>
 											<p>
 												<span class="num">150</span><br /><span class="short">Sensor types</span><span class="long"
-													>Sensor types<br />tested in<br />our lab</span
-												>
+													>Sensor types<br />tested in<br />our lab</span>
 											</p>
 										</div>
 									</div>
@@ -467,18 +453,15 @@ const customerLogos = [
 										<div class="stats">
 											<p>
 												<span class="num">10+</span><br /><span class="short">Experience</span><span class="long"
-													>Years experience<br />in the alternative<br />energy sector</span
-												>
+													>Years experience<br />in the alternative<br />energy sector</span>
 											</p>
 											<p>
 												<span class="num">7K</span><br /><span class="short">Sales</span><span class="long"
-													>Pellet burners<br />sold</span
-												>
+													>Pellet burners<br />sold</span>
 											</p>
 											<p>
 												<span class="num">96%</span><br /><span class="short">Efficiency</span><span class="long"
-													>Efficiency of<br />pellet burners</span
-												>
+													>Efficiency of<br />pellet burners</span>
 											</p>
 										</div>
 									</div>
@@ -509,18 +492,15 @@ const customerLogos = [
 										<div class="stats">
 											<p>
 												<span class="num">7</span><br /><span class="short">Experience</span><span class="long"
-													>Years of<br />experience<br />on the market</span
-												>
+													>Years of<br />experience<br />on the market</span>
 											</p>
 											<p>
 												<span class="num">50+</span><br /><span class="short">Retailers</span><span class="long"
-													>Retailers<br />managed under<br />one system</span
-												>
+													>Retailers<br />managed under<br />one system</span>
 											</p>
 											<p>
 												<span class="num">6</span><br /><span class="short">Challenges</span><span class="long"
-													>Solving<br />challenges<br />with data</span
-												>
+													>Solving<br />challenges<br />with data</span>
 											</p>
 										</div>
 									</div>
@@ -551,18 +531,15 @@ const customerLogos = [
 										<div class="stats">
 											<p>
 												<span class="num">100%</span><br /><span class="short">Automation</span><span class="long"
-													>Automated<br />temperature<br />monitoring</span
-												>
+													>Automated<br />temperature<br />monitoring</span>
 											</p>
 											<p>
 												<span class="num">90%</span><br /><span class="short">Accuracy</span><span class="long"
-													>Reduction<br />in human error</span
-												>
+													>Reduction<br />in human error</span>
 											</p>
 											<p>
 												<span class="num">100+</span><br /><span class="short">Units</span><span class="long"
-													>Storage and<br />transportation<br />units</span
-												>
+													>Storage and<br />transportation<br />units</span>
 											</p>
 										</div>
 									</div>
@@ -1183,8 +1160,7 @@ const customerLogos = [
 								class="read-more-link"
 								href="/clients-feedback/?category=smart-energy"
 								target="_blank"
-								rel="noopener noreferrer">read more<span class="sr-only"> about smart energy solutions</span></a
-							>
+								rel="noopener noreferrer">read more<span class="sr-only"> about smart energy solutions</span></a>
 						</p>
 						<h2>Mark Hunt, CTO at Oneserve</h2>
 					</div>
@@ -2070,8 +2046,8 @@ const customerLogos = [
 			imageAlt: 'Jeppe Walther',
 			feedback:
 				'"ThingsBoard (TB) turned out to be a great match to build our Agricultural IoT platform. First and foremost because of the extremely skilled and service minded architects behind it. Together with the TB developers several new features were added to the platform for our needs, among these the Asset system...',
-			readMoreLink: '/industries/agriculture/',
-			readMoreLabel: 'about agriculture IoT solutions',
+			readMoreLink: '/clients-feedback/?category=smart-energy',
+			readMoreLabel: 'about smart energy solutions',
 			name: 'Jeppe Walther, CTO at Supertech Agroline',
 			nameNoMargin: false,
 			demoLink:
@@ -2083,8 +2059,8 @@ const customerLogos = [
 			imageAlt: 'Mamadou Ly',
 			feedback:
 				'"With ThingsBoard we found the platform to modernize our factories and especially improve our performance processes. Following a benchmarking of solutions on the market, we came across Thingsboard. It was a surprising discovery, but above all a turning point for Farinia group. Now we have a real-ti...',
-			readMoreLink: '/industries/industry40/',
-			readMoreLabel: 'about Industry 4.0 IoT solutions',
+			readMoreLink: '/clients-feedback/?category=smart-city',
+			readMoreLabel: 'about smart city solutions',
 			name: 'Mamadou Ly, Project Manager at Farinia Group',
 			nameNoMargin: false,
 			demoLink:
@@ -2122,8 +2098,8 @@ const customerLogos = [
 			imageAlt: 'Steven Kruse',
 			feedback:
 				'"With ThingsBoard, we can offer our customers a customised IoT platform that has been specially developed for monitoring temperature and storage conditions in food logistics. One of the platform\'s greatest strengths is its low-code approach, which allows us to implement complex solutions with minima...',
-			readMoreLink: '/industries/warehouse-monitoring/',
-			readMoreLabel: 'about warehouse monitoring solutions',
+			readMoreLink: '/case-studies/senseing/',
+			readMoreLabel: 'about the SenseING case study',
 			name: 'Steven Kruse, CEO at SenseING GmbH',
 			nameNoMargin: false,
 			demoLink:
@@ -2890,60 +2866,7 @@ const customerLogos = [
 	}
 
 	.project-screen-container {
-		min-height: 370px;
-		padding: 5px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		border-radius: 12px;
 		margin-bottom: 50px;
-	}
-
-	.project-screen {
-		position: relative;
-		width: 100%;
-		isolation: isolate;
-
-		img {
-			height: auto;
-			width: 100%;
-			border-radius: 5px;
-			transition: opacity 0.3s ease;
-		}
-
-		.bg-1 {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			z-index: -1;
-			border-radius: 24px;
-			right: -81px;
-			top: 46px;
-			border: 1.5px solid #3e9af8;
-		}
-
-		.bg-2 {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			z-index: -2;
-			border-radius: 24px;
-			left: -61px;
-			top: -33px;
-			border: 1.5px solid #d1e9ff;
-		}
-
-		.bg-3 {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			z-index: -3;
-			border-radius: 24px;
-			right: -57px;
-			top: -65px;
-			background: #f4f8fe;
-			border: none;
-		}
 	}
 
 	// :global() needed — buttons are injected via buildClientHtml() without Astro scoped attributes
@@ -3159,7 +3082,6 @@ const customerLogos = [
 			}
 			:global(.project-screen-container) {
 				display: none;
-				min-height: unset;
 			}
 			:global(.feedback-heading) {
 				display: none;
@@ -3347,11 +3269,10 @@ const customerLogos = [
 
 		.panel-images {
 			:global(.project-screen-container) {
-				display: block;
+				display: flex;
 				width: 100%;
 				padding: 56px 0 32px;
 				margin-bottom: 0;
-				min-height: unset;
 			}
 
 			:global(.feedback-heading) {
@@ -3386,19 +3307,6 @@ const customerLogos = [
 			:global(.client-info > div:last-child) {
 				margin-left: 0;
 			}
-		}
-
-		:global(.project-screen .bg-1) {
-			right: -13px;
-			top: 10px;
-		}
-		:global(.project-screen .bg-2) {
-			left: -10px;
-			top: -31px;
-		}
-		:global(.project-screen .bg-3) {
-			right: -14px;
-			top: -19px;
 		}
 	}
 
