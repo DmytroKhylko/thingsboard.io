@@ -177,22 +177,30 @@ export function setupDynamicSearch(): void {
 	// after a fetch error. resetPage=false keeps the page index the user
 	// was on when the failure happened.
 	let lastRefetchOpts: { resetPage?: boolean } = { resetPage: false };
-	let lastTrackedSearch: string | null = null;
+	let lastTrackedQuery: string | null = null;
 
-	// Push an `iot_hub_search` event to dataLayer once per changed,
-	// non-empty term — pagination/sort/filter on the same query don't re-count.
-	// Marketing owns the GTM trigger + GA4 tag.
-	function trackSearch(term: string, resultsCount: number): void {
-		// Clearing the box resets, so re-entering the same term later counts anew.
-		if (!term) {
-			lastTrackedSearch = null;
+	// Push an `iot_hub_query` event to dataLayer once per changed query state
+	// (search text + active filters). Pagination, sort and repeats don't
+	// re-count. Marketing owns the GTM trigger + GA4 tag.
+	function trackQuery(term: string, resultsCount: number): void {
+		// Canonical (key- and value-sorted) string so the same selection always
+		// yields the same de-dupe key; copy before sorting to avoid mutating state.
+		const activeFilters = Object.entries(filters)
+			.map(([k, v]) => `${k}:${[...v].sort().join(',')}`)
+			.sort()
+			.join(';');
+		// Nothing meaningful to report on a default, unfiltered browse.
+		if (!term && !activeFilters) {
+			lastTrackedQuery = null;
 			return;
 		}
-		if (term === lastTrackedSearch) return;
-		lastTrackedSearch = term;
+		const key = `${term} ${activeFilters}`;
+		if (key === lastTrackedQuery) return;
+		lastTrackedQuery = key;
 		window.dataLayer?.push({
-			event: 'iot_hub_search',
+			event: 'iot_hub_query',
 			search_term: term,
+			search_filters: activeFilters,
 			search_results_count: resultsCount,
 			search_surface: itemType || (creatorId ? 'creator' : 'all'),
 			search_sort: sortId,
@@ -406,7 +414,7 @@ export function setupDynamicSearch(): void {
 				updatePagination(paginationNav, { currentPage, totalPages, hideOnSinglePage: true });
 			}
 			updateResultsCount(countEl!, body.totalElements ?? 0);
-			trackSearch(trimmed, body.totalElements ?? 0);
+			trackQuery(trimmed, body.totalElements ?? 0);
 		} catch (err) {
 			// Aborts happen on every superseding fetch — don't treat them
 			// as failures or the error panel would flash on every keystroke.
